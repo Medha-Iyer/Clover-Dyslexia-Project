@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "96674709873",
+    "firebase_url": "https://dyslexia-textrecognition.firebaseio.com",
+    "project_id": "dyslexia-textrecognition",
+    "storage_bucket": "dyslexia-textrecognition.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:96674709873:android:005c3ac6f57a29f44136d0",
+        "android_client_info": {
+          "package_name": "com.example.technovation2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "96674709873-q0v4tesv5geisrdf1dfhttummbi6nqmp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0la0aImnrU5jG4n_ngof7D34ETi8SuOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "96674709873-q0v4tesv5geisrdf1dfhttummbi6nqmp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

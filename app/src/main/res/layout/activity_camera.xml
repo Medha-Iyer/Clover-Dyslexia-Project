@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Camera">
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="340dp"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="#fff5fd"
+        android:src="@drawable/ic_insertphoto"/>
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="340dp"
+        android:layout_height="215dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="285dp"
+        android:background="#f5f5fd"
+        android:scrollbars="vertical"
+        android:text=""
+        android:textSize="25dp"
+        android:padding="10dp"/>
+
+    <Button
+        android:id="@+id/take_photo"
+        android:layout_width="169dp"
+        android:layout_height="wrap_content"
+        android:text="Take Photo"
+        android:layout_marginTop="508dp"
+        android:layout_marginLeft="23dp"/>
+    }
+
+    //format for button appears off but is perfect for my phone
+    <Button
+        android:id="@+id/from_gallery"
+        android:layout_width="169dp"
+        android:layout_height="wrap_content"
+        android:text="From Gallery"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="508dp"/>
+
+    <Button
+        android:id="@+id/convert_text"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:text="Convert Text to OpenDyslexic Font"
+        android:background="#bdf2d8"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="560dp" />
+
+    //needs to be placed on every single activity
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemBackground="@android:color/white"
+        app:itemTextColor="@drawable/selector"
+        app:itemIconTint="@drawable/selector"
+        app:menu="@menu/menu_nav"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
