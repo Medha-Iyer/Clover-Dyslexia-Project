@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:background="#fff5fd"
-        android:srcCompat="@drawable/ic_insertphoto"/>
+        app:srcCompat="@drawable/ic_insertphoto"/>
 
     <TextView
         android:id="@+id/text_view"
@@ -34,7 +34,8 @@
         android:layout_width="169dp"
         android:layout_height="wrap_content"
         android:text="Take Photo"
-        android:layout_marginTop="508dp"
+        android:layout_alignTop="@id/text_view"
+        android:layout_marginTop="220dp"
         android:layout_marginLeft="23dp"/>
     }
 
@@ -44,8 +45,9 @@
         android:layout_width="169dp"
         android:layout_height="wrap_content"
         android:text="From Gallery"
+        android:layout_alignTop="@id/text_view"
         android:layout_marginLeft="200dp"
-        android:layout_marginTop="508dp"/>
+        android:layout_marginTop="220dp"/>
 
     <Button
         android:id="@+id/convert_text"
@@ -54,7 +56,8 @@
         android:text="Convert Text to OpenDyslexic Font"
         android:background="#bdf2d8"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="560dp" />
+        android:layout_alignBottom="@id/nav_bar"
+        android:layout_marginBottom="120dp" />
 
     //needs to be placed on every single activity
 
