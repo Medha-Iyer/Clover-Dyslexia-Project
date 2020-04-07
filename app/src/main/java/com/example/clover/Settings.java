@@ -1,4 +1,4 @@
-package com.example.technovation2;
+package com.example.clover;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.example.clover.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Locale;

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="4dp">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp">
+
+        <ImageView
+            android:id="@+id/imageOne"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_centerVertical="true"
+            android:padding="5dp" />
+
+        <TextView
+            android:id="@+id/titleOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/imageOne"
+            android:text="Saved Text 1"
+            android:textSize="25sp"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/contentOne"
+            android:layout_width="475dp"
+            android:layout_height="55dp"
+            android:text="text 1 content..."
+            android:textSize="15sp"
+            android:fontFamily="@font/opendyslexic_regular"
+            android:textColor="@android:color/black"
+            android:layout_below="@+id/titleOne"
+            android:layout_toRightOf="@id/imageOne"
+            android:layout_marginLeft="8dp"
+            android:scrollbars="vertical"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

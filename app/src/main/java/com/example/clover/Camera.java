@@ -1,18 +1,16 @@
-package com.example.technovation2;
+package com.example.clover;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,37 +25,47 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Camera extends AppCompatActivity {
+public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener{
 
     //take photo function
-    private Button takePhotoBtn, fromGalleryBtn, convertTextBtn;
+    private Button takePhotoBtn, fromGalleryBtn, convertTextBtn, saveLibraryBtn;
     private ImageView imageView;
     private TextView tv;
-    private Bitmap imageBitmap;
+    private static Bitmap imageBitmap;
+
+    //saving to library
+    private String fileName, fileText, bitmapString;
+    private ArrayList<LibraryCardItem> libraryList = new ArrayList<>();
+
+    //constants to save UI states
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String SAVED_LIST = "savedList";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        loadData();
+        saveData();
 
         //make text view scrollable
         tv = (TextView) findViewById(R.id.text_view);
         tv.setMovementMethod(new ScrollingMovementMethod());
 
-        //initiate each button
-        takePhotoBtn = findViewById(R.id.take_photo);
-        convertTextBtn = findViewById(R.id.convert_text);
-        fromGalleryBtn = findViewById(R.id.from_gallery);
         imageView = findViewById(R.id.image_view);
 
         //take photo function
+        takePhotoBtn = findViewById(R.id.take_photo);
         takePhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,6 +75,7 @@ public class Camera extends AppCompatActivity {
         });
 
         //photo from gallery function
+        fromGalleryBtn = findViewById(R.id.from_gallery);
         fromGalleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,10 +84,29 @@ public class Camera extends AppCompatActivity {
             }
         });
 
+        convertTextBtn = findViewById(R.id.convert_text);
         convertTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                detectTextFromImage();
+                if(imageBitmap != null) {
+                    detectTextFromImage();
+                    saveLibraryBtn.setVisibility(View.VISIBLE);
+                }else{
+                    Toast.makeText(getApplicationContext(), "Please upload photo.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        saveLibraryBtn = findViewById(R.id.save_to_library);
+        saveLibraryBtn.setVisibility(View.GONE);
+        saveLibraryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveToLibrary();
+                saveLibraryBtn.setVisibility(View.GONE);
+                tv.setText("Displaying text...");
+                imageView.setImageResource(R.drawable.ic_insertphoto);
+                imageBitmap = null;
             }
         });
 
@@ -93,8 +121,7 @@ public class Camera extends AppCompatActivity {
                     case R.id.camera:
                         return true;
                     case R.id.library:
-                        startActivity(new Intent(getApplicationContext(), Library.class));
-                        overridePendingTransition(0,0);
+                        sendListToLibrary();
                         return true;
                     case R.id.home:
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -133,6 +160,21 @@ public class Camera extends AppCompatActivity {
                 "Select Picture"), SELECT_PICTURE);
     }
 
+    //for saving to library!!!
+    private void saveToLibrary(){
+        //save file name pop-up
+        CameraNameDialog exampleDialog = new CameraNameDialog();
+        exampleDialog.show(getSupportFragmentManager(), "example dialog");
+    }
+
+    @Override //after pop-up, this method does something with the name
+    public void applyTexts(String name) {
+        fileName = name;
+        libraryList.add(new LibraryCardItem(fileName, fileText, bitmapString));
+        saveData();
+        sendListToLibrary();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -140,18 +182,27 @@ public class Camera extends AppCompatActivity {
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap); //displaying image
+            bitmapString = convertBitmapToString(imageBitmap);
         } else if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
             try {
                 imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                // Log.d(TAG, String.valueOf(bitmap));
-
                 ImageView imageView = findViewById(R.id.image_view);
+                bitmapString = convertBitmapToString(imageBitmap);
                 imageView.setImageBitmap(imageBitmap);
+                //imageView.setImageBitmap(imageBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String convertBitmapToString(Bitmap imageBitmap){
+        ByteArrayOutputStream baos = new  ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp= Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
     }
 
     private void detectTextFromImage(){
@@ -166,7 +217,6 @@ public class Camera extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(Camera.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.d("Error: ", e.getMessage());
             }
         });
     }
@@ -179,7 +229,42 @@ public class Camera extends AppCompatActivity {
             for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()){
                 String text = block.getText();
                 tv.setText(text);
+                fileText = text;
             }
         }
+    }
+
+    //to save UI states
+    private void saveData(){
+        //no other app can change our shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(libraryList);
+        editor.putString(SAVED_LIST, json);
+        editor.apply();
+    }
+
+    private void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(SAVED_LIST, null);
+        Type type = new TypeToken<ArrayList<LibraryCardItem>>() {}.getType();
+        libraryList = gson.fromJson(json, type);
+
+        if (libraryList == null){
+            libraryList = new ArrayList<LibraryCardItem>();
+        }
+    }
+
+    public void sendListToLibrary(){
+        loadData();
+        saveData();
+        Intent i = new Intent(Camera.this, Library.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("library list", libraryList);
+        i.putExtras(bundle);
+        startActivity(i);
+        overridePendingTransition(0,0);
     }
 }

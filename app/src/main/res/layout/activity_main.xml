@@ -7,14 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    //needs to be placed on every single activity
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="Home"
-        android:textSize="50dp" />
+        android:textSize="50dp"
+        android:fontFamily="@font/opendyslexic_regular"/>/>
+    //needs to be placed on every single activity
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
