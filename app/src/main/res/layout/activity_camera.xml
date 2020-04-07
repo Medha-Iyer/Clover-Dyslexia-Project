@@ -24,8 +24,9 @@
         android:layout_marginTop="285dp"
         android:background="#f5f5fd"
         android:scrollbars="vertical"
-        android:text=""
-        android:textSize="25dp"
+        android:text="Displaying text..."
+        android:fontFamily="@font/opendyslexic_regular"
+        android:textSize="15dp"
         android:padding="10dp"/>
 
     <Button
@@ -56,6 +57,17 @@
         android:layout_marginTop="560dp" />
 
     //needs to be placed on every single activity
+
+    <Button
+        android:id="@+id/save_to_library"
+        android:layout_width="90dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="290dp"
+        android:layout_marginLeft="270dp"
+        android:background="#fff5fd"
+        android:text="Save To Library"
+        android:textSize="10dp"/>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"

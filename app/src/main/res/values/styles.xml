@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.PopMe">
+        <!-- Pop-up will overlap and close when you touch outside -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name = "android:windowBackground" > @android:color/transparent</item>
+    </style>
+
 </resources>

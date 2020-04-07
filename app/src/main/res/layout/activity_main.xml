@@ -10,9 +10,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:text="Home"
         android:textSize="50dp"
-        android:layout_centerInParent="true"/>
+        android:fontFamily="@font/opendyslexic_regular"/>
 
     //needs to be placed on every single activity
     <com.google.android.material.bottomnavigation.BottomNavigationView
