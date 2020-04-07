@@ -7,7 +7,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+        android:maxSdkVersion="29" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +19,8 @@
         <activity android:name=".Settings"></activity>
         <activity android:name=".Profile" />
         <activity android:name=".Library" />
+        <activity android:name=".Voice"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".Camera">
             <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"

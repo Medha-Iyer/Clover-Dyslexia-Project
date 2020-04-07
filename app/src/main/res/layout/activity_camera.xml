@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:background="#fff5fd"
-        android:src="@drawable/ic_insertphoto"/>
+        android:srcCompat="@drawable/ic_insertphoto"/>
 
     <TextView
         android:id="@+id/text_view"
@@ -60,6 +60,8 @@
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/rounded_nav"
+        android:elevation="8dp"
         app:itemBackground="@android:color/white"
         app:itemTextColor="@drawable/selector"
         app:itemIconTint="@drawable/selector"

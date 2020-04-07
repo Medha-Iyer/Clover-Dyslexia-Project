@@ -6,19 +6,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    // TODO add banner ads on screen somewhere
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //initialize and assign variable, do this for every
+        //initialize and assign variable, do this for every button or other interactive feature
         BottomNavigationView navView = findViewById(R.id.nav_bar);
-
+        Button voice = findViewById(R.id.voice_game);
+        voice.setOnClickListener(this);
         //set home as selected
         navView.setSelectedItemId(R.id.home);
 
@@ -29,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()){
                     case R.id.camera:
                         startActivity(new Intent(getApplicationContext(), Camera.class));
-                        overridePendingTransition(0,0);
-                        return true;
+                    overridePendingTransition(0,0);
+                    return true;
                     case R.id.library:
                         startActivity(new Intent(getApplicationContext(), Library.class));
                         overridePendingTransition(0,0);
@@ -49,5 +53,10 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+    @Override
+    public void onClick(View v) {
+        Intent i=new Intent(MainActivity.this,Voice.class);
+        startActivity(i);
     }
 }
