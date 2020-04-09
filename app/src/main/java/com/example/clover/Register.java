@@ -6,9 +6,12 @@ import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -20,11 +23,27 @@ import com.google.android.gms.tasks.OnCompleteListener;
 
 public class Register extends AppCompatActivity implements View.OnClickListener {
 
+    RelativeLayout mainRegister;
+    ImageView splashlogo;
     private TextView mLoginHere;
     private CardView mRegisterButton;
     EditText mFullName, mEmail, mAge, mPassword;
     private ProgressBar mPbar;
     FirebaseAuth fAuth;
+    private Handler handler  = new Handler();
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if(fAuth.getCurrentUser() != null) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+            }else {
+                mainRegister.setVisibility(View.VISIBLE);
+                splashlogo.setVisibility(View.GONE);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +51,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_register);
 
         //initialize and assign variable, do this for every button or other interactive feature
+        mainRegister = findViewById(R.id.mainregister);
+        splashlogo = findViewById(R.id.splashlogo);
         mLoginHere = findViewById(R.id.loginHere);
         mLoginHere.setOnClickListener(this);
         mRegisterButton = findViewById(R.id.registerButton);
@@ -43,10 +64,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         mPbar = findViewById(R.id.progressBar);
         fAuth = FirebaseAuth.getInstance();
 
-        if(fAuth.getCurrentUser() != null) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
-        }
+        handler.postDelayed(runnable, 2000); //2000 is the timeout for the splash
     }
 
     @Override
@@ -80,7 +98,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 mPbar.setVisibility(View.VISIBLE);
 
                 //Register user in Firebase console this or activity.this??
-                fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {

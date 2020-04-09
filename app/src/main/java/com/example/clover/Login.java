@@ -6,10 +6,13 @@ import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +23,27 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
+    private RelativeLayout mainLogin;
+    private ImageView splashlogo;
     private TextView mcreateAccount;
     private CardView mloginButton;
     EditText mEmail, mPassword;
     private ProgressBar mPbar;
     FirebaseAuth fAuth;
+    private Handler handler = new Handler();
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if(fAuth.getCurrentUser() != null) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+            }else {
+                mainLogin.setVisibility(View.VISIBLE);
+                splashlogo.setVisibility(View.GONE);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +51,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
 
         //initialize and assign variable, do this for every button or other interactive feature
+        mainLogin = findViewById(R.id.mainlogin);
+        splashlogo = findViewById(R.id.splashlogo);
         mcreateAccount = findViewById(R.id.createAccount);
         mcreateAccount.setOnClickListener(this);
         mloginButton = findViewById(R.id.loginButton);
@@ -41,6 +62,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         mPbar = findViewById(R.id.progressBar);
         fAuth = FirebaseAuth.getInstance();
 
+        handler.postDelayed(runnable, 3000); //3000 is the timeout for the splash
+
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
         if(fAuth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
@@ -72,7 +100,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 mPbar.setVisibility(View.VISIBLE);
 
                 //authenticate user
-                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
