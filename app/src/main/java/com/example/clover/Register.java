@@ -20,10 +20,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 
 public class Register extends AppCompatActivity implements View.OnClickListener {
 
-    TextView mLoginHere;
-    CardView mRegisterButton;
-    EditText mFullName, mEmail, mPassword;
-    ProgressBar mPbar;
+    private TextView mLoginHere;
+    private CardView mRegisterButton;
+    EditText mFullName, mEmail, mAge, mPassword;
+    private ProgressBar mPbar;
     FirebaseAuth fAuth;
 
     @Override
@@ -38,12 +38,12 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         mRegisterButton.setOnClickListener(this);
         mFullName = findViewById(R.id.fullname);
         mEmail = findViewById(R.id.email);
+        mAge = findViewById(R.id.age);
         mPassword = findViewById(R.id.password);
         mPbar = findViewById(R.id.progressBar);
-
         fAuth = FirebaseAuth.getInstance();
 
-        if(fAuth.getCurrentUser() != null){
+        if(fAuth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
@@ -54,11 +54,17 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.registerButton:
                 String email = mEmail.getText().toString().trim();
+                String age = mAge.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
 
                 //Check if user has entered valid information
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError("Email is required.");
+                    return;
+                }
+
+                if(TextUtils.isEmpty(age)){
+                    mEmail.setError("Age is required.");
                     return;
                 }
 
@@ -78,7 +84,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(Register.this, "User successfully created", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Register.this, "User successfully created an account", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }else{
                             Toast.makeText(Register.this, "ERROR!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

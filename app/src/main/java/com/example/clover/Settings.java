@@ -2,6 +2,7 @@ package com.example.clover;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,14 +18,15 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Locale;
 
-public class Settings extends AppCompatActivity {
+public class Settings extends AppCompatActivity implements View.OnClickListener {
 
+    private CardView logout;
     private SeekBar mSeekBarPitch;
     private SeekBar mSeekBarSpeed;
-    private Button mButtonSpeak;
     public static float pitchVal = 1;
     public static float speedVal = 1;
 
@@ -44,7 +46,8 @@ public class Settings extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_bar);
         mSeekBarPitch = findViewById(R.id.seek_bar_pitch);
         mSeekBarSpeed = findViewById(R.id.seek_bar_speed);
-
+        logout = findViewById(R.id.logoutButton);
+        logout.setOnClickListener(this);
 
         //set home as selected
         navView.setSelectedItemId(R.id.settings);
@@ -86,6 +89,19 @@ public class Settings extends AppCompatActivity {
         saveData();
         updateViews(); //TODO make it so that you don't have to go to settings twice for it to update
 
+    }
+
+    @Override
+    public void onClick(View v){
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(getApplicationContext(), Login.class));
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        saveData();
+        loadData();
     }
 
     public static void speak(TextToSpeech mTTS, String word) {
