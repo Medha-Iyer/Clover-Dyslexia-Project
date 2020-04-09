@@ -24,7 +24,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
-import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+//import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -205,10 +206,58 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         return temp;
     }
 
-    private void detectTextFromImage(){
+
+    //CURRENT CODE
+//    private void detectTextFromImage() {
+//        final FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
+//        FirebaseVisionTextDetector firebaseVisionTextDetector = FirebaseVision.getInstance().getVisionTextDetector();
+//        firebaseVisionTextDetector.detectInImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+//            @Override
+//            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+//                displayTextFromImage(firebaseVisionText);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(Camera.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+//TESTING if the newer Firebase works here is what to revert to if it doesn't
+
+//    Before (v-16.0.0):
+//
+//    FirebaseVisionTextDetector
+//FirebaseVisionTextDetector.detectInImage(image)
+//    List<FirebaseVisionText.Block> resultsBlocks = results.getBlocks();
+//for (FirebaseVisionText.Block block : resultsBlocks) {
+//        for (FirebaseVisionText.Line line : block.getLines()) {
+//            //...
+//        }
+//    }
+//    After (v-18.0.1):
+//
+//    FirebaseVisionTextRecognizer
+//FirebaseVisionTextDetector.processImage(image)
+//    List<FirebaseVisionText.TextBlock> blocks = results.getTextBlocks();
+//    if (blockList.size() == 0){
+//        Toast.makeText(this, "No Text Found in image.", Toast.LENGTH_SHORT).show();
+//    } else {
+//      for (FirebaseVisionText.TextBlock block : blocks) {
+//        String text = block.getText();
+//        tv.setText(text);
+//        fileText = text;
+//       }
+//    }
+//}
+
+
+
+        private void detectTextFromImage(){
         final FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
-        FirebaseVisionTextDetector firebaseVisionTextDetector = FirebaseVision.getInstance().getVisionTextDetector();
-        firebaseVisionTextDetector.detectInImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+        FirebaseVisionTextRecognizer firebaseVisionTextRecognizer = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+        firebaseVisionTextRecognizer.processImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
             @Override
             public void onSuccess(FirebaseVisionText firebaseVisionText) {
                 displayTextFromImage(firebaseVisionText);
@@ -222,17 +271,50 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     }
 
     private void displayTextFromImage(FirebaseVisionText firebaseVisionText){
-        List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
+        List<FirebaseVisionText.TextBlock> blockList = firebaseVisionText.getTextBlocks();
         if (blockList.size() == 0){
             Toast.makeText(this, "No Text Found in image.", Toast.LENGTH_SHORT).show();
         } else {
-            for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()){
+            for (FirebaseVisionText.TextBlock block : blockList){
                 String text = block.getText();
                 tv.setText(text);
                 fileText = text;
             }
         }
     }
+
+
+
+    // ---------------------------------------CURRENT CODE BELOW------------------------------
+
+//    private void detectTextFromImage(){
+//        final FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
+//        FirebaseVisionTextDetector firebaseVisionTextDetector = FirebaseVision.getInstance().getVisionTextDetector();
+//        firebaseVisionTextDetector.detectInImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+//            @Override
+//            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+//                displayTextFromImage(firebaseVisionText);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(Camera.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+//
+//    private void displayTextFromImage(FirebaseVisionText firebaseVisionText){
+//        List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
+//        if (blockList.size() == 0){
+//            Toast.makeText(this, "No Text Found in image.", Toast.LENGTH_SHORT).show();
+//        } else {
+//            for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()){
+//                String text = block.getText();
+//                tv.setText(text);
+//                fileText = text;
+//            }
+//        }
+//    }
 
     //to save UI states
     private void saveData(){

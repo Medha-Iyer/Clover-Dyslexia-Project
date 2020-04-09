@@ -19,12 +19,9 @@
         android:id="@+id/pitchTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginRight="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@id/seek_bar_pitch"
+        android:layout_marginTop="150dp"
         android:text="Pitch"
         android:textSize="16sp" />
 
@@ -33,9 +30,8 @@
         android:id="@+id/seek_bar_pitch"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/pitchTitle"
-        android:layout_marginLeft="61dp"
-        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
         android:progress="50" />
 
     <TextView
@@ -44,19 +40,16 @@
         android:layout_height="wrap_content"
         android:text="Speed"
         android:textSize="16sp"
-        android:layout_alignTop="@id/pitchTitle"
-        android:layout_marginTop="80dp"
-        android:layout_marginLeft="100dp"/>
+        android:layout_toLeftOf="@id/seek_bar_speed"
+        android:layout_marginTop="180dp" />
 
     <SeekBar
         android:id="@+id/seek_bar_speed"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_centerHorizontal="true"
         android:progress="50"
-        android:layout_alignLeft="@id/pitchTitle"
-        android:layout_marginLeft="61dp"
-        android:layout_marginTop="180dp"/>
+        android:layout_marginTop="180dp" />
 
     //needs to be placed on every single activity
     <com.google.android.material.bottomnavigation.BottomNavigationView

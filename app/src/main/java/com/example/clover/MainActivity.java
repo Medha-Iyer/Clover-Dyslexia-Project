@@ -22,8 +22,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //initialize and assign variable, do this for every button or other interactive feature
         BottomNavigationView navView = findViewById(R.id.nav_bar);
-        Button voice = findViewById(R.id.voice_game);
-        voice.setOnClickListener(this);
+        Button mvoice = findViewById(R.id.voice_game);
+        mvoice.setOnClickListener(this);
         //set home as selected
         navView.setSelectedItemId(R.id.home);
 
