@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.clover">
 
@@ -19,14 +18,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LibraryPopActivity"
-            android:theme="@style/AppTheme.PopMe">
-        </activity>
+        <activity android:name=".LibraryEditCard"></activity>
+        <activity
+            android:name=".LibraryPopActivity"
+            android:theme="@style/AppTheme.PopMe"></activity>
         <activity android:name=".Settings" />
         <activity android:name=".Profile" />
-        <activity android:name=".Library" />
-        <activity android:name=".Voice"
-            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".Library"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Voice"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".Camera">
             <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
@@ -39,11 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-<!--        <meta-data-->
-<!--            android:name="preloaded_fonts"-->
-<!--            android:resource="@array/preloaded_fonts" />-->
-
     </application>
 
 </manifest>

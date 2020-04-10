@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -43,7 +42,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     private static Bitmap imageBitmap;
 
     //saving to library
-    private String fileName, fileText, bitmapString;
+    private String fileName, fileText;
     private ArrayList<LibraryCardItem> libraryList = new ArrayList<>();
 
     //constants to save UI states
@@ -170,7 +169,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     @Override //after pop-up, this method does something with the name
     public void applyTexts(String name) {
         fileName = name;
-        libraryList.add(new LibraryCardItem(fileName, fileText, bitmapString));
+        libraryList.add(new LibraryCardItem(fileName, fileText));
         saveData();
         sendListToLibrary();
     }
@@ -182,27 +181,16 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap); //displaying image
-            bitmapString = convertBitmapToString(imageBitmap);
         } else if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
             try {
                 imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 ImageView imageView = findViewById(R.id.image_view);
-                bitmapString = convertBitmapToString(imageBitmap);
                 imageView.setImageBitmap(imageBitmap);
-                //imageView.setImageBitmap(imageBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    private String convertBitmapToString(Bitmap imageBitmap){
-        ByteArrayOutputStream baos = new  ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] b=baos.toByteArray();
-        String temp= Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
     }
 
     private void detectTextFromImage(){

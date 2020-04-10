@@ -5,14 +5,12 @@ import java.io.Serializable;
 public class LibraryCardItem implements Serializable {
     private String itemTitle;
     private String itemText;
-    private String imageString;
 
     private static final long serialVersionUID = 1L;
 
-    public LibraryCardItem(String title, String text, String bitstring){
+    public LibraryCardItem(String title, String text){
         itemTitle = title;
         itemText = text;
-        imageString = bitstring;
     }
 
     public String getItemTitle(){
@@ -23,5 +21,4 @@ public class LibraryCardItem implements Serializable {
         return itemText;
     }
 
-    public String getImageString() { return imageString; }
 }
