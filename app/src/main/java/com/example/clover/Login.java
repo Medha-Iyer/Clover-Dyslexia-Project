@@ -66,18 +66,21 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        if(fAuth.getCurrentUser() != null) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
-        }
-    }
+//    @Override
+//    protected void onPause(){
+//        super.onPause();
+//        if(fAuth.getCurrentUser() != null) {
+//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//            finish();
+//        }
+//    }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()){
+            case R.id.createAccount:
+                startActivity(new Intent(getApplicationContext(), Register.class));
+                break;
             case R.id.loginButton:
                 String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
@@ -108,11 +111,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }else{
                             Toast.makeText(Login.this, "ERROR!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            mPbar.setVisibility(View.GONE);
                         }
                     }
                 });
-            case R.id.createAccount:
-                startActivity(new Intent(getApplicationContext(), Register.class));
         }
     }
 }
