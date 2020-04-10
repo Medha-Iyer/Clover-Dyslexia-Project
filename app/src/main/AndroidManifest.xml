@@ -19,6 +19,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".LibraryEditCard"></activity>
+        <activity
+            android:name=".LibraryPopActivity"
+            android:theme="@style/AppTheme.PopMe"></activity>
+        <activity android:name=".Settings" />
+        <activity android:name=".Profile" />
+        <activity
+            android:name=".Library"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".Register"></activity>
         <activity android:name=".Login">
             <intent-filter>
@@ -27,12 +37,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LibraryPopActivity"
-            android:theme="@style/AppTheme.PopMe" />
-        <activity android:name=".Settings" />
-        <activity android:name=".Profile" />
-        <activity android:name=".Library" />
         <activity
             android:name=".Voice"
             android:parentActivityName=".MainActivity" />

@@ -2,10 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_search"
+
+    <item
+        android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
-        android:title="Search"
-        app:showAsAction="ifRoom|collapseActionView"
-        app:actionViewClass="android.widget.SearchView"/>
+        android:orderInCategory="100"
+        android:title="@string/abc_search_hint"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/show_archive"
+        android:icon="@drawable/ic_archive_white"
+        android:orderInCategory="100"
+        android:title="archive"
+        app:showAsAction="always"/>
+
 
 </menu>

@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleViewHolder> implements Filterable {
+public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleViewHolder> {
 
     private ArrayList<LibraryCardItem> mExampleList;
     private OnItemClickListener mListener;
@@ -26,24 +26,25 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
 
     public interface OnItemClickListener {
         void onItemClick(int position);
+        void onItemClick1(LibraryCardItem item);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
     }
 
-    public static class ExampleViewHolder extends RecyclerView.ViewHolder {
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
         //you have to initialize these parts for a card
-        public ImageView mImageView;
         public TextView mTitle;
         public TextView mText;
+        public ImageView mEditBtn;
 
         public ExampleViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             //values from item_one.xml, references to views
-            mImageView = itemView.findViewById(R.id.imageOne);
             mTitle = itemView.findViewById(R.id.titleOne);
             mText = itemView.findViewById(R.id.contentOne);
+            mEditBtn = itemView.findViewById(R.id.editNote);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -53,6 +54,16 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
                         if (position != RecyclerView.NO_POSITION) {
                             listener.onItemClick(position);
                         }
+                    }
+                }
+            });
+
+            mEditBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick1(mExampleList.get(position));
                     }
                 }
             });
@@ -75,21 +86,9 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
     @Override //referring to item at certain position
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
         LibraryCardItem currentItem = mExampleList.get(position);
-
-        holder.mImageView.setImageBitmap(convertStringToBitmap(currentItem.getImageString()));
+        holder.mEditBtn.setImageResource(R.drawable.ic_edit);
         holder.mTitle.setText(currentItem.getItemTitle());
         holder.mText.setText(currentItem.getItemText());
-    }
-
-    private Bitmap convertStringToBitmap(String encodedString){
-        try {
-            byte [] encodeByte= Base64.decode(encodedString,Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch(Exception e) {
-            e.getMessage();
-            return null;
-        }
     }
 
     @Override //returns total amount of items in list
@@ -100,38 +99,8 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
         return mExampleList.size();
     }
 
-    @Override
-    public Filter getFilter(){
-        return exampleFilter;
+    public void setLibraryItems(ArrayList<LibraryCardItem> items){
+        mExampleList = items;
+        notifyDataSetChanged();
     }
-
-    private Filter exampleFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            ArrayList<LibraryCardItem> filteredList = new ArrayList<>();
-
-            if (constraint == null || constraint.length()==0){
-                filteredList.addAll(exampleListFull);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-                for (LibraryCardItem item : exampleListFull){
-                    if (item.getItemTitle().toLowerCase().contains(filterPattern)){
-                        filteredList.add(item);
-                    }
-                }
-            }
-
-            FilterResults results = new FilterResults();
-            results.values = filteredList;
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            mExampleList.clear();
-            mExampleList.addAll((List) results.values);
-            notifyDataSetChanged();
-        }
-    };
 }
