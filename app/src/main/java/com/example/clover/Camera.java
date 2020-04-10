@@ -23,7 +23,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
-import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+//import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -192,35 +193,37 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             }
         }
     }
-
-    private void detectTextFromImage(){
-        final FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
-        FirebaseVisionTextDetector firebaseVisionTextDetector = FirebaseVision.getInstance().getVisionTextDetector();
-        firebaseVisionTextDetector.detectInImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-            @Override
-            public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                displayTextFromImage(firebaseVisionText);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Camera.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+  
+        private void detectTextFromImage(){
+          final FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
+          FirebaseVisionTextRecognizer firebaseVisionTextRecognizer = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+          firebaseVisionTextRecognizer.processImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+              @Override
+              public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                  displayTextFromImage(firebaseVisionText);
+              }
+          }).addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                  Toast.makeText(Camera.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+              }
+          });
     }
 
     private void displayTextFromImage(FirebaseVisionText firebaseVisionText){
-        List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
+        List<FirebaseVisionText.TextBlock> blockList = firebaseVisionText.getTextBlocks();
         if (blockList.size() == 0){
             Toast.makeText(this, "No Text Found in image.", Toast.LENGTH_SHORT).show();
         } else {
-            for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()){
+            for (FirebaseVisionText.TextBlock block : blockList){
                 String text = block.getText();
                 tv.setText(text);
                 fileText = text;
             }
         }
     }
+
+
 
     //to save UI states
     private void saveData(){
