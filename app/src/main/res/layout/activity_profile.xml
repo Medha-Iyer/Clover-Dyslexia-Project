@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Profile">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile"
-        android:textSize="50dp"
-        android:layout_centerInParent="true"/>
+    tools:context=".Profile"
+    android:background="@drawable/pastelgreen">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:background="#0f7303">
+    </LinearLayout>
+<!--    android:background="#b2f7ba">-->
 
     //needs to be placed on every single activity
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -26,5 +26,29 @@
         app:itemIconTint="@drawable/selector"
         app:menu="@menu/menu_nav"
         android:layout_alignParentBottom="true"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/prof_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="name"
+        android:textSize="25sp"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/prof_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="age"
+        android:textSize="25sp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/prof_name"/>
+
 
 </RelativeLayout>

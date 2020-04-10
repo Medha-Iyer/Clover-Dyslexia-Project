@@ -64,4 +64,30 @@
         app:menu="@menu/menu_nav"
         android:layout_alignParentBottom="true"/>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/logoutButton"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/nav_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dp"
+        app:cardBackgroundColor="#0f8528"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/logoutText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/opendyslexic_regular"
+                android:text="LOG OUT"
+                android:textSize="25sp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
 </RelativeLayout>
