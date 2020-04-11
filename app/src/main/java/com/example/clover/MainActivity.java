@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (menuItem.getItemId()){
                     case R.id.camera:
                         startActivity(new Intent(getApplicationContext(), Camera.class));
-                    overridePendingTransition(0,0);
+                        overridePendingTransition(0,0);
                     return true;
                     case R.id.library:
                         startActivity(new Intent(getApplicationContext(), Library.class));

@@ -56,8 +56,8 @@
         android:text="Convert Text to OpenDyslexic Font"
         android:background="#bdf2d8"
         android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@id/nav_bar"
-        android:layout_marginBottom="120dp" />
+        android:layout_margin="10dp"
+        android:layout_below="@+id/take_photo"/>
 
     //needs to be placed on every single activity
 
