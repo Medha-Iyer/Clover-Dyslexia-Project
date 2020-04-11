@@ -26,10 +26,11 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
 
     public interface OnItemClickListener {
         void onItemClick(int position);
-        void onItemClick1(LibraryCardItem item);
+        void onItemClick1(LibraryCardItem item, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
+
         mListener = listener;
     }
 
@@ -63,7 +64,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick1(mExampleList.get(position));
+                        listener.onItemClick1(mExampleList.get(position), position);
                     }
                 }
             });

@@ -19,7 +19,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LibraryEditCard"></activity>
+        <activity
+            android:name=".LibraryEditCard"
+            android:parentActivityName=".Library"
+            android:theme="@style/AppTheme.PopMe">
+        </activity>
         <activity
             android:name=".LibraryPopActivity"
             android:theme="@style/AppTheme.PopMe"></activity>
@@ -28,14 +32,15 @@
         <activity
             android:name=".Library"
             android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".Register"></activity>
         <activity android:name=".Login">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".Voice"
@@ -46,11 +51,10 @@
                 android:value="ocr" />
         </activity>
         <activity android:name=".MainActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

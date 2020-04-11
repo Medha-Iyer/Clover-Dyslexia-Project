@@ -38,7 +38,8 @@
         app:layout_anchor="@id/nav_bar"
         android:layout_marginBottom="75dp"
         android:layout_marginRight="15dp"
-        app:layout_anchorGravity="right"/>
+        app:layout_anchorGravity="right"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 
     //needs to be placed on every single activity
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -68,9 +69,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:layout_scrollFlags="scroll|enterAlways|snap"/>
+                android:background="?attr/colorPrimary"/>
 
             <com.miguelcatalan.materialsearchview.MaterialSearchView
                 android:id="@+id/search_view"
