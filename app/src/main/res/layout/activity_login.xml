@@ -123,6 +123,19 @@
                 android:visibility="invisible" />
 
             <TextView
+                android:id="@+id/forgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/progressBar"
+                android:layout_marginTop="50dp"
+                android:fontFamily="@font/opendyslexic_bold"
+                android:text="Forgot Password?"
+                android:textSize="20sp"
+                android:textColor="#0f8528"
+                android:elevation="3dp"/>
+
+            <TextView
                 android:id="@+id/createAccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -134,6 +147,7 @@
                 android:textSize="20sp"
                 android:textColor="#0f8528"
                 android:elevation="3dp"/>
+
         </RelativeLayout>
     </RelativeLayout>
 

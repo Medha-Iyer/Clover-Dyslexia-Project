@@ -1,9 +1,11 @@
 package com.example.clover;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +29,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private RelativeLayout mainLogin;
     private ImageView splashlogo;
-    private TextView mcreateAccount;
+    private TextView mcreateAccount, mforgotPassword;
     private CardView mloginButton;
     EditText mEmail, mPassword;
     private ProgressBar mPbar;
@@ -55,6 +59,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         splashlogo = findViewById(R.id.splashlogo);
         mcreateAccount = findViewById(R.id.createAccount);
         mcreateAccount.setOnClickListener(this);
+        mforgotPassword = findViewById(R.id.forgotPassword);
+        mforgotPassword.setOnClickListener(this);
         mloginButton = findViewById(R.id.loginButton);
         mloginButton.setOnClickListener(this);
         mEmail = findViewById(R.id.email);
@@ -80,6 +86,41 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         switch(v.getId()){
             case R.id.createAccount:
                 startActivity(new Intent(getApplicationContext(), Register.class));
+                break;
+            case R.id.forgotPassword:
+                final EditText reset = new EditText(v.getContext());
+                AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
+                passwordResetDialog.setTitle("Reset password?");
+                passwordResetDialog.setMessage("Enter your email to receive a link to reset your password.");
+                passwordResetDialog.setView(reset);
+
+                passwordResetDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // retrieve email and send reset link
+                        String mail = reset.getText().toString();
+                        fAuth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(Login.this, "Reset link sent to your email.", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(Login.this, "Error! Link has not been sent. " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+
+                passwordResetDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //return to login screen and close dialog
+                    }
+                });
+
+                passwordResetDialog.create().show();
                 break;
             case R.id.loginButton:
                 String email = mEmail.getText().toString().trim();
@@ -115,6 +156,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         }
                     }
                 });
+                break;
         }
     }
 }
