@@ -82,17 +82,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-////        mAdapter.setOnItemClickListener(new LibraryAdapter.OnItemClickListener() {
-////            @Override
-//            public void onItemClick(int position) {
-//            }
-//
-//            @Override
-//            public void onItemClick1(LibraryCardItem item) {
-//                Intent intent = new Intent(Library.this, LibraryEditCard.class);
-//            }
-//        });
-
         //perform item selected listener
         BottomNavigationView navView = findViewById(R.id.nav_bar); //initialize and assign variable, do this for every
         navView.setSelectedItemId(R.id.library); //set library as selected
@@ -134,7 +123,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
             String text = data.getStringExtra(LibraryEditCard.EXTRA_TEXT);
 
             LibraryCardItem newCard = new LibraryCardItem(title, text);
-            //newCard.setId(0);
             savedList.add(newCard);
             mAdapter.notifyItemInserted(savedList.size()-1);
             saveData();
@@ -191,11 +179,13 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                 if(showArchive.getTitle().equals("archive")) {
                     showArchive.setIcon(R.drawable.ic_library_white);
                     showArchive.setTitle("library");
+                    toolbar.setTitle("Archives");
                     mAdapter.setLibraryItems(archivedItems);
                     toolbar.setBackgroundColor(getResources().getColor(R.color.colorLight));
                 } else {
                     showArchive.setIcon(R.drawable.ic_archive_white);
                     showArchive.setTitle("archive");
+                    toolbar.setTitle("Library");
                     mAdapter.setLibraryItems(savedList);
                     toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.speech.tts.TextToSpeech;
@@ -17,6 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -26,16 +33,17 @@ import java.util.Scanner;
 
 public class Voice extends AppCompatActivity implements View.OnClickListener {
 
-    private TextView voiceResult;
-    private TextView gameWord;
-    private ImageView speakWord;
+    private TextView voiceResult, gameWord;
+    private ImageView speakWord, bool;
     private Scanner s;
-    private ArrayList<String> words = new ArrayList<String>();
-    public int age = 12;
-    private String currentWord;
+    private ArrayList<String> wordList = new ArrayList<String>();
+    private ArrayList<String> completedWords = new ArrayList<String>();
+    int age;
+    String currentWord, userId;
     private int wordCount=0;
-    ImageView bool;
     private TextToSpeech mTTS;
+    FirebaseFirestore fStore;
+    FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,19 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         bool = findViewById(R.id.imageView);
         Button next = findViewById(R.id.nextWord);
         next.setOnClickListener(this);
+        fStore = FirebaseFirestore.getInstance();
+        fAuth = FirebaseAuth.getInstance();
+        userId = fAuth.getCurrentUser().getUid();
+
+        //get age from Firebase
+        DocumentReference documentReference = fStore.collection("users").document(userId);
+        documentReference.addSnapshotListener(Voice.this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                age = Integer.parseInt(documentSnapshot.getString("age"));
+            }
+        });
+
 
         // declare if text to speech is being used
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -110,13 +131,13 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         }
         try {
             while (s.hasNextLine()) {
-                words.add(s.nextLine());
+                wordList.add(s.nextLine());
             }
         } finally {
             s.close();
         }
 
-        gameWord.setText(randomLine(words));
+        gameWord.setText(randomLine(wordList));
     }
 
     public void getSpeechInput(View view) {
@@ -160,7 +181,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.nextWord:
-                gameWord.setText(randomLine(words));
+                gameWord.setText(randomLine(wordList));
                 speakWord.setVisibility(View.INVISIBLE);
             case R.id.speakWord:
                 Settings.speak(mTTS, currentWord);
@@ -169,7 +190,8 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
 
     public String randomLine(ArrayList<String> list) {
         currentWord = list.get(new Random().nextInt(list.size()));
-        words.remove(currentWord);
+        completedWords.add(currentWord);
+        wordList.remove(currentWord);
         return currentWord;
     }
 
