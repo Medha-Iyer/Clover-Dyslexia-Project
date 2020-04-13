@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.WindowManager;
@@ -16,12 +17,10 @@ public class LibraryPopActivity extends AppCompatActivity { //change to Activity
 
     private TextView mTitle;
     private TextView mText;
-    private Button mCloseBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
         setContentView(R.layout.activity_library_pop);
 
         Intent intent = getIntent();
@@ -30,6 +29,7 @@ public class LibraryPopActivity extends AppCompatActivity { //change to Activity
 
         mTitle = findViewById(R.id.titleView);
         mText = findViewById(R.id.textView);
+        mText.setMovementMethod(new ScrollingMovementMethod());
 
         mTitle.setText(title);
         mText.setText(content);

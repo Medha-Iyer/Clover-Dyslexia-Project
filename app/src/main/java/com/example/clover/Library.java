@@ -1,6 +1,7 @@
 package com.example.clover;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -16,8 +17,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,6 +39,7 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<LibraryCardItem> savedList = new ArrayList<LibraryCardItem>();
 
+    private FloatingActionButton addNoteBtn;
     private MenuItem showArchive;
     private Toolbar toolbar;
 
@@ -43,11 +47,24 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String SAVED_LIST = "savedList";
 
+    //for editing or adding note
+    public static final int ADD_NOTE_REQUEST = 1;
+    public static final int EDIT_NOTE_REQUEST = 2;
+    private int currentPos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_library);
+
+        addNoteBtn = findViewById(R.id.add_button);
+        addNoteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Library.this, LibraryEditCard.class);
+                startActivityForResult(intent, ADD_NOTE_REQUEST);
+            }
+        });
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,17 +81,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
-
-//        mAdapter.setOnItemClickListener(new LibraryAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//            }
-//
-//            @Override
-//            public void onItemClick1(LibraryCardItem item) {
-//                Intent intent = new Intent(Library.this, LibraryEditCard.class);
-//            }
-//        });
 
         //perform item selected listener
         BottomNavigationView navView = findViewById(R.id.nav_bar); //initialize and assign variable, do this for every
@@ -108,6 +114,43 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == ADD_NOTE_REQUEST && resultCode == RESULT_OK){
+            String title = data.getStringExtra(LibraryEditCard.EXTRA_TITLE);
+            String text = data.getStringExtra(LibraryEditCard.EXTRA_TEXT);
+
+            LibraryCardItem newCard = new LibraryCardItem(title, text);
+            savedList.add(newCard);
+            mAdapter.notifyItemInserted(savedList.size()-1);
+            saveData();
+            loadData();
+
+            Toast.makeText(this, "New card saved", Toast.LENGTH_SHORT).show();
+        } else if(requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK){
+            int id = data.getIntExtra(LibraryEditCard.EXTRA_ID, -1);
+
+            //only if something went wrong
+            if (id == -1){
+                Toast.makeText(this, "Note can't be updated", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String title = data.getStringExtra(LibraryEditCard.EXTRA_TITLE);
+            String text = data.getStringExtra(LibraryEditCard.EXTRA_TEXT);
+            LibraryCardItem newCard = new LibraryCardItem(title, text);
+            newCard.setId(id);
+            update(newCard, currentPos);
+            buildRecyclerView(savedList);
+
+            Toast.makeText(this, "Card updated", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Card not saved", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void buildRecyclerView(ArrayList<LibraryCardItem> savedList) {
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true); //might need to change false
@@ -136,11 +179,13 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                 if(showArchive.getTitle().equals("archive")) {
                     showArchive.setIcon(R.drawable.ic_library_white);
                     showArchive.setTitle("library");
+                    toolbar.setTitle("Archives");
                     mAdapter.setLibraryItems(archivedItems);
                     toolbar.setBackgroundColor(getResources().getColor(R.color.colorLight));
                 } else {
                     showArchive.setIcon(R.drawable.ic_archive_white);
                     showArchive.setTitle("archive");
+                    toolbar.setTitle("Library");
                     mAdapter.setLibraryItems(savedList);
                     toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 }
@@ -149,6 +194,15 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         });
 
         return true;
+    }
+
+    public void update(LibraryCardItem newCard, int position){
+        savedList.add(position, newCard);
+        mAdapter.notifyItemInserted(position);
+        savedList.remove(position+1);
+        mAdapter.notifyItemRemoved(position);
+        saveData();
+        loadData();
     }
 
     private void setUpSearch(){
@@ -202,9 +256,13 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
     }
 
     @Override
-    public void onItemClick1(LibraryCardItem item) {
+    public void onItemClick1(LibraryCardItem item, int position) {
+        currentPos = position;
         Intent intent = new Intent(Library.this,LibraryEditCard.class);
-//        intent.putExtra()
+        intent.putExtra(LibraryEditCard.EXTRA_ID, item.getId());
+        intent.putExtra(LibraryEditCard.EXTRA_TITLE, item.getItemTitle());
+        intent.putExtra(LibraryEditCard.EXTRA_TEXT, item.getItemText());
+        startActivityForResult(intent, EDIT_NOTE_REQUEST);
     }
 
     //deleting function

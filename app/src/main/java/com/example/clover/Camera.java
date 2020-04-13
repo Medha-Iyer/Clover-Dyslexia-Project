@@ -170,7 +170,9 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     @Override //after pop-up, this method does something with the name
     public void applyTexts(String name) {
         fileName = name;
-        libraryList.add(new LibraryCardItem(fileName, fileText));
+        LibraryCardItem newCard = new LibraryCardItem(fileName, fileText);
+        //newCard.setId(0);
+        libraryList.add(newCard);
         saveData();
         sendListToLibrary();
     }
