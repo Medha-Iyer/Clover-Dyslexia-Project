@@ -1,4 +1,4 @@
-package com.example.clover;
+package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.example.clover.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;

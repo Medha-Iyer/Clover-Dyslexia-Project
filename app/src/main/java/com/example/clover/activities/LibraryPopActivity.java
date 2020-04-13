@@ -1,4 +1,4 @@
-package com.example.clover;
+package com.example.clover.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,8 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.clover.R;
 
 import java.util.ArrayList;
 

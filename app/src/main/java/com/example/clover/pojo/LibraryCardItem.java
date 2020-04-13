@@ -1,4 +1,4 @@
-package com.example.clover;
+package com.example.clover.pojo;
 
 import java.io.Serializable;
 

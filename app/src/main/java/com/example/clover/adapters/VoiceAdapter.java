@@ -1,6 +1,4 @@
-package com.example.clover;
-import android.content.Context;
-import android.media.Image;
+package com.example.clover.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +7,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.clover.R;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.example.clover;
+package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.clover.R;
 
 public class LibraryEditCard extends AppCompatActivity {
 
