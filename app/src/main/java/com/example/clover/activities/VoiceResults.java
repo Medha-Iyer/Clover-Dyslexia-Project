@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.clover.R;
-import com.example.clover.adapters.VoiceAdapter;
+import com.example.clover.adapters.GameAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class VoiceResults extends AppCompatActivity implements View.OnClickListener {
@@ -33,7 +33,7 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
 
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new VoiceAdapter(Voice.completedWords, Voice.voiceIcons);
+        mAdapter = new GameAdapter(Voice.completedWords, Voice.voiceIcons);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 

@@ -12,24 +12,24 @@ import com.example.clover.R;
 
 import java.util.ArrayList;
 
-public class VoiceAdapter extends RecyclerView.Adapter<VoiceAdapter.VoiceViewHolder>{
+public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolder>{
     ArrayList<String> voiceResults;
     ArrayList<Integer> voiceIconResults;
 
-    public VoiceAdapter(ArrayList<String> words, ArrayList<Integer> icons){
+    public GameAdapter(ArrayList<String> words, ArrayList<Integer> icons){
         voiceResults = words;
         voiceIconResults = icons;
     }
 
     @NonNull
     @Override
-    public VoiceAdapter.VoiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.voice_list, parent, false);
+    public GameAdapter.VoiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.game_list, parent, false);
         return new VoiceViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VoiceAdapter.VoiceViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull GameAdapter.VoiceViewHolder holder, int position) {
         holder.Voiceword.setText(voiceResults.get(position));
         for(int i=0; i<10; i++){
             holder.Voiceicon.setImageResource(voiceIconResults.get(i));
