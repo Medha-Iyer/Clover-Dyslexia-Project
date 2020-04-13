@@ -25,7 +25,7 @@
         android:layout_centerHorizontal="true"
         android:textColor="#000"
         android:textSize="26sp"
-        android:textStyle="normal" />
+        android:fontFamily="@font/opendyslexic_regular" />
 
     <TextView
         android:id="@+id/gameWord"
@@ -100,5 +100,15 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="150dp"
         app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />
+
+    <TextView
+        android:id="@+id/displayScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:fontFamily="@font/opendyslexic_regular"
+        android:textColor="#000"
+        android:textSize="26sp" />
+
 
 </RelativeLayout>
