@@ -1,11 +1,10 @@
-package  com.example.clover;
+package com.example.clover.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.speech.tts.TextToSpeech;
@@ -17,8 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.clover.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;

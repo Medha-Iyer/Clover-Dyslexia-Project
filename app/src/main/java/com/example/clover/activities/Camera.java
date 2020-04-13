@@ -1,4 +1,4 @@
-package com.example.clover;
+package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.clover.R;
+import com.example.clover.pojo.LibraryCardItem;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,13 +29,12 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener{
+public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener {
 
     //take photo function
     private Button takePhotoBtn, fromGalleryBtn, convertTextBtn, saveLibraryBtn;

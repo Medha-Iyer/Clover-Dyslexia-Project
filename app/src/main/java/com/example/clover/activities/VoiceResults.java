@@ -1,32 +1,43 @@
-package com.example.clover;
+package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.adapters.VoiceAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    // TODO add banner ads on screen somewhere
+public class VoiceResults extends AppCompatActivity implements View.OnClickListener {
+
+    CardView playAgain;
+    private RecyclerView mRecyclerView;
+    RecyclerView.LayoutManager mLayoutManager;
+    RecyclerView.Adapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        //initialize and assign variable, do this for every button or other interactive feature
+        setContentView(R.layout.activity_voice_results);
         BottomNavigationView navView = findViewById(R.id.nav_bar);
-        Button mvoice = findViewById(R.id.voice_game);
-        mvoice.setOnClickListener(this);
-        //set home as selected
-        navView.setSelectedItemId(R.id.home);
+        mRecyclerView = findViewById(R.id.voiceRecycler);
+        playAgain = findViewById(R.id.playAgain);
+        playAgain.setOnClickListener(this);
 
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new VoiceAdapter(Voice.completedWords, Voice.voiceIcons);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+
+        //navView.setSelectedItemId();
         //perform item selected listener
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -35,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.camera:
                         startActivity(new Intent(getApplicationContext(), Camera.class));
                         overridePendingTransition(0,0);
-                    return true;
+                        return true;
                     case R.id.library:
                         startActivity(new Intent(getApplicationContext(), Library.class));
                         overridePendingTransition(0,0);
@@ -55,9 +66,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+
     @Override
     public void onClick(View v) {
-        Intent i=new Intent(MainActivity.this,Voice.class);
-        startActivity(i);
+        switch (v.getId()) {
+            case R.id.playAgain:
+                startActivity(new Intent(getApplicationContext(), Voice.class));
+        }
     }
 }
