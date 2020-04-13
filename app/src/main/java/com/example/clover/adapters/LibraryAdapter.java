@@ -76,7 +76,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_one, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.library_card, parent, false);
         ExampleViewHolder evh = new ExampleViewHolder(v, mListener);
         return evh;
     }

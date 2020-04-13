@@ -208,6 +208,7 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         loadData();
     }
 
+    //for searching
     private void setUpSearch(){
         MaterialSearchView searchView = findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {

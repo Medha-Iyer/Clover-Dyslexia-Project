@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
+import android.widget.Toast;
 import com.example.clover.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -19,13 +19,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //initialize and assign variable, do this for every button or other interactive feature
-        BottomNavigationView navView = findViewById(R.id.nav_bar);
         Button mvoice = findViewById(R.id.voice_game);
         mvoice.setOnClickListener(this);
+
+        Button mspelling = findViewById(R.id.spelling_game_btn);
+        mspelling.setOnClickListener(this);
+
+        //initialize and assign variable, do this for every button or other interactive feature
+        BottomNavigationView navView = findViewById(R.id.nav_bar);
         //set home as selected
         navView.setSelectedItemId(R.id.home);
-
         //perform item selected listener
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -56,7 +59,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     @Override
     public void onClick(View v) {
-        Intent i=new Intent(MainActivity.this, Voice.class);
-        startActivity(i);
+        Intent i;
+        switch (v.getId()){
+            case R.id.voice_game:
+                i=new Intent(MainActivity.this,Voice.class);
+                startActivity(i);
+                break;
+            case R.id.spelling_game_btn:
+                i=new Intent(MainActivity.this,Spelling.class);
+                startActivity(i);
+                break;
+        }
     }
 }

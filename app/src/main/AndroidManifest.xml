@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.VoiceResults"></activity>
+        <activity android:name=".Spelling"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity
             android:name=".activities.LibraryEditCard"
             android:parentActivityName=".activities.Library"
