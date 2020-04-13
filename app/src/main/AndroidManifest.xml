@@ -19,26 +19,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VoiceResults"></activity>
+        <activity android:name=".Spelling"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".VoiceResults" />
         <activity
             android:name=".LibraryEditCard"
             android:parentActivityName=".Library"
-            android:theme="@style/AppTheme.PopMe">
-        </activity>
+            android:theme="@style/AppTheme.PopMe"></activity>
         <activity
             android:name=".LibraryPopActivity"
-            android:theme="@style/AppTheme.PopMe"></activity>
+            android:theme="@style/AppTheme.PopMe" />
         <activity android:name=".Settings" />
         <activity android:name=".Profile" />
         <activity
             android:name=".Library"
-            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing" />
-        <activity android:name=".Register"></activity>
+        <activity android:name=".Register" />
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -50,7 +53,7 @@
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
                 android:value="ocr" />
         </activity>
-        <activity android:name=".MainActivity">   </activity>
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>

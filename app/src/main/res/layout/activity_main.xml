@@ -32,16 +32,20 @@
     <Button
         android:id="@+id/voice_game"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="82dp"
         android:layout_marginTop="167dp"
-        android:layout_marginRight="90dp"
         android:text="READING" />
+
+    <Button
+        android:id="@+id/spelling_game_btn"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/voice_game"
+        android:layout_centerHorizontal="true"
+        android:text="SPELLING" />
 
 
 </RelativeLayout>

@@ -93,7 +93,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         });
 
         //set home as selected
-        //navView.setSelectedItemId(R.id.home); //TODO set the navigation bar to nothing highlighted
+        navView.setSelectedItemId(R.id.home); //TODO set the navigation bar to nothing highlighted
 
         //perform item selected listener
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -109,6 +109,8 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.home:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        overridePendingTransition(0,0);
                         return true;
                     case R.id.profile:
                         startActivity(new Intent(getApplicationContext(), Profile.class));
