@@ -14,7 +14,7 @@ import com.example.clover.pojo.GameItem;
 import java.util.ArrayList;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolder>{
-    ArrayList<GameItem> gameList;
+    private ArrayList<GameItem> gameList;
 
     public GameAdapter(ArrayList<GameItem> g){
         gameList = g;
@@ -24,7 +24,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolde
     @Override
     public GameAdapter.VoiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.game_list, parent, false);
-        return new VoiceViewHolder(view);
+        GameAdapter.VoiceViewHolder evh = new GameAdapter.VoiceViewHolder(view);
+        return evh;
     }
 
     @Override
@@ -39,8 +40,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolde
     }
 
     public class VoiceViewHolder extends RecyclerView.ViewHolder {
-        TextView Voiceword;
-        ImageView Voiceicon;
+        public TextView Voiceword;
+        public ImageView Voiceicon;
 
         public VoiceViewHolder(@NonNull View itemView) {
             super(itemView);
