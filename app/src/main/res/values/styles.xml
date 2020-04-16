@@ -1,15 +1,70 @@
 <resources>
-
-    <!-- Base application theme. -->
+<!--make sure the different styles chosen share the same parent-->
+    <!-- Light/Day themes. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">#C4D186</item>
+        <item name="colorPrimaryDark">#435202</item>
+        <item name="colorAccent">#864149</item>
+        <item name="backgroundColor">#F1EDEA</item>
+        <item name="cardbackground">#C4D186</item>
+        <item name="textcolor">#808080</item>
+        <item name="tintcolor">#000000</item>
+        <item name="buttoncolor">#C4D186</item>
+        <item name="android:windowAnimationStyle"> @style/WindowAnimationTransition </item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="LightTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="colorPrimary">#F7CBFF</item>
+        <item name="colorPrimaryDark">#b76bc6</item>
+        <item name="colorAccent">#9FE6FA</item>
+        <item name="backgroundColor">#F1EDEA</item>
+        <item name="cardbackground">#F7CBFF</item>
+        <item name="textcolor">#808080</item>
+        <item name="tintcolor">#000000</item>
+        <item name="buttoncolor">#F7CBFF</item>
+        <item name="android:windowAnimationStyle"> @style/WindowAnimationTransition </item>
+    </style>
+
+
+    <!-- Dark/Night themes. -->
+    <style name="DarkTheme1" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#C4D186</item>
+        <item name="colorPrimaryDark">#435202</item>
+        <item name="colorAccent">#864149</item>
+        <item name="backgroundColor">#303030</item>
+        <item name="cardbackground">#C4D186</item>
+<!--        alternate card background #424242-->
+        <item name="textcolor">#F1EDEA</item>
+        <item name="tintcolor">#FFFFFF</item>
+        <item name="buttoncolor">#C4D186</item>
+        <item name="android:windowAnimationStyle"> @style/WindowAnimationTransition </item>
+    </style>
+
+    <style name="DarkTheme2" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#F7CBFF</item>
+        <item name="colorPrimaryDark">#b76bc6</item>
+        <item name="colorAccent">#9FE6FA</item>
+        <item name="backgroundColor">#303030</item>
+        <item name="cardbackground">#F7CBFF</item>
+        <item name="textcolor">#F1EDEA</item>
+        <item name="tintcolor">#FFFFFF</item>
+        <item name="buttoncolor">#F7CBFF</item>
+        <item name="android:windowAnimationStyle"> @style/WindowAnimationTransition </item>
+    </style>
+
+    <!-- Base application theme. -->
+<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">-->
+        <!-- Customize your theme here. -->
+<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
+<!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+<!--        <item name="colorAccent">@color/colorAccent</item>-->
+<!--    </style>-->
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -28,5 +83,9 @@
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name = "android:windowBackground" > @android:color/transparent</item>
     </style>
-
+    
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation"> @android:anim/fade_in </item>
+        <item name="android:windowExitAnimation"> @android:anim/fade_out </item>
+    </style>
 </resources>

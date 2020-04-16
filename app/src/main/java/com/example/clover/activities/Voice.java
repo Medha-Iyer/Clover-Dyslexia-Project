@@ -1,6 +1,7 @@
 package com.example.clover.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.pojo.GameItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -24,7 +26,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
@@ -33,16 +38,18 @@ import java.util.Scanner;
 
 public class Voice extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String VOICE_LIST = "voiceList";
     private static final String TAG = "VoiceActivity";
+
+    private ArrayList<String> wordList = new ArrayList<String>();
+    private ArrayList<GameItem> voiceGame = new ArrayList<GameItem>();
+    ArrayList<String> speakResult;
+
     private TextView voiceResult, gameWord, displayScore;
     private ImageView speakWord, bool;
     private Scanner s;
-    private ArrayList<String> wordList = new ArrayList<String>();
-
-    public static ArrayList<String> completedWords = new ArrayList<String>();
-    public static ArrayList<Integer> voiceIcons = new ArrayList<Integer>();
-
-    int age;
+    int age, fl=0;
     int score = 0;
     String currentWord, userId;
     private TextToSpeech mTTS;
@@ -166,20 +173,22 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         switch (requestCode) {
             case 10:
                 if (resultCode == RESULT_OK && data != null) {
-                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    voiceResult.setText("You said: " + result.get(0));
+                    speakResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    voiceResult.setText("You said: " + speakResult.get(0));
                     speakWord.setVisibility(View.VISIBLE);
-                    if(result.get(0).equalsIgnoreCase(currentWord)){
+                    bool.setVisibility(View.VISIBLE);
+                    fl=1;
+                    if(speakResult.get(0).equalsIgnoreCase(currentWord)){
                         bool.setImageResource(R.drawable.check);
-                        voiceIcons.add(R.drawable.check);
                         score++;
                         displayScore.setText(String.valueOf(score));
+                        voiceGame.add(new GameItem(currentWord, R.drawable.check));
                     }else{
                         bool.setImageResource(R.drawable.x);
-                        voiceIcons.add(R.drawable.x);
+                        voiceGame.add(new GameItem(currentWord, R.drawable.x));
                     }
-                    if(completedWords.size()==10){
-                        startActivity(new Intent(getApplicationContext(), VoiceResults.class));
+                    if(voiceGame.size()==2){ //TODO change to 10
+                        sendListToVoice();
                     }
                 }
                 break;
@@ -190,9 +199,14 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.nextWord:
-                gameWord.setText(randomLine(wordList));
-                speakWord.setVisibility(View.INVISIBLE);
-                bool.setVisibility(View.INVISIBLE);
+                if(fl==1) {
+                    gameWord.setText(randomLine(wordList));
+                    speakWord.setVisibility(View.INVISIBLE);
+                    bool.setVisibility(View.INVISIBLE);
+                    fl=0;
+                }else{
+                    Toast.makeText(Voice.this, "Attempt to say the word", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.speakWord:
                 Settings.speak(mTTS, currentWord);
@@ -201,15 +215,27 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
     }
 
     public String randomLine(ArrayList<String> list) {
-        //if(!list.isEmpty()) {
-            currentWord = list.get(new Random().nextInt(list.size()));
-        //}
-        completedWords.add(currentWord);
+        currentWord = list.get(new Random().nextInt(list.size()));
+        Toast.makeText(Voice.this, "Current word: " + currentWord, Toast.LENGTH_SHORT).show();
         wordList.remove(currentWord);
         return currentWord;
     }
 
-
+    public void sendListToVoice(){
+        loadData();
+        saveData();
+        Intent i = new Intent(Voice.this, VoiceResults.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("voice list", voiceGame);
+        i.putExtras(bundle);
+        startActivity(i);
+        overridePendingTransition(0,0);
+//        i.putParcelableArrayListExtra("voice list", voiceGame);
+//        if(voiceGame!=null){
+//            Log.d("voicelist", "The list being sent is not null");
+//            startActivity(i);
+//        }
+    }
 
     private void readData(final FirebaseCallback f){
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
@@ -232,6 +258,29 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
     //allows access of variable age outside of the snapshotlistener
     private interface FirebaseCallback{
         void onCallback(int age);
+    }
+
+    //to save UI states
+    private void saveData(){
+        //no other app can change our shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(voiceGame);
+        editor.putString(VOICE_LIST, json);
+        editor.apply();
+    }
+
+    private void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(VOICE_LIST, null);
+        Type type = new TypeToken<ArrayList<GameItem>>() {}.getType();
+        voiceGame = gson.fromJson(json, type);
+
+        if (voiceGame == null){
+            voiceGame = new ArrayList<GameItem>();
+        }
     }
 
     @Override

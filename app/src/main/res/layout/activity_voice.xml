@@ -99,6 +99,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="150dp"
+        android:visibility="invisible"
         app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />
 
     <TextView

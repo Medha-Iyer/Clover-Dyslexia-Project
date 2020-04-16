@@ -2,6 +2,7 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
@@ -10,7 +11,11 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.clover.R;
@@ -22,19 +27,31 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private CardView logout;
     private SeekBar mSeekBarPitch;
     private SeekBar mSeekBarSpeed;
+    private Switch switchMode;
+    private RadioGroup radioGroup;
+    private RadioButton radioButton;
+    private int selectedTheme;
     public static float pitchVal = 1;
     public static float speedVal = 1;
 
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PITCH = "pitch";
     public static final String SPEED = "speed";
+    public static final String DARK_MODE = "dark mode";
+    public static final String THEME = "theme";
 
     private static int p;
     private static int s;
+    private static boolean darkmode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            setTheme(R.style.DarkTheme1); // TODO Change so that it takes into consideration what color preset has been selected
+        }else{
+            setTheme(R.style.AppTheme);
+        }
         setContentView(R.layout.activity_settings);
 
         //initialize and assign variable, do this for every
@@ -43,6 +60,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         mSeekBarSpeed = findViewById(R.id.seek_bar_speed);
         logout = findViewById(R.id.logoutButton);
         logout.setOnClickListener(this);
+        switchMode = findViewById(R.id.switchmode);
+        radioGroup = findViewById(R.id.radioGroup);
+
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES) {
+            switchMode.setChecked(true);
+        }
 
         //set home as selected
         navView.setSelectedItemId(R.id.settings);
@@ -82,14 +105,40 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         loadData();
         saveData();
-        updateViews(); //TODO make it so that you don't have to go to settings twice for it to update
+        updateViews();
 
     }
 
     @Override
     public void onClick(View v){
-        FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(getApplicationContext(), Login.class));
+        switch(selectedTheme){
+            case R.id.radio_one:
+                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                    setTheme(R.style.DarkTheme1);
+                }else{
+                    setTheme(R.style.AppTheme);
+                    Toast.makeText(this, "Theme 1", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.radio_two:
+                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                    setTheme(R.style.DarkTheme2);
+                }else{
+                    setTheme(R.style.LightTheme2);
+                }
+                break;
+        }
+
+        switch (v.getId()){
+            case R.id.logoutButton:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), Login.class));
+                break;
+        }
+    }
+
+    public void checkButton(View v) {
+        selectedTheme = radioGroup.getCheckedRadioButtonId();
     }
 
     @Override
@@ -97,6 +146,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         super.onPause();
         saveData();
         loadData();
+    }
+
+    public void restartApp() {
+        Intent i = new Intent(getApplicationContext(), Settings.class);
+        startActivity(i);
+        finish();
     }
 
     public static void speak(TextToSpeech mTTS, String word) {
@@ -115,6 +170,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         editor.putInt(PITCH, mSeekBarPitch.getProgress());
         editor.putInt(SPEED, mSeekBarSpeed.getProgress());
+        editor.putBoolean(DARK_MODE, switchMode.isChecked());
 
         editor.apply();
 
@@ -125,11 +181,24 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         p = sharedPreferences.getInt(PITCH, 50);
         s = sharedPreferences.getInt(SPEED, 50);
+        darkmode = sharedPreferences.getBoolean(DARK_MODE, false);
     }
 
     public void updateViews(){
         mSeekBarPitch.setProgress(p);
         mSeekBarSpeed.setProgress(s);
+        switchMode.setChecked(darkmode);
+        switchMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    restartApp();
+                }else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
+            }
+        });
     }
 
 }
