@@ -72,8 +72,8 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        loadData();
-        saveData();
+//        loadData();
+//        saveData();
         Bundle bundleObject = getIntent().getExtras();
         if (bundleObject != null) {
             savedList = (ArrayList<LibraryCardItem>) bundleObject.getSerializable("library list");

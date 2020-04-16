@@ -5,13 +5,92 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/speak_word"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="100dp"
+        android:src="@drawable/speaker"/>
+
+    <Button
+        android:id="@+id/check_word"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/show_word"
+        android:layout_marginTop="160dp"
+        android:layout_marginRight="35dp"
+        android:textSize="15dp"
+        android:text="Check Word!"
+        android:padding="10dp"
+        android:fontFamily="@font/opendyslexic_bold"
+        android:background="@drawable/rounded_nav"/>
+
+    <Button
+        android:id="@+id/check_again"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/show_word"
+        android:layout_marginTop="160dp"
+        android:layout_marginRight="35dp"
+        android:textSize="15dp"
+        android:text="Check Again!"
+        android:padding="10dp"
+        android:fontFamily="@font/opendyslexic_bold"
+        android:background="@drawable/rounded_nav"/>
+
+    <Button
+        android:id="@+id/next_word"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/show_word"
+        android:layout_marginTop="160dp"
+        android:layout_marginRight="35dp"
+        android:textSize="15dp"
+        android:text="Next Word"
+        android:padding="10dp"
+        android:fontFamily="@font/opendyslexic_bold"
+        android:background="@drawable/rounded_nav"/>
+
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/show_word"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:background="@drawable/rounded_nav"
+        android:text="Loading word..."
+        android:fontFamily="@font/opendyslexic_regular"
+        android:textSize="35dp"
+        android:textAlignment="center"
+        android:padding="5dp" />
+
+    <TextView
+        android:id="@+id/correct_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Spelling"
-        android:textSize="50dp" />
+        android:layout_alignLeft="@+id/input_word"
+        android:layout_above="@+id/input_word"
+        android:layout_margin="5dp"
+        android:text="Correct!"
+        android:textColor="@color/darkGreen"
+        android:fontFamily="@font/opendyslexic_regular"/>
+
+    <EditText
+        android:id="@+id/input_word"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/nav_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="250dp"
+        android:hint="Type word here..."
+        android:inputType="text|textVisiblePassword"
+        android:imeOptions="actionDone"
+        android:textSize="25dp"/>
+
 
     //needs to be placed on every single activity
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -12,6 +12,10 @@ public class GameItem implements Serializable {
         itemIcon = icon;
     }
 
+    public GameItem(String word){
+        itemWord = word;
+    }
+
     public String getItemWord(){
         return itemWord;
     }
@@ -19,4 +23,6 @@ public class GameItem implements Serializable {
     public int getItemIcon(){
         return itemIcon;
     }
+
+    public void setItemIcon(int icon) { itemIcon = icon; }
 }
