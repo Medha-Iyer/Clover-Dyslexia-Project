@@ -211,6 +211,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             return;
         }
         viewWord.setText(currentWord);
+
         if(result.equalsIgnoreCase(currentWord)){
             correctView.setText("Correct!");
             correctView.setTextColor(getResources().getColor(R.color.darkGreen));
@@ -220,14 +221,17 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                 score++;
                 completedList.get(0).setItemIcon(R.drawable.check);
             }
+
             checkAgainBtn.setVisibility(View.GONE);
             nextWordBtn.setVisibility(View.VISIBLE);
+
 
             if(completedList.size()==2){
                 sendToSpellingResults();
             }
 
         }else{
+
             correctView.setText("Incorrect!");
             correctView.setTextColor(getResources().getColor(R.color.darkRed));
 
