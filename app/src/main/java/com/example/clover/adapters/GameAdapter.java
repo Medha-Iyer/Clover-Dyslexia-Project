@@ -9,16 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
+import com.example.clover.pojo.GameItem;
 
 import java.util.ArrayList;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolder>{
-    ArrayList<String> voiceResults;
-    ArrayList<Integer> voiceIconResults;
+    ArrayList<GameItem> gameList;
 
-    public GameAdapter(ArrayList<String> words, ArrayList<Integer> icons){
-        voiceResults = words;
-        voiceIconResults = icons;
+    public GameAdapter(ArrayList<GameItem> g){
+        gameList = g;
     }
 
     @NonNull
@@ -30,24 +29,23 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull GameAdapter.VoiceViewHolder holder, int position) {
-        holder.Voiceword.setText(voiceResults.get(position));
-        for(int i=0; i<10; i++){
-            holder.Voiceicon.setImageResource(voiceIconResults.get(i));
-        }
+        holder.Voiceword.setText(gameList.get(position).getItemWord());
+        holder.Voiceicon.setImageResource(gameList.get(position).getItemIcon());
     }
 
     @Override
     public int getItemCount() {
-        return voiceResults.size();
+        return gameList.size();
     }
 
     public class VoiceViewHolder extends RecyclerView.ViewHolder {
-        TextView Voiceword = itemView.findViewById(R.id.voiceText);
-        ImageView Voiceicon = itemView.findViewById(R.id.voiceIcon);
+        TextView Voiceword;
+        ImageView Voiceicon;
 
         public VoiceViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            Voiceword = itemView.findViewById(R.id.voiceText);
+            Voiceicon = itemView.findViewById(R.id.voiceIcon);
         }
     }
 }

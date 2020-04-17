@@ -7,6 +7,8 @@ public class GameItem implements Serializable {
     private String itemWord;
     private int itemIcon;
 
+    private static final long serialVersionUID = 2L;
+
     public GameItem(String word, int icon){
         itemWord = word;
         itemIcon = icon;
