@@ -16,13 +16,15 @@
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:text="hello"/>
         <ImageView
             android:id="@+id/voiceIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/voiceText"
             android:layout_marginEnd="100dp"
+            android:src="@drawable/x"
             />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

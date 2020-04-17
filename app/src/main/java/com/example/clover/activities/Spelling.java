@@ -188,6 +188,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     private void setUpWord(){
         //show word for 5 seconds before disappearing
         viewWord.setText(randomLine(wordList));
+        Settings.speak(mTTS, currentWord);
         mHandler.postDelayed(mShowLoadingRunnable, 2000);
     }
 
@@ -217,23 +218,38 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             if(code==0) {
                 viewWord.setBackground(getResources().getDrawable(R.drawable.rounded_light_green));
                 score++;
+                completedList.get(0).setItemIcon(R.drawable.check);
             }
             checkAgainBtn.setVisibility(View.GONE);
             nextWordBtn.setVisibility(View.VISIBLE);
+
+            if(completedList.size()==2){
+                sendToSpellingResults();
+            }
+
         }else{
             correctView.setText("Incorrect!");
             correctView.setTextColor(getResources().getColor(R.color.darkRed));
 
             viewWord.setBackground(getResources().getDrawable(R.drawable.rounded_light_red));
             checkAgainBtn.setVisibility(View.VISIBLE);
+
+            if(code==0){
+                completedList.get(0).setItemIcon(R.drawable.x);
+            }
         }
 
         checkWordBtn.setVisibility(View.GONE);
         correctView.setVisibility(View.VISIBLE);
+    }
 
-        if(completedList.size()==10){
-            startActivity(new Intent(getApplicationContext(), MainActivity.class)); //TODO change
-        }
+    private void sendToSpellingResults(){
+        Intent i = new Intent(Spelling.this, SpellingResults.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("spelling list", completedList);
+        i.putExtras(bundle);
+        startActivity(i);
+        overridePendingTransition(0,0);
     }
 
     //for the speaker function

@@ -2,16 +2,13 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import com.example.clover.R;
 import com.example.clover.adapters.GameAdapter;
@@ -22,32 +19,29 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
-public class VoiceResults extends AppCompatActivity implements View.OnClickListener {
+public class SpellingResults extends AppCompatActivity {
 
-    private Button playAgain;
-
+    //for recycler view format
     private RecyclerView mRecyclerView;
     private GameAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<GameItem> voiceList = new ArrayList<GameItem>();
+    private ArrayList<GameItem> spellingList = new ArrayList<GameItem>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_voice_results);
+        setContentView(R.layout.activity_spelling_results);
 
         Bundle bundleObject = getIntent().getExtras();
-        if (bundleObject != null) { //TODO find out why this always says null
-            voiceList = (ArrayList<GameItem>) bundleObject.getSerializable("voice list");
+        if (bundleObject != null) {
+            spellingList = (ArrayList<GameItem>) bundleObject.getSerializable("spelling list");
         }
-        buildRecyclerView(voiceList);
 
-        playAgain = findViewById(R.id.play_again);
-        playAgain.setOnClickListener(this);
+        buildRecyclerView(spellingList);
 
-        //navView.setSelectedItemId();
-        BottomNavigationView navView = findViewById(R.id.nav_bar);
         //perform item selected listener
+        BottomNavigationView navView = findViewById(R.id.nav_bar); //initialize and assign variable, do this for every
+        navView.setSelectedItemId(R.id.home); //set home as selected
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -57,10 +51,10 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.library:
-                        startActivity(new Intent(getApplicationContext(), Library.class));
-                        overridePendingTransition(0,0);
                         return true;
                     case R.id.home:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        overridePendingTransition(0,0);
                         return true;
                     case R.id.profile:
                         startActivity(new Intent(getApplicationContext(), Profile.class));
@@ -76,19 +70,11 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.play_again:
-                startActivity(new Intent(getApplicationContext(), Voice.class));
-        }
-    }
-
-    public void buildRecyclerView(ArrayList<GameItem> voiceList) {
-        mRecyclerView = findViewById(R.id.voiceRecycler);
-        mRecyclerView.setHasFixedSize(true);
+    public void buildRecyclerView(ArrayList<GameItem> savedList) {
+        mRecyclerView =  findViewById(R.id.spellingRecycler);
+        mRecyclerView.setHasFixedSize(true); //might need to change false
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new GameAdapter(voiceList);
+        mAdapter = new GameAdapter(savedList); //passes to adapter, then presents to viewholder
 
         mRecyclerView.setLayoutManager((mLayoutManager));
         mRecyclerView.setAdapter(mAdapter);

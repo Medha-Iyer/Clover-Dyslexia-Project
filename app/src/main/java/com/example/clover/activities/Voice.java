@@ -222,19 +222,14 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
     }
 
     public void sendListToVoice(){
-        loadData();
         saveData();
+        loadData();
         Intent i = new Intent(Voice.this, VoiceResults.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("voice list", voiceGame);
         i.putExtras(bundle);
         startActivity(i);
         overridePendingTransition(0,0);
-//        i.putParcelableArrayListExtra("voice list", voiceGame);
-//        if(voiceGame!=null){
-//            Log.d("voicelist", "The list being sent is not null");
-//            startActivity(i);
-//        }
     }
 
     private void readData(final FirebaseCallback f){

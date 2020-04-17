@@ -148,6 +148,13 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         loadData();
     }
 
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        saveData();
+        loadData();
+    }
+
     public void restartApp() {
         Intent i = new Intent(getApplicationContext(), Settings.class);
         startActivity(i);
