@@ -19,8 +19,11 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.firebase.client.Firebase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Settings extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,7 +33,13 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private Switch switchMode;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
+    FirebaseAuth fAuth;
+    FirebaseFirestore fStore;
+    DocumentReference documentReference;
+    Firebase fRootRef = new Firebase(""); //TODO Annie give me link
+    Firebase fChildRef;
     private int selectedTheme;
+    private String userID;
     public static float pitchVal = 1;
     public static float speedVal = 1;
 
@@ -43,6 +52,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private static int p;
     private static int s;
     private static boolean darkmode;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +72,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         logout.setOnClickListener(this);
         switchMode = findViewById(R.id.switchmode);
         radioGroup = findViewById(R.id.radioGroup);
+        fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        userID = fAuth.getCurrentUser().getUid();
+        documentReference = fStore.collection("users").document(userID);
 
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES) {
             switchMode.setChecked(true);
@@ -148,6 +162,13 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         loadData();
     }
 
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        saveData();
+        loadData();
+    }
+
     public void restartApp() {
         Intent i = new Intent(getApplicationContext(), Settings.class);
         startActivity(i);
@@ -171,8 +192,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         editor.putInt(PITCH, mSeekBarPitch.getProgress());
         editor.putInt(SPEED, mSeekBarSpeed.getProgress());
         editor.putBoolean(DARK_MODE, switchMode.isChecked());
-
         editor.apply();
+
+        fChildRef = fRootRef.child("pitch");
+        fChildRef.setValue(mSeekBarPitch.getProgress());
+        fChildRef = fRootRef.child("speed");
+        fChildRef.setValue(mSeekBarSpeed.getProgress());
 
         Toast.makeText(this, "Data saved", Toast.LENGTH_SHORT).show();
     }
