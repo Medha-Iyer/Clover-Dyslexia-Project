@@ -16,37 +16,41 @@ import java.util.ArrayList;
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolder>{
     private ArrayList<GameItem> gameList;
 
-    public GameAdapter(ArrayList<GameItem> g){
-        gameList = g;
-    }
-
-    @NonNull
-    @Override
-    public GameAdapter.VoiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.game_list, parent, false);
-        GameAdapter.VoiceViewHolder evh = new GameAdapter.VoiceViewHolder(view);
-        return evh;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull GameAdapter.VoiceViewHolder holder, int position) {
-        holder.Voiceword.setText(gameList.get(position).getItemWord());
-        holder.Voiceicon.setImageResource(gameList.get(position).getItemIcon());
-    }
-
-    @Override
-    public int getItemCount() {
-        return gameList.size();
-    }
-
     public class VoiceViewHolder extends RecyclerView.ViewHolder {
-        public TextView Voiceword;
-        public ImageView Voiceicon;
+        TextView Voiceword;
+        ImageView Voiceicon;
 
         public VoiceViewHolder(@NonNull View itemView) {
             super(itemView);
             Voiceword = itemView.findViewById(R.id.voiceText);
             Voiceicon = itemView.findViewById(R.id.voiceIcon);
         }
+    }
+
+    public GameAdapter(ArrayList<GameItem> g){
+        gameList = g;
+    }
+
+    @NonNull
+    @Override
+    public VoiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.game_list, parent, false);
+        VoiceViewHolder vvh = new VoiceViewHolder(view);
+        return vvh;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull VoiceViewHolder holder, int position) {
+        holder.Voiceword.setText(gameList.get(position).getItemWord());
+        holder.Voiceicon.setImageResource(gameList.get(position).getItemIcon());
+    }
+
+    @Override
+    public int getItemCount() {
+        if(gameList==null){
+            return 0;
+        }
+
+        return gameList.size();
     }
 }

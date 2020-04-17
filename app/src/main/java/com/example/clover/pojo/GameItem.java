@@ -1,10 +1,6 @@
 package com.example.clover.pojo;
 
-import android.os.Parcelable;
-
 import java.io.Serializable;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 public class GameItem implements Serializable {
 
@@ -18,6 +14,10 @@ public class GameItem implements Serializable {
         itemIcon = icon;
     }
 
+    public GameItem(String word){
+        itemWord = word;
+    }
+
     public String getItemWord(){
         return itemWord;
     }
@@ -26,40 +26,5 @@ public class GameItem implements Serializable {
         return itemIcon;
     }
 
-//    public GameItem(Parcel source) {
-//        itemWord = source.readString();
-//        itemIcon = source.readInt();
-//    }
-//
-//    @Override
-//    public int describeContents() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public void writeToParcel(Parcel dest, int flags) {
-//        dest.writeString(itemWord);
-//        dest.writeInt(itemIcon);
-//    }
-//
-//    public String getItemWord(){
-//        return itemWord;
-//    }
-//
-//    public int getItemIcon(){
-//        return itemIcon;
-//    }
-//
-//    public static final Creator<GameItem> CREATOR = new Creator<GameItem>() {
-//        @Override
-//        public GameItem[] newArray(int size) {
-//            return new GameItem[size];
-//        }
-//
-//        @Override
-//        public GameItem createFromParcel(Parcel source) {
-//            return new GameItem(source);
-//        }
-//    };
+    public void setItemIcon(int icon) { itemIcon = icon; }
 }
-
