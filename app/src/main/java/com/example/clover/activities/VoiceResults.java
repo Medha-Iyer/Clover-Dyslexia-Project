@@ -93,4 +93,8 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setLayoutManager((mLayoutManager));
         mRecyclerView.setAdapter(mAdapter);
     }
+
+    public void updateProgress(){
+
+    }
 }
