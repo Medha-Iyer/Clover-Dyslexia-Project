@@ -93,4 +93,13 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setLayoutManager((mLayoutManager));
         mRecyclerView.setAdapter(mAdapter);
     }
+
+    public void saveProgress(){
+        String word;
+        int icon;
+        for(int i=0; i< voiceList.size(); i++){
+            word = voiceList.get(i).getItemWord();
+            icon = voiceList.get(i).getItemIcon();
+        }
+    }
 }
