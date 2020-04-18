@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.pojo.UserItem;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -122,10 +124,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                             Toast.makeText(Register.this, "User successfully created an account", Toast.LENGTH_SHORT).show();
                             userID = fAuth.getCurrentUser().getUid();
                             DocumentReference documentReference = fStore.collection("users").document(userID);
-                            Map<Object, String> user = new HashMap<>();
-                            user.put("fname", fullname);
-                            user.put("age", age);
-                            user.put("email", email);
+                            UserItem user = new UserItem(fullname, email, age, "50", "50");
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

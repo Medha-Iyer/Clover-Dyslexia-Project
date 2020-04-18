@@ -14,7 +14,7 @@ import com.example.clover.pojo.GameItem;
 import java.util.ArrayList;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolder>{
-    ArrayList<GameItem> gameList;
+    private ArrayList<GameItem> gameList;
 
     public class VoiceViewHolder extends RecyclerView.ViewHolder {
         TextView Voiceword;

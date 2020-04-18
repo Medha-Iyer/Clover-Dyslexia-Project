@@ -48,8 +48,8 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
 
     private TextView voiceResult, gameWord, displayScore;
     private ImageView speakWord, bool;
-    private Scanner s;
-    int age, fl=0;
+    private Scanner sc;
+    int age, pitch, speed, fl=0;
     int score = 0;
     String currentWord, userId;
     private TextToSpeech mTTS;
@@ -82,19 +82,21 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         //loads age from firebase
         readData(new FirebaseCallback() {
             @Override
-            public void onCallback(int a) {
+            public void onCallback(int a, int p, int s) {
                 Log.d(TAG, "This is the age from Firebase: " + a);
+                Log.d(TAG, "This is the pitch from Firebase: " + p);
+                Log.d(TAG, "This is the speed from Firebase: " + s);
                 //adds all the words from text file into an arraylist so they can be chosen randomly in the game.
                 if(age>=7){
                     Log.d("age", "Valid list");
-                    s = new Scanner(getResources().openRawResource(R.raw.words2));
+                    sc = new Scanner(getResources().openRawResource(R.raw.words2));
                 }else{
-                    s = new Scanner(getResources().openRawResource(R.raw.words1));
+                    sc = new Scanner(getResources().openRawResource(R.raw.words1));
                 }
-                while (s.hasNextLine()) {
-                    wordList.add(s.nextLine());
+                while (sc.hasNextLine()) {
+                    wordList.add(sc.nextLine());
                 }
-                s.close();
+                sc.close();
                 gameWord.setText(randomLine(wordList));
             }
         });
@@ -209,7 +211,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.speakWord:
-                Settings.speak(mTTS, currentWord);
+                Settings.speak(mTTS, currentWord, pitch, speed);
                 break;
         }
     }
@@ -244,15 +246,17 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
 
                 if (documentSnapshot.exists()) {
                     age = Integer.parseInt(documentSnapshot.getString("age"));
-                    f.onCallback(age);
+                    pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
+                    speed = Integer.parseInt(documentSnapshot.getString("speed"));
+                    f.onCallback(age, pitch, speed);
                 }
             }
         });
     }
 
-    //allows access of variable age outside of the snapshotlistener
+    //allows access of variables outside of the snapshotlistener
     private interface FirebaseCallback{
-        void onCallback(int age);
+        void onCallback(int age, int pitch, int speed);
     }
 
     //to save UI states

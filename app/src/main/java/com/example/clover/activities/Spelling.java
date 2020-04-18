@@ -56,7 +56,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     private Handler mHandler = new Handler();
 
     //to get the right age from list
-    private int age;
+    private int age, pitch, speed;
     private String userId;
     private Scanner scanner;
 
@@ -116,7 +116,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
         //loads age from firebase
         readData(new Spelling.FirebaseCallback() {
             @Override
-            public void onCallback(int a) {
+            public void onCallback(int a, int p, int s) {
                 //adds all the words from text file into an arraylist so they can be chosen randomly in the game.
                 if(age>=7){
                     scanner = new Scanner(getResources().openRawResource(R.raw.words2));
@@ -170,7 +170,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.speak_word:
-                Settings.speak(mTTS, currentWord);
+                Settings.speak(mTTS, currentWord, pitch, speed);
                 break;
             case R.id.check_word:
                 checkIfCorrect(0);
@@ -188,7 +188,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     private void setUpWord(){
         //show word for 5 seconds before disappearing
         viewWord.setText(randomLine(wordList));
-        Settings.speak(mTTS, currentWord);
+        Settings.speak(mTTS, currentWord, pitch, speed);
         mHandler.postDelayed(mShowLoadingRunnable, 2000);
     }
 
@@ -290,7 +290,9 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
                 if (documentSnapshot.exists()) {
                     age = Integer.parseInt(documentSnapshot.getString("age"));
-                    f.onCallback(age);
+                    pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
+                    speed = Integer.parseInt(documentSnapshot.getString("speed"));
+                    f.onCallback(age, pitch, speed);
                 }
             }
         });
@@ -298,7 +300,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
     //allows access of variable age outside of the snapshotlistener
     private interface FirebaseCallback{
-        void onCallback(int age);
+        void onCallback(int age, int pitch, int speed);
     }
 
     private void reset(){
