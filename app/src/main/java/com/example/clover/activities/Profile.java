@@ -108,7 +108,7 @@ public class Profile extends AppCompatActivity {
     }
 
     public void buildRecyclerView(ArrayList<GameItem> progressView) {
-        mRecyclerView = findViewById(R.id.voiceRecycler);
+        mRecyclerView = findViewById(R.id.progressRecycler);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mAdapter = new GameAdapter(progressView);

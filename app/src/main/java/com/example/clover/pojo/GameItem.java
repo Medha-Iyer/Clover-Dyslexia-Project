@@ -9,10 +9,6 @@ public class GameItem implements Serializable {
 
     private static final long serialVersionUID = 2L;
 
-    public GameItem(){
-        //no arg constructor for FireStore
-    }
-
     public GameItem(String word, int icon){
         itemWord = word;
         itemIcon = icon;
@@ -22,9 +18,12 @@ public class GameItem implements Serializable {
         itemWord = word;
     }
 
+    public GameItem(){
+    }
+
     public String getItemWord(){
         return itemWord;
-    }
+}
 
     public int getItemIcon(){
         return itemIcon;
