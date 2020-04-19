@@ -18,7 +18,12 @@ import com.example.clover.adapters.GameAdapter;
 import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.pojo.GameItem;
 import com.example.clover.pojo.LibraryCardItem;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -30,6 +35,11 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
     private GameAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<GameItem> voiceList = new ArrayList<GameItem>();
+
+    private FirebaseAuth fAuth;
+    private FirebaseFirestore fStore;
+    private String userId;
+    private DocumentReference progressRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +54,11 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
 
         playAgain = findViewById(R.id.play_again);
         playAgain.setOnClickListener(this);
+        fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        userId = fAuth.getCurrentUser().getUid();
+
+        saveProgress();
 
         //navView.setSelectedItemId();
         BottomNavigationView navView = findViewById(R.id.nav_bar);
@@ -96,10 +111,26 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
 
     public void saveProgress(){
         String word;
-        int icon;
         for(int i=0; i< voiceList.size(); i++){
             word = voiceList.get(i).getItemWord();
-            icon = voiceList.get(i).getItemIcon();
+            progressRef = fStore.collection("users")
+                    .document(userId)
+                    .collection("progress")
+                    .document(word);
+            progressRef.set(voiceList.get(i))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("Progress", "Data saved to Firestore");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("Progress", "Error updating document", e);
+                        }
+                    });
+
         }
     }
 }
