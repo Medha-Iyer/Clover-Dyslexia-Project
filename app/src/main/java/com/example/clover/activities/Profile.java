@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.clover.R;
@@ -29,8 +31,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class Profile extends AppCompatActivity {
+public class Profile extends AppCompatActivity implements View.OnClickListener {
     TextView fullname, age;
+    Button voiceProgress, spellingProgress;
+
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     DocumentReference progressRef;
@@ -50,6 +54,10 @@ public class Profile extends AppCompatActivity {
 
         //initialize and assign variable, do this for every
         BottomNavigationView navView = findViewById(R.id.nav_bar);
+        voiceProgress = findViewById(R.id.voice_progress);
+        voiceProgress.setOnClickListener(this);
+        spellingProgress = findViewById(R.id.spelling_progress);
+        spellingProgress.setOnClickListener(this);
         fullname = findViewById(R.id.prof_name);
         age = findViewById(R.id.prof_age);
 
@@ -63,15 +71,6 @@ public class Profile extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 fullname.setText(documentSnapshot.getString("fname"));
                 age.setText(documentSnapshot.getString("age"));
-            }
-        });
-
-        readVoiceProgress(new ProgressCallback() {
-            @Override
-            public void onCallback(ArrayList<GameItem> voiceList) {
-                //Do what you need to do with your list
-
-                buildRecyclerView(correctWords); //TODO make it so it builds when they click a button
             }
         });
 
@@ -107,6 +106,25 @@ public class Profile extends AppCompatActivity {
         });
     }
 
+    public void onClick(View v) { //TODO what if they click before they play any games (dialog?)
+        switch (v.getId()) {
+            case R.id.voice_progress:
+                readVoiceProgress(new ProgressCallback() {
+                    @Override
+                    public void onCallback(ArrayList<GameItem> voiceList) { //switches to correct voice words
+                        buildRecyclerView(voiceList);
+                    }
+                });
+            case R.id.spelling_progress:
+                readSpellingProgress(new ProgressCallback() {
+                    @Override
+                    public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
+                        buildRecyclerView(spellingList);
+                    }
+                });
+        }
+    }
+
     public void buildRecyclerView(ArrayList<GameItem> progressView) {
         mRecyclerView = findViewById(R.id.progressRecycler);
         mRecyclerView.setHasFixedSize(true);
@@ -120,7 +138,7 @@ public class Profile extends AppCompatActivity {
     public void readVoiceProgress(final ProgressCallback vCallback){
         progressRef = fStore.collection("users")
                 .document(userId);
-        progressRef.collection("progress")
+        progressRef.collection("voiceprogress")
                 .whereEqualTo("itemIcon", R.drawable.check)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -143,6 +161,51 @@ public class Profile extends AppCompatActivity {
                 });
 
 //        progressRef.collection("progress")
+//                .whereEqualTo("item icon", R.drawable.x)
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                GameItem incorrect = document.toObject(GameItem.class);
+//                                incorrectWords.add(incorrect);
+//                            }
+//                            //vCallback.onCallback(incorrectWords);
+//                            Log.d("Load incorrect words", "Success");
+//                        } else {
+//                            Log.d("Load incorrect words", "Error getting documents: ", task.getException());
+//                        }
+//                    }
+//                });
+    }
+
+    public void readSpellingProgress(final ProgressCallback vCallback){
+        progressRef = fStore.collection("users")
+                .document(userId);
+        progressRef.collection("spellingprogress")
+                .whereEqualTo("itemIcon", R.drawable.check)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("correct words", document.getId() + " => " + document.getData());
+                                GameItem correct = document.toObject(GameItem.class);
+                                correctWords.add(correct);
+                            }
+                            if(correctWords!=null) {
+                                Log.d("Load correct words", "Success");
+                                vCallback.onCallback(correctWords);
+                            }
+                        } else {
+                            Log.d("Load correct words", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+//        progressRef.collection("spellingprogress")
 //                .whereEqualTo("item icon", R.drawable.x)
 //                .get()
 //                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
