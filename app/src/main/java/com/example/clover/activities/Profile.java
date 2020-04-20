@@ -131,24 +131,24 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         });
     }
 
-//    public void onClick(View v) { //TODO what if they click before they play any games (dialog?)
-//        switch (v.getId()) {
-//            case R.id.voice_progress:
-//                readVoiceProgress(new ProgressCallback() {
-//                    @Override
-//                    public void onCallback(ArrayList<GameItem> voiceList) { //switches to correct voice words
-//                        buildRecyclerView(voiceList);
-//                    }
-//                });
-//            case R.id.spelling_progress:
-//                readSpellingProgress(new ProgressCallback() {
-//                    @Override
-//                    public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
-//                        buildRecyclerView(spellingList);
-//                    }
-//                });
-//        }
-//    }
+    public void onClick(View v) { //TODO what if they click before they play any games (dialog?)
+        switch (v.getId()) {
+            case R.id.voice_progress:
+                readVoiceProgress(new ProgressCallback() {
+                    @Override
+                    public void onCallback(ArrayList<GameItem> voiceList) { //switches to correct voice words
+                        buildRecyclerView(voiceList);
+                    }
+                });
+            case R.id.spelling_progress:
+                readSpellingProgress(new ProgressCallback() {
+                    @Override
+                    public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
+                        buildRecyclerView(spellingList);
+                    }
+                });
+        }
+    }
 
     public void buildRecyclerView(ArrayList<GameItem> progressView) {
         mRecyclerView = findViewById(R.id.progressRecycler);

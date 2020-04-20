@@ -19,24 +19,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SpellingResults"></activity>
+        <activity
+            android:name=".activities.ProfileProgress"
+            android:parentActivityName=".activities.Profile"
+            android:theme="@style/AppTheme.PopMe" />
+        <activity android:name=".activities.SpellingResults" />
         <activity
             android:name=".activities.VoiceResults"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.Spelling"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.LibraryEditCard"
             android:parentActivityName=".activities.Library"
-            android:theme="@style/AppTheme.PopMe"></activity>
+            android:theme="@style/AppTheme.PopMe" />
         <activity
             android:name=".activities.LibraryPopActivity"
             android:theme="@style/AppTheme.PopMe" />
         <activity android:name=".activities.Settings" />
         <activity
             android:name=".activities.Profile"
-            android:theme="@style/ProfileTheme"/>
+            android:theme="@style/ProfileTheme" />
         <activity
             android:name=".activities.Library"
             android:launchMode="singleTop"
@@ -58,7 +62,7 @@
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
                 android:value="ocr" />
         </activity>
-        <activity android:name=".activities.MainActivity"></activity>
+        <activity android:name=".activities.MainActivity" />
     </application>
 
 </manifest>

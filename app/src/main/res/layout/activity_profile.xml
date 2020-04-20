@@ -88,6 +88,7 @@
         app:tabTextColor="@android:color/black"
         app:tabIndicatorColor="@color/lightGreen"/>
 
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
@@ -111,7 +112,6 @@
         android:id="@+id/voice_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/prof_age"
         android:text="VOICE" />
 
     <Button
