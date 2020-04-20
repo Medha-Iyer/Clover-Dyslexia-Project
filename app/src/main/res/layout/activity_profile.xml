@@ -107,4 +107,18 @@
         android:scrollbars="vertical"
         android:layout_below="@id/profile_background"/>
 
+    <Button
+        android:id="@+id/voice_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/prof_age"
+        android:text="VOICE" />
+
+    <Button
+        android:id="@+id/spelling_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/voice_progress"
+        android:text="SPELLING" />
+
 </RelativeLayout>

@@ -115,7 +115,7 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
             word = voiceList.get(i).getItemWord();
             progressRef = fStore.collection("users")
                     .document(userId)
-                    .collection("progress")
+                    .collection("voiceprogress")
                     .document(word);
             progressRef.set(voiceList.get(i))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
