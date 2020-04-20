@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.clover.R;
 import com.example.clover.adapters.GameAdapter;
@@ -25,7 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class SpellingResults extends AppCompatActivity {
+public class SpellingResults extends AppCompatActivity implements View.OnClickListener {
 
     //for recycler view format
     private RecyclerView mRecyclerView;
@@ -37,6 +38,8 @@ public class SpellingResults extends AppCompatActivity {
     private FirebaseFirestore fStore;
     private String userId;
     private DocumentReference progressRef;
+
+    private Button playAgain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,9 @@ public class SpellingResults extends AppCompatActivity {
         userId = fAuth.getCurrentUser().getUid();
 
         saveProgress();
+
+        playAgain = findViewById(R.id.play_again);
+        playAgain.setOnClickListener(this);
 
         //perform item selected listener
         BottomNavigationView navView = findViewById(R.id.nav_bar); //initialize and assign variable, do this for every
@@ -85,6 +91,14 @@ public class SpellingResults extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.play_again:
+                startActivity(new Intent(getApplicationContext(), Spelling.class));
+        }
     }
 
     public void buildRecyclerView(ArrayList<GameItem> savedList) {

@@ -100,25 +100,4 @@
         android:background="@android:color/white"
         android:layout_above="@+id/nav_bar"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/progressRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:scrollbars="vertical"
-        android:layout_below="@id/profile_background"/>
-
-    <Button
-        android:id="@+id/voice_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="VOICE" />
-
-    <Button
-        android:id="@+id/spelling_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/voice_progress"
-        android:text="SPELLING" />
-
 </RelativeLayout>

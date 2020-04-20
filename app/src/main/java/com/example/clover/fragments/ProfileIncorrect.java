@@ -58,7 +58,7 @@ public class ProfileIncorrect extends Fragment {
 
         code = ProfileProgress.CODE;
 
-        readSpellingProgress(new Profile.ProgressCallback() {
+        readSpellingProgress(new ProfileIncorrect.ProgressCallback() {
             @Override
             public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
                 buildRecyclerView(spellingList);
@@ -80,7 +80,7 @@ public class ProfileIncorrect extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    public void readSpellingProgress(final Profile.ProgressCallback vCallback){
+    public void readSpellingProgress(final ProfileIncorrect.ProgressCallback vCallback){
         progressRef = fStore.collection("users")
                 .document(userId);
 
@@ -111,5 +111,9 @@ public class ProfileIncorrect extends Fragment {
                         }
                     }
                 });
+    }
+
+    public interface ProgressCallback {
+        void onCallback(ArrayList<GameItem> progressList);
     }
 }
