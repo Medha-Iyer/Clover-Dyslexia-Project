@@ -5,19 +5,25 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.clover.R;
 import com.example.clover.adapters.GameAdapter;
+import com.example.clover.adapters.ProfileViewPagerAdapter;
+import com.example.clover.fragments.ProfilePersonalInfo;
+import com.example.clover.fragments.ProfileProgressCheck;
 import com.example.clover.pojo.GameItem;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -43,15 +49,27 @@ public class Profile extends AppCompatActivity {
     private GameAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        //setting up tabs for fragments
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        ProfileViewPagerAdapter vpAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager());
+        vpAdapter.AddFragment(new ProfilePersonalInfo(), "Personal Info");
+        vpAdapter.AddFragment(new ProfileProgressCheck(), "Progress Check");
+        //setting up adapter for fragments
+        viewPager.setAdapter(vpAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+
         //initialize and assign variable, do this for every
-        BottomNavigationView navView = findViewById(R.id.nav_bar);
         fullname = findViewById(R.id.prof_name);
-        age = findViewById(R.id.prof_age);
+       // age = findViewById(R.id.prof_age);
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
@@ -62,7 +80,7 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 fullname.setText(documentSnapshot.getString("fname"));
-                age.setText(documentSnapshot.getString("age"));
+               // age.setText(documentSnapshot.getString("age"));
             }
         });
 
@@ -75,9 +93,9 @@ public class Profile extends AppCompatActivity {
             }
         });
 
-        //set home as selected
+        //set profile as selected
+        BottomNavigationView navView = findViewById(R.id.nav_bar);
         navView.setSelectedItemId(R.id.profile);
-
         //perform item selected listener
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -109,6 +127,7 @@ public class Profile extends AppCompatActivity {
 
     public void buildRecyclerView(ArrayList<GameItem> progressView) {
         mRecyclerView = findViewById(R.id.progressRecycler);
+        mRecyclerView.setVisibility(View.GONE);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mAdapter = new GameAdapter(progressView);

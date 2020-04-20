@@ -8,14 +8,6 @@
     tools:context=".activities.Profile"
     android:background="@drawable/pastelgreen">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="#0f7303">
-    </LinearLayout>
-<!--    android:background="#b2f7ba">-->
-
-    //needs to be placed on every single activity
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
@@ -28,34 +20,91 @@
         app:menu="@menu/menu_nav"
         android:layout_alignParentBottom="true"/>
 
+    <ImageView
+        android:id="@+id/profile_background"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/green_background" />
+
     <androidx.cardview.widget.CardView
-        android:layout_width="300dp"
-        android:layout_height="120dp"
+        android:id="@+id/profile_card"
+        android:layout_width="145dp"
+        android:layout_height="145dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="100dp"
+        app:cardBackgroundColor="@color/pastelGreen"
+        app:cardCornerRadius="250dp"
+        app:cardElevation="0dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="250dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/profile_photo"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_profile_temp" />
+        </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/prof_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="name"
-        android:textSize="25sp"
-        android:layout_centerInParent="true"/>
+        android:layout_height="40dp"
+        android:layout_below="@id/profile_card"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/opendyslexic_bold"
+        android:text="Name"
+        android:textSize="25sp" />
 
     <TextView
-        android:id="@+id/prof_age"
+        android:id="@+id/prof_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="age"
-        android:textSize="25sp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/prof_name"/>
+        android:layout_below="@+id/prof_name"
+        android:text="Date joined"
+        android:fontFamily="@font/opendyslexic_regular"
+        android:textSize="15sp"
+        android:layout_centerHorizontal="true"/>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/prof_date"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabTextColor="@android:color/black"
+        app:tabIndicatorColor="@color/lightGreen"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tabLayout"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@android:color/white"
+        android:layout_above="@+id/nav_bar"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/progressRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:layout_below="@id/profile_background"/>
 
 </RelativeLayout>
