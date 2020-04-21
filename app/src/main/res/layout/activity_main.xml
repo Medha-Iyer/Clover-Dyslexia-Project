@@ -8,14 +8,7 @@
     tools:context=".activities.MainActivity"
     android:background="?attr/backgroundColor">
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Home"
-        android:textSize="50dp"
-        android:fontFamily="@font/opendyslexic_regular"/>/>
+    />
     //needs to be placed on every single activity
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,23 +23,78 @@
         app:menu="@menu/menu_nav"
         android:layout_alignParentBottom="true"/>
 
-    <Button
-        android:id="@+id/voice_game"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="200dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/voice_game_btn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="167dp"
-        android:text="READING" />
+        android:layout_columnWeight="1"
+        android:layout_rowWeight="1"
+        app:cardElevation="6dp"
+        app:cardCornerRadius="12dp"
+        android:layout_margin="12dp"
+        app:cardBackgroundColor="@color/lighterGreen">
 
-    <Button
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:src="@drawable/voice_game"
+                android:layout_width="80dp"
+                android:layout_height="80dp"/>
+
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:text="VOICE"
+                android:fontFamily="@font/opendyslexic_regular"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/spelling_game_btn"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/voice_game"
         android:layout_centerHorizontal="true"
-        android:text="SPELLING" />
+        android:layout_columnWeight="1"
+        android:layout_rowWeight="1"
+        android:layout_below="@id/voice_game_btn"
+        app:cardElevation="6dp"
+        app:cardCornerRadius="12dp"
+        android:layout_margin="12dp"
+        app:cardBackgroundColor="@color/lighterGreen">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:src="@drawable/abc"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+
+        <TextView
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:text="SPELLING"
+            android:fontFamily="@font/opendyslexic_regular"/>
+    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 
 </RelativeLayout>

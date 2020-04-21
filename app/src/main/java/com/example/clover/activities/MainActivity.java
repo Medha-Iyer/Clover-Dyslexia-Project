@@ -3,6 +3,7 @@ package com.example.clover.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,10 +27,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         setContentView(R.layout.activity_main);
 
-        Button mvoice = findViewById(R.id.voice_game);
+        CardView mvoice = findViewById(R.id.voice_game_btn);
         mvoice.setOnClickListener(this);
 
-        Button mspelling = findViewById(R.id.spelling_game_btn);
+        CardView mspelling = findViewById(R.id.spelling_game_btn);
         mspelling.setOnClickListener(this);
 
         //initialize and assign variable, do this for every button or other interactive feature
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         Intent i;
         switch (v.getId()){
-            case R.id.voice_game:
+            case R.id.voice_game_btn:
                 i=new Intent(MainActivity.this,Voice.class);
                 startActivity(i);
                 break;

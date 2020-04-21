@@ -28,4 +28,16 @@ public class PersonalInfoItem implements Serializable {
         return itemIcon;
     }
 
+    public void setItemTitle(String t){
+        itemTitle = t;
+    }
+
+    public void setItemText(String t){
+        itemText = t;
+    }
+
+    public void setItemIcon(int i){
+        itemIcon = i;
+    }
+
 }

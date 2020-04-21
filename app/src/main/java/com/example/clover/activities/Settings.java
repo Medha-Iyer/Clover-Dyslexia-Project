@@ -44,8 +44,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     DocumentReference documentReference;
-    private int selectedTheme;
     private String userID;
+    private int selectedTheme;
     private static float pitchVal, speedVal = 1;
 
     public static final String SHARED_PREFS = "sharedPrefs";

@@ -70,7 +70,7 @@ public class Profile extends AppCompatActivity {
         documentReference.addSnapshotListener(Profile.this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                fullName.setText(documentSnapshot.getString("fname"));
+                fullName.setText(documentSnapshot.getString("name"));
             }
         });
 

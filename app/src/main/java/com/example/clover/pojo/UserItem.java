@@ -2,7 +2,7 @@ package com.example.clover.pojo;
 
 public class UserItem {
 
-    private String fname;
+    private String name;
     private String email;
     private String age;
     private String pitch;
@@ -12,16 +12,16 @@ public class UserItem {
         // no arg constructor for FireStore
     }
 
-    public UserItem(String name, String mail, String a, String p, String s){
-        fname = name;
+    public UserItem(String n, String mail, String a, String p, String s){
+        name = n;
         email = mail;
         age = a;
         pitch = p;
         speed = s;
     }
 
-    public String getFName(){
-        return fname;
+    public String getName(){
+        return name;
     }
 
     public String getEmail(){

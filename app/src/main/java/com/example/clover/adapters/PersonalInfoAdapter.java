@@ -9,25 +9,45 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
+import com.example.clover.activities.ProfileNameDialog;
 import com.example.clover.pojo.PersonalInfoItem;
 
 import java.util.ArrayList;
 
-public class PersonalInfoAdapter extends RecyclerView.Adapter<PersonalInfoAdapter.ExampleViewHolder>{
+public class PersonalInfoAdapter extends RecyclerView.Adapter<PersonalInfoAdapter.PersonalViewHolder>{
     private ArrayList<PersonalInfoItem> infoList;
+    private OnItemClickListener mListener;
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder {
+    public interface OnItemClickListener {
+        void onEditClick(PersonalInfoItem item, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
+
+    public class PersonalViewHolder extends RecyclerView.ViewHolder {
         TextView infoTitle;
         TextView infoUser;
         ImageView infoIcon;
         ImageView infoEdit;
 
-        public ExampleViewHolder(@NonNull View itemView) {
+        public PersonalViewHolder(@NonNull View itemView, final PersonalInfoAdapter.OnItemClickListener listener) {
             super(itemView);
             infoTitle = itemView.findViewById(R.id.info_title);
             infoUser = itemView.findViewById(R.id.info_user);
             infoIcon = itemView.findViewById(R.id.info_icon);
             infoEdit = itemView.findViewById(R.id.editInfo);
+
+            infoEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onEditClick(infoList.get(position), position);
+                    }
+                }
+            });
         }
     }
 
@@ -37,14 +57,14 @@ public class PersonalInfoAdapter extends RecyclerView.Adapter<PersonalInfoAdapte
 
     @NonNull
     @Override
-    public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PersonalViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.personal_info_item, parent, false);
-        ExampleViewHolder evh = new ExampleViewHolder(view);
+        PersonalViewHolder evh = new PersonalViewHolder(view, mListener);
         return evh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PersonalViewHolder holder, int position) {
         holder.infoTitle.setText(infoList.get(position).getItemTitle());
         holder.infoUser.setText(infoList.get(position).getItemText());
         holder.infoIcon.setImageResource(infoList.get(position).getItemIcon());
