@@ -14,6 +14,10 @@ public class LibraryCardItem implements Serializable {
         itemText = text;
     }
 
+    public LibraryCardItem(){
+
+    }
+
     public void setId(int ids){
         id = ids;
     }

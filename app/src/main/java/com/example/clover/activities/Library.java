@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,9 +23,18 @@ import android.widget.Toast;
 import com.example.clover.R;
 import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.pojo.LibraryCardItem;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -41,10 +51,16 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
     private LibraryAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<LibraryCardItem> savedList = new ArrayList<LibraryCardItem>();
+    private ArrayList<LibraryCardItem> firebaseList = new ArrayList<LibraryCardItem>();
 
     private FloatingActionButton addNoteBtn;
     private MenuItem showArchive;
     private Toolbar toolbar;
+
+    FirebaseFirestore fStore;
+    FirebaseAuth fAuth;
+    DocumentReference documentReference;
+    private String userID;
 
     //constants to save UI states
     public static final String SHARED_PREFS = "sharedPrefs";
@@ -60,6 +76,7 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
 
+        //Initialize variables
         addNoteBtn = findViewById(R.id.add_button);
         addNoteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +85,10 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                 startActivityForResult(intent, ADD_NOTE_REQUEST);
             }
         });
+
+        fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        userID = fAuth.getCurrentUser().getUid();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,8 +100,19 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
             savedList = (ArrayList<LibraryCardItem>) bundleObject.getSerializable("library list");
         }
 
-        buildRecyclerView(savedList);
-        setUpSearch();
+        saveToFirebase();
+        readLibraryData(new Library.LibraryCallback() {
+            @Override
+            public void onCallback(ArrayList<LibraryCardItem> firebaseList) { //loads firebase library if it exists
+                Log.d("Library", "Inside callback");
+                buildRecyclerView(firebaseList);
+                setUpSearch();
+                savedList = firebaseList;
+            }
+        });
+
+        //buildRecyclerView(savedList);
+        //setUpSearch();
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
@@ -202,10 +234,71 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
     public void update(LibraryCardItem newCard, int position){
         savedList.add(position, newCard);
         mAdapter.notifyItemInserted(position);
+        documentReference = fStore.collection("users").document(userID)
+                .collection("library").document(savedList.get(position+1).getItemTitle());
+        documentReference.delete();
         savedList.remove(position+1);
         mAdapter.notifyItemRemoved(position);
+        documentReference = fStore.collection("users").document(userID)
+                .collection("library").document(newCard.getItemTitle());
+        documentReference.set(newCard).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("Library", "Document added to library collection");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Library", "onFailure: " + e.toString());
+            }
+        });
         saveData();
         loadData();
+    }
+
+    public void saveToFirebase(){
+        String title;
+        for(int i=0; i<savedList.size(); i++){
+            title = savedList.get(i).getItemTitle();
+            documentReference = fStore.collection("users").document(userID)
+                    .collection("library").document(title);
+            //TODO make it so that they can't name two things the same title
+            documentReference.set(savedList.get(i)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d("Library", "Document saved to library collection");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("Library", "onFailure: " + e.toString());
+                }
+            });
+        }
+    }
+
+    public void readLibraryData(final Library.LibraryCallback lCallback){
+        documentReference = fStore.collection("users").document(userID);
+        documentReference.collection("library")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                LibraryCardItem loadItem = document.toObject(LibraryCardItem.class);
+                                firebaseList.add(loadItem);
+                            }
+                            if(!firebaseList.isEmpty()) {
+                                Log.d("Load library", "Success");
+                                lCallback.onCallback(firebaseList);
+                            }
+                        } else {
+                            Log.d("Load library", "Error getting documents: ", task.getException());
+                            firebaseList = savedList; //If firebase library doesn't exist it is set to savedList
+                        }
+                    }
+                });
     }
 
     //for searching
@@ -423,5 +516,9 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         if (archivedItems == null){
             archivedItems = new ArrayList<LibraryCardItem>();
         }
+    }
+
+    public interface LibraryCallback {
+        void onCallback(ArrayList<LibraryCardItem> progressList);
     }
 }
