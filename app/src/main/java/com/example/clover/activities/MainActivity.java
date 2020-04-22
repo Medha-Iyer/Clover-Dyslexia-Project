@@ -12,10 +12,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import com.example.clover.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    // TODO add banner ads on screen somewhere
+
+    private AdView mAdView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +33,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setTheme(R.style.AppTheme);
         }
         setContentView(R.layout.activity_main);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+                    @Override
+                    public void onInitializationComplete(InitializationStatus initializationStatus) {
+                    }
+                });
 
-        CardView mvoice = findViewById(R.id.voice_game_btn);
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
+
+                CardView mvoice = findViewById(R.id.voice_game_btn);
         mvoice.setOnClickListener(this);
 
         CardView mspelling = findViewById(R.id.spelling_game_btn);
