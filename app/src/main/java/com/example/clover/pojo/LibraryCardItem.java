@@ -6,12 +6,14 @@ public class LibraryCardItem implements Serializable {
     private String itemTitle;
     private String itemText;
     private int id;
+    private boolean state; //true is library, false is archive
 
     private static final long serialVersionUID = 1L;
 
     public LibraryCardItem(String title, String text){
         itemTitle = title;
         itemText = text;
+        state = true;
     }
 
     public LibraryCardItem(){
@@ -31,4 +33,6 @@ public class LibraryCardItem implements Serializable {
     }
 
     public int getId() { return id; }
+
+    public void switchState() { state = !state; }
 }

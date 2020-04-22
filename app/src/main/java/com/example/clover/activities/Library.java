@@ -93,8 +93,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        loadData();
-//        saveData();
         Bundle bundleObject = getIntent().getExtras();
         if (bundleObject != null) {
             savedList = (ArrayList<LibraryCardItem>) bundleObject.getSerializable("library list");
@@ -108,14 +106,10 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                 buildRecyclerView(firebaseList);
                 setUpSearch();
                 savedList = firebaseList;
+                ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+                itemTouchHelper.attachToRecyclerView(mRecyclerView);
             }
         });
-
-        //buildRecyclerView(savedList);
-        //setUpSearch();
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         //perform item selected listener
         BottomNavigationView navView = findViewById(R.id.nav_bar); //initialize and assign variable, do this for every
@@ -160,8 +154,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
             LibraryCardItem newCard = new LibraryCardItem(title, text);
             savedList.add(newCard);
             mAdapter.notifyItemInserted(savedList.size()-1);
-            saveData();
-            loadData();
 
             Toast.makeText(this, "New card saved", Toast.LENGTH_SHORT).show();
         } else if(requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK){
@@ -252,8 +244,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                 Log.d("Library", "onFailure: " + e.toString());
             }
         });
-        saveData();
-        loadData();
     }
 
     public void saveToFirebase(){
@@ -395,7 +385,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                             public void onClick(View v) {
                                 savedList.add(position, deletedItem);
                                 mAdapter.notifyItemInserted(position);
-                                saveData();
                             }
                         });
                     } else {
@@ -409,15 +398,12 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                             public void onClick(View v) {
                                 archivedItems.add(position, deletedItem);
                                 mAdapter.notifyItemInserted(position);
-                                saveData();
                             }
                         });
                     }
 
                     snack.setAnchorView(R.id.nav_bar);
                     snack.show();
-
-                    saveData();
                     break;
                 case ItemTouchHelper.RIGHT: //left to right
                     if(showArchive.getTitle().equals("archive")) {
@@ -433,7 +419,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                                 archivedItems.remove(archivedItems.lastIndexOf(cardItem));
                                 savedList.add(position, cardItem);
                                 mAdapter.notifyItemInserted(position);
-                                saveData();
                             }
                         });
                     } else {
@@ -450,14 +435,12 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                                 archivedItems.add(position, cardItem);
                                 savedList.remove(position);
                                 mAdapter.notifyItemRemoved(position);
-                                saveData();
                             }
                         });
                     }
 
                     snack.setAnchorView(R.id.nav_bar);
                     snack.show();
-                    saveData();
                     break;
             }
         }
@@ -486,37 +469,6 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }
     };
-
-    //to save UI states
-    private void saveData(){
-        //no other app can change our shared preferences
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(savedList);
-        String json2 = gson.toJson(archivedItems);
-        editor.putString(SAVED_LIST, json);
-        editor.putString("ARCHIVED", json2);
-        editor.apply();
-    }
-
-    private void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString(SAVED_LIST, null);
-        String json2 = sharedPreferences.getString("ARCHIVED", null);
-        Type type = new TypeToken<ArrayList<LibraryCardItem>>() {}.getType();
-        Type type2 = new TypeToken<ArrayList<LibraryCardItem>>() {}.getType();
-        savedList = gson.fromJson(json, type);
-        archivedItems = gson.fromJson(json2, type2);
-
-        if (savedList == null){
-            savedList = new ArrayList<LibraryCardItem>();
-        }
-        if (archivedItems == null){
-            archivedItems = new ArrayList<LibraryCardItem>();
-        }
-    }
 
     public interface LibraryCallback {
         void onCallback(ArrayList<LibraryCardItem> progressList);
