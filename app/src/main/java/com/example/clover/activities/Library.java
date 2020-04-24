@@ -3,6 +3,7 @@ package com.example.clover.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -32,7 +33,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
@@ -57,23 +61,51 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
     private MenuItem showArchive;
     private Toolbar toolbar;
 
-    FirebaseFirestore fStore;
-    FirebaseAuth fAuth;
-    DocumentReference documentReference;
-    private String userID;
-
     //constants to save UI states
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String SAVED_LIST = "savedList";
+    private final String TAG = "Library";
 
     //for editing or adding note
     public static final int ADD_NOTE_REQUEST = 1;
     public static final int EDIT_NOTE_REQUEST = 2;
     private int currentPos;
+    private boolean darkmode;
+
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //This has to be implemented in every screen to update mode and theme.
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Library.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            setTheme(R.style.DarkTheme1);
+        }else{
+            setTheme(R.style.AppTheme);
+        }
         setContentView(R.layout.activity_library);
 
         //Initialize variables
@@ -88,7 +120,7 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-        userID = fAuth.getCurrentUser().getUid();
+        userId = fAuth.getCurrentUser().getUid();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -234,12 +266,12 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
     public void update(LibraryCardItem newCard, int position){
         savedList.add(position, newCard);
         mAdapter.notifyItemInserted(position);
-        documentReference = fStore.collection("users").document(userID)
+        documentReference = fStore.collection("users").document(userId)
                 .collection("library").document(savedList.get(position+1).getItemTitle());
         documentReference.delete();
         savedList.remove(position+1);
         mAdapter.notifyItemRemoved(position);
-        documentReference = fStore.collection("users").document(userID)
+        documentReference = fStore.collection("users").document(userId)
                 .collection("library").document(newCard.getItemTitle());
         documentReference.set(newCard).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -260,7 +292,7 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
         String title;
         for(int i=0; i<savedList.size(); i++){
             title = savedList.get(i).getItemTitle();
-            documentReference = fStore.collection("users").document(userID)
+            documentReference = fStore.collection("users").document(userId)
                     .collection("library").document(title);
             //TODO make it so that they can't name two things the same title
             documentReference.set(savedList.get(i)).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -278,7 +310,7 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
     }
 
     public void readLibraryData(final Library.LibraryCallback lCallback){
-        documentReference = fStore.collection("users").document(userID);
+        documentReference = fStore.collection("users").document(userId);
         documentReference.collection("library")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

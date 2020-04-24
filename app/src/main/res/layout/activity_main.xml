@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity"
     android:background="?attr/backgroundColor">
-
     />
     //needs to be placed on every single activity
 
@@ -22,79 +21,197 @@
         app:itemIconTint="@drawable/selector"
         app:menu="@menu/menu_nav"
         android:layout_alignParentBottom="true"/>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/voice_game_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        app:cardElevation="6dp"
-        app:cardCornerRadius="12dp"
-        android:layout_margin="12dp"
-        app:cardBackgroundColor="@color/lighterGreen">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:src="@drawable/voice_game"
-                android:layout_width="80dp"
-                android:layout_height="80dp"/>
-
-            <TextView
-                android:layout_marginTop="12dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:text="VOICE"
-                android:fontFamily="@font/opendyslexic_regular"/>
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/spelling_game_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:layout_below="@id/voice_game_btn"
-        app:cardElevation="6dp"
-        app:cardCornerRadius="12dp"
-        android:layout_margin="12dp"
-        app:cardBackgroundColor="@color/lighterGreen">
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
-        android:gravity="center"
-        android:orientation="vertical">
+        tools:context=".activities.MainActivity">
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnCount="1"
+            android:rowCount="5"
+            android:alignmentMode="alignMargins">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/voice_game_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                android:layout_margin="12dp"
+                app:cardBackgroundColor="@color/lighterGreen">
 
-        <ImageView
-            android:src="@drawable/abc"
-            android:layout_width="80dp"
-            android:layout_height="80dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-        <TextView
-            android:layout_marginTop="12dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:text="SPELLING"
-            android:fontFamily="@font/opendyslexic_regular"/>
-    </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                    <ImageView
+                        android:src="@drawable/voice_game"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"/>
 
+                    <TextView
+                        android:layout_marginTop="12dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:text="VOICE"
+                        android:fontFamily="@font/opendyslexic_regular"/>
 
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/spelling_game_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_below="@id/voice_game_btn"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                android:layout_margin="12dp"
+                app:cardBackgroundColor="@color/lighterGreen">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:src="@drawable/abc"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"/>
+
+                <TextView
+                    android:layout_marginTop="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:text="SPELLING"
+                    android:fontFamily="@font/opendyslexic_regular"/>
+            </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/book_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_below="@id/spelling_game_btn"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                android:layout_margin="12dp"
+                app:cardBackgroundColor="@color/lighterGreen">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:src="@drawable/book"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"/>
+
+                    <TextView
+                        android:layout_marginTop="12dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:text="BOOKS"
+                        android:fontFamily="@font/opendyslexic_regular"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/game3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_below="@id/spelling_game_btn"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                android:layout_margin="12dp"
+                app:cardBackgroundColor="@color/lighterGreen">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:src="@drawable/lockgame"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"/>
+
+                    <TextView
+                        android:layout_marginTop="12dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:text="MATCH"
+                        android:fontFamily="@font/opendyslexic_regular"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/game4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_below="@id/game3"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                android:layout_margin="12dp"
+                app:cardBackgroundColor="@color/lighterGreen">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:src="@drawable/lockgame"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"/>
+
+                    <TextView
+                        android:layout_marginTop="12dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:text="VOWEL BLENDS"
+                        android:fontFamily="@font/opendyslexic_regular"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </GridLayout>
+    </ScrollView>
 </RelativeLayout>

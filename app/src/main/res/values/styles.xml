@@ -3,10 +3,10 @@
     <!-- Light/Day themes. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#C4D186</item>
+        <item name="colorPrimary">#93C8DD</item>
         <item name="colorPrimaryDark">#435202</item>
         <item name="colorAccent">#864149</item>
-        <item name="backgroundColor">#F1EDEA</item>
+        <item name="backgroundColor">#D5EDE7</item>
         <item name="cardbackground">#C4D186</item>
         <item name="textcolor">#808080</item>
         <item name="tintcolor">#000000</item>
@@ -16,7 +16,7 @@
 
     <style name="ProfileTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#C4D186</item>
+        <item name="colorPrimary">#93C8DD</item>
         <item name="colorPrimaryDark">#435202</item>
         <item name="colorAccent">#864149</item>
         <item name="backgroundColor">#F1EDEA</item>
@@ -44,7 +44,7 @@
     <!-- Dark/Night themes. -->
     <style name="DarkTheme1" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#C4D186</item>
+        <item name="colorPrimary">#93C8DD</item>
         <item name="colorPrimaryDark">#435202</item>
         <item name="colorAccent">#864149</item>
         <item name="backgroundColor">#303030</item>

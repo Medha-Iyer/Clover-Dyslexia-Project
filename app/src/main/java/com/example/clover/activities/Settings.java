@@ -1,6 +1,7 @@
 package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
@@ -20,6 +21,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.pojo.UserItem;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,13 +40,13 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private CardView logout;
     private SeekBar mSeekBarPitch;
     private SeekBar mSeekBarSpeed;
-    private Switch switchMode;
+    Switch switchMode;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    DocumentReference documentReference;
-    private String userID;
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
     private int selectedTheme;
     private static float pitchVal, speedVal = 1;
 
@@ -58,15 +60,47 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private static int pitch;
     private static int speed;
     private static boolean darkmode;
+    private static int theme;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Settings.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    theme = Integer.parseInt(documentSnapshot.getString("theme"));
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            setTheme(R.style.DarkTheme1); // TODO Change so that it takes into consideration what color preset has been selected
+            switch(theme){
+                case R.style.DarkTheme1:
+                    setTheme(R.style.DarkTheme1);
+                case R.style.DarkTheme2:
+                    setTheme(R.style.DarkTheme2);
+            }
         }else{
-            setTheme(R.style.AppTheme);
+            switch(theme){
+                case R.style.AppTheme:
+                    setTheme(R.style.AppTheme);
+                case R.style.LightTheme2:
+                    setTheme(R.style.LightTheme2);
+            }
         }
         setContentView(R.layout.activity_settings);
 
@@ -74,18 +108,63 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         BottomNavigationView navView = findViewById(R.id.nav_bar);
         mSeekBarPitch = findViewById(R.id.seek_bar_pitch);
         mSeekBarSpeed = findViewById(R.id.seek_bar_speed);
-        logout = findViewById(R.id.logoutButton);
+        logout = findViewById(R.id.logoutCard);
         logout.setOnClickListener(this);
-        switchMode = findViewById(R.id.switchmode);
+        switchMode = (Switch) findViewById(R.id.switchmode);
         radioGroup = findViewById(R.id.radioGroup);
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-        userID = fAuth.getCurrentUser().getUid();
-        documentReference = fStore.collection("users").document(userID);
+        userId = fAuth.getCurrentUser().getUid();
+        documentReference = fStore.collection("users").document(userId);
 
-        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES) {
-            switchMode.setChecked(true);
-        }
+        // Theme 1: 2131296529
+        // Theme 2: 2131886088
+
+        loadData();
+        switchMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d(TAG, "SWITCHED to " + isChecked);
+                if(darkmode == isChecked){
+                    saveData();
+                    Log.d(TAG, "This is darkmode switch" + darkmode);
+                    return;
+                }else {
+                    darkmode = isChecked;
+                    Log.d(TAG, "This is darkmode switch" + darkmode);
+                }
+                if(isChecked) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    Log.d(TAG, "Dark mode is on");
+                }else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    Log.d(TAG, "Dark mode is off");
+                }
+                saveData();
+                restartApp();
+            }
+        });
+
+        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d(TAG, "Current data: " + snapshot.getData());
+                    UserItem u = snapshot.toObject(UserItem.class);
+                    if(darkmode != u.getDarkmode()){
+                        darkmode = u.getDarkmode();
+
+                    }
+                } else {
+                    Log.d(TAG, "Current data: null");
+                }
+            }
+        });
 
         //set home as selected
         navView.setSelectedItemId(R.id.settings);
@@ -98,22 +177,18 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     case R.id.camera:
                         startActivity(new Intent(getApplicationContext(), Camera.class));
                         overridePendingTransition(0,0);
-                        saveData();
                         return true;
                     case R.id.library:
                         startActivity(new Intent(getApplicationContext(), Library.class));
                         overridePendingTransition(0,0);
-                        saveData();
                         return true;
                     case R.id.home:
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         overridePendingTransition(0,0);
-                        saveData();
                         return true;
                     case R.id.profile:
                         startActivity(new Intent(getApplicationContext(), Profile.class));
                         overridePendingTransition(0,0);
-                        saveData();
                         return true;
                     case R.id.settings:
                         return true;
@@ -123,64 +198,87 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         });
 
-        saveData();
-        loadData();
-        updateViews();
-
     }
 
     @Override
     public void onClick(View v){
-        switch(selectedTheme){
-            case R.id.radio_one:
-                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-                    setTheme(R.style.DarkTheme1);
-                }else{
-                    setTheme(R.style.AppTheme);
-                    Toast.makeText(this, "Theme 1", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.radio_two:
-                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-                    setTheme(R.style.DarkTheme2);
-                }else{
-                    setTheme(R.style.LightTheme2);
-                }
-                break;
-        }
+//        switch(selectedTheme){
+//            case R.id.radio_one:
+//                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+//                    theme = R.style.DarkTheme1;
+//                    saveData();
+//                    restartApp();
+//                }else{
+//                    theme = R.style.AppTheme;
+//                    saveData();
+//                    restartApp();
+//                }
+//                break;
+//            case R.id.radio_two:
+//                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+//                    theme = R.style.DarkTheme2;
+//                    saveData();
+//                    restartApp();
+//                }else{
+//                    theme = R.style.LightTheme2;
+//                    saveData();
+//                    restartApp();
+//                }
+//                break;
+//            case R.id.radio_three:
+//                break;
+//        }
 
         switch (v.getId()){
-            case R.id.logoutButton:
+            case R.id.logoutCard:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(), Login.class));
                 break;
         }
     }
 
-    public void checkButton(View v) {
+    public void radioClick(View v) {
         selectedTheme = radioGroup.getCheckedRadioButtonId();
+        boolean checked = ((RadioButton) v).isChecked();
+        switch(v.getId()) {
+            case R.id.radio_one:
+                if (checked) {
+                    if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                        theme = R.style.DarkTheme1;
+                        Log.d(TAG, "Dark theme 1");
+                        saveData();
+                        restartApp();
+                    }else{
+                        theme = R.style.AppTheme;
+                        Log.d(TAG, "App theme");
+                        saveData();
+                        restartApp();
+                    }
+                }
+                break;
+            case R.id.radio_two:
+                if(checked){
+                    if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                        theme = R.style.DarkTheme2;
+                        Log.d(TAG, "Dark theme 2");
+                        saveData();
+                        restartApp();
+                    }else{
+                        theme = R.style.LightTheme2;
+                        Log.d(TAG, "Light theme 2");
+                        saveData();
+                        restartApp();
+                    }
+                }
+                break;
+            case R.id.radio_three:
+                break;
+        }
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        saveData();
-        loadData();
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        saveData();
-        loadData();
-        updateViews();
-    }
-
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        saveData();
-        loadData();
     }
 
     public void restartApp() {
@@ -212,24 +310,23 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 if (documentSnapshot.exists()) {
                     pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
                     speed = Integer.parseInt(documentSnapshot.getString("speed"));
-                    f.onCallback(pitch, speed);
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    theme = Integer.parseInt(documentSnapshot.getString("theme"));
+                    Log.d(TAG, "This is darkmode " + darkmode);
+                    f.onCallback(pitch, speed, darkmode, theme);
                 }
             }
         });
     }
 
-    //allows access of variables outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int pitch, int speed);
-    }
-
     public void saveData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         documentReference.update(
                 "pitch", Integer.toString(mSeekBarPitch.getProgress()),
-                "speed", Integer.toString(mSeekBarSpeed.getProgress()))
+                "speed", Integer.toString(mSeekBarSpeed.getProgress()),
+                "darkmode", darkmode, "theme", Integer.toString(theme))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -243,44 +340,63 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     }
                 });
 
-        editor.putInt(PITCH, pitch);
-        editor.putInt(SPEED, speed);
-        editor.putBoolean(DARK_MODE, switchMode.isChecked());
-        editor.apply();
+//        editor.putInt(PITCH, pitch);
+//        editor.putInt(SPEED, speed);
+//        editor.putBoolean(DARK_MODE, switchMode.isChecked());
+//        editor.apply();
 
     }
 
-    public void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        pitch = sharedPreferences.getInt(PITCH, 50);
-        speed = sharedPreferences.getInt(SPEED, 50);
-        darkmode = sharedPreferences.getBoolean(DARK_MODE, false);
+    private void loadData(){
+//        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+//        pitch = sharedPreferences.getInt(PITCH, 50);
+//        speed = sharedPreferences.getInt(SPEED, 50);
+//        darkmode = sharedPreferences.getBoolean(DARK_MODE, false);
 
         //loads data from firebase
         readData(new Settings.FirebaseCallback() {
             @Override
-            public void onCallback(int p, int s) {
+            public void onCallback(int p, int s, boolean mode, int t) {
                 Log.d(TAG, "This is the pitch from Firebase: " + p);
                 Log.d(TAG, "This is the speed from Firebase: " + s);
+                Log.d(TAG, "Dark mode is set to: " + mode);
+                mSeekBarPitch.setProgress(p);
+                mSeekBarSpeed.setProgress(s);
+                switchMode.setChecked(mode);
+                if(mode){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+                }else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
+
+                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                    switch(theme){
+                        case R.style.DarkTheme1:
+                            setTheme(R.style.DarkTheme1);
+                            ((RadioButton)radioGroup.getChildAt(0)).setChecked(true);
+                        case R.style.DarkTheme2:
+                            setTheme(R.style.DarkTheme2);
+                            ((RadioButton)radioGroup.getChildAt(1)).setChecked(true);
+                    }
+                }else{
+                    switch(theme){
+                        case R.style.AppTheme:
+                            setTheme(R.style.AppTheme);
+                            ((RadioButton)radioGroup.getChildAt(0)).setChecked(true);
+                        case R.style.LightTheme2:
+                            setTheme(R.style.LightTheme2);
+                            ((RadioButton)radioGroup.getChildAt(1)).setChecked(true);
+                    }
+                }
             }
         });
     }
 
-    public void updateViews(){
-        mSeekBarPitch.setProgress(pitch);
-        mSeekBarSpeed.setProgress(speed);
-        switchMode.setChecked(darkmode);
-        switchMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    restartApp();
-                }else{
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                }
-            }
-        });
+
+    //allows access of variables outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int pitch, int speed, boolean darkMode, int theme);
     }
 
 }
