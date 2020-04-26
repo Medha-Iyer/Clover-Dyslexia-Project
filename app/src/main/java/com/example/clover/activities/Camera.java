@@ -2,6 +2,8 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -20,6 +22,7 @@ import com.example.clover.pojo.LibraryCardItem;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
@@ -31,7 +34,7 @@ import java.util.List;
 public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener, View.OnClickListener {
 
     //layout things
-    private Button takePhotoBtn, fromGalleryBtn, convertTextBtn, saveLibraryBtn;
+    CardView convertTextBtn, saveLibraryBtn, takePhotoBtn, fromGalleryBtn;
     private ImageView imageView;
     private TextView tv;
     private Bitmap imageBitmap;
@@ -70,8 +73,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         convertTextBtn = findViewById(R.id.convert_text);
         convertTextBtn.setOnClickListener(this);
 
-        saveLibraryBtn = findViewById(R.id.save_to_library);
-        saveLibraryBtn.setVisibility(View.GONE);
+        saveLibraryBtn = findViewById(R.id.save_card);
         saveLibraryBtn.setOnClickListener(this);
 
         //for bottom navigation bar
@@ -125,12 +127,15 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                     Toast.makeText(getApplicationContext(), "Please upload photo.", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.save_to_library:
-                saveToLibrary();
-                saveLibraryBtn.setVisibility(View.GONE);
-                tv.setText("Displaying text...");
-                imageView.setImageResource(R.drawable.ic_insertphoto);
-                imageBitmap = null;
+            case R.id.save_card:
+                if (imageBitmap != null && tv !=  null) {
+                    saveToLibrary();
+                    tv.setText("Displaying text...");
+                    imageView.setImageResource(R.drawable.ic_insertphoto);
+                    imageBitmap = null;
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please upload photo.", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }

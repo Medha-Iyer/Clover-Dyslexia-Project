@@ -34,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_add"
+        android:backgroundTint="?attr/baseAccent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="75dp"
@@ -55,8 +56,10 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:title="Library"/>
+                android:background="?attr/baseSelect"
+                app:title="Library"
+                app:titleTextColor="@android:color/white"
+                android:theme="@style/ToolbarTheme"/>
 
             <com.miguelcatalan.materialsearchview.MaterialSearchView
                 android:id="@+id/search_view"

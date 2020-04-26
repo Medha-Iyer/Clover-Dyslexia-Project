@@ -38,7 +38,7 @@
             app:tabGravity="fill"
             app:tabMode="fixed"
             app:tabTextColor="@android:color/black"
-            app:tabIndicatorColor="@color/lightGreen"/>
+            app:tabIndicatorColor="?attr/baseSelect"/>
 
 
     </RelativeLayout>

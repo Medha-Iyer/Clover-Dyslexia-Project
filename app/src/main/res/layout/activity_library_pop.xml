@@ -5,30 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pop_bg"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.clover.activities.LibraryPopActivity">
 
-    <TextView
-        android:id="@+id/titleView"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:layout_margin="20dp"
-        android:textSize="50dp"
-        android:text="hey"
-        android:textAlignment="center"
-        android:layout_gravity="center_horizontal"/>
+    <androidx.cardview.widget.CardView
+            android:id="@id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="0dp"
+            android:backgroundTint="?attr/baseAccent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="fill_parent"
-        android:layout_height="600dp"
-        android:layout_below="@+id/titleView"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"
-        android:scrollbars="vertical"
-        android:padding="10dp"
-        android:text="hey"
-        android:textSize="25dp"
-        android:fontFamily="@font/opendyslexic_regular"/>
+            <TextView
+                android:id="@+id/titleView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textSize="40dp"
+                android:text="hey"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal" />
 
-</RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/title"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="20dp"
+            android:scrollbars="vertical"
+            android:padding="10dp"
+            android:text="hey"
+            android:textSize="25dp"
+            android:fontFamily="@font/opendyslexic_regular"/>
+    </RelativeLayout>
+

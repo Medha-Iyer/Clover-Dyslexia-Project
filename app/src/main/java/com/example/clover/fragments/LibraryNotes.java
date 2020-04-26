@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -28,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -42,6 +44,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firestore.v1.WriteResult;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import java.util.Collections;
 
@@ -115,7 +118,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                     addCard(Camera.newCard);
                 }
 
-                buildRecyclerView(libraryItems);
+                buildRecyclerView(getListToUse());
                 setUpSearch();
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
                 itemTouchHelper.attachToRecyclerView(mRecyclerView);
@@ -137,18 +140,30 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
         showArchive.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+
+                TypedValue typedValue = new TypedValue();
+
                 if (toolbar.getTitle().equals("Library")) { //if you're going to Archive
                     showArchive.setIcon(R.drawable.ic_library_white);
                     addNoteBtn.setVisibility(View.GONE);
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.colorLight));
+                    getContext().getTheme().resolveAttribute(R.attr.baseAccent, typedValue, true);
                     toolbar.setTitle("Archives");
                 } else { //if you're switching back to Library
                     showArchive.setIcon(R.drawable.ic_archive_white);
                     addNoteBtn.setVisibility(View.VISIBLE);
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    getContext().getTheme().resolveAttribute(R.attr.baseSelect, typedValue, true);
                     toolbar.setTitle("Library");
                 }
                 buildRecyclerView(getListToUse());
+
+                // it's probably a good idea to check if the color wasn't specified as a resource
+                if (typedValue.resourceId != 0) {
+                    toolbar.setBackgroundResource(typedValue.resourceId);
+                } else {
+                    // this should work whether there was a resource id or not
+                    toolbar.setBackgroundColor(typedValue.data);
+                }
+
                 return false;
             }
         });
@@ -240,6 +255,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
 
     //read data from firebase
     public void readLibraryData(final LibraryNotes.LibraryCallback lCallback) {
+        firebaseList = new ArrayList<>();
         documentReference = fStore.collection("users").document(userID);
         documentReference.collection("library")
                 .get()
@@ -262,10 +278,21 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                     }
                 });
     }
+    public void readData(){
+        readLibraryData(new LibraryNotes.LibraryCallback() {
+            @Override
+            public void onCallback(ArrayList<LibraryCardItem> firebaseList) { //loads firebase library if it exists
+                Log.d("Library", "Inside callback");
+                completeList = firebaseList;
+                separateLists(firebaseList);
+                buildRecyclerView(getListToUse());
+            }
+        });
+    }
 
     //to add a new card
     public void addCard(LibraryCardItem item) {
-        shiftPositionValues(1, 0);
+        shiftPositionValues(1, 0, getListToUse());
         newCard = item;
         completeList.add(newCard);
         separateLists(completeList);
@@ -275,10 +302,15 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
     //to update an existing card
     public void update(LibraryCardItem newCard, int position, int code) {
         ArrayList<LibraryCardItem> listToUse = getListToUse();
+        String oldCard;
 
+        separateLists(completeList);
         if (code == 0) { //if archived, set position to last of opposite list
-            newCard.setPosition(completeList.size() - getListToUse().size());
+            shiftPositionValues(-1, position, getOpposite());
+            newCard.setPosition(completeList.size() - getListToUse().size() - 1);
+            oldCard=listToUse.get(position).getItemTitle();
         } else { //if archived, then undo, reset to original position
+            oldCard = newCard.getItemTitle();
             newCard.setPosition(position);
         }
 
@@ -286,8 +318,9 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
 
         //delete existing card from firebase
         documentReference = fStore.collection("users").document(userID)
-                .collection("library").document(listToUse.get(position).getItemTitle());
+                .collection("library").document(oldCard);
         documentReference.delete();
+//        completeList.remove(cpList+1);
         //upload updated version to firebase
         documentReference = fStore.collection("users").document(userID)
                 .collection("library").document(newCard.getItemTitle());
@@ -303,16 +336,14 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
             }
         });
 
-        separateLists(completeList);
-        buildRecyclerView(getListToUse());
-        saveToFirebase();
+        readData();
     }
 
     //shift position values if new card is added or moved around
-    public void shiftPositionValues(int shift, int start) {
-        for (int i = start; i < getListToUse().size(); i++) {
-            int index = getListToUse().get(i).getPosition();
-            getListToUse().get(i).setPosition(index + shift);
+    public void shiftPositionValues(int shift, int start, ArrayList<LibraryCardItem> list) {
+        for (int i = start; i < list.size(); i++) {
+            int index = list.get(i).getPosition();
+            list.get(i).setPosition(index + shift);
         }
     }
 
@@ -339,6 +370,14 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
             listToUse = libraryItems;
         }
         return listToUse;
+    }
+    public ArrayList<LibraryCardItem> getOpposite() {
+        ArrayList<LibraryCardItem> listToUse = getListToUse();
+        if (listToUse == libraryItems) {
+            return archivedItems;
+        } else {
+            return libraryItems;
+        }
     }
 
     //deleting function
@@ -380,7 +419,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                     completeList.remove(deletedItem);
                     separateLists(completeList);
                     Log.d("shift","pos: "+position);
-                    shiftPositionValues(-1,position);
+                    shiftPositionValues(-1,position, getListToUse());
                     buildRecyclerView(getListToUse());
                     saveToFirebase();
 
@@ -389,7 +428,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                     snack.setAction("Undo", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            shiftPositionValues(+1,position);
+                            shiftPositionValues(+1,position, getListToUse());
                             completeList.add(deletedItem);
                             separateLists(completeList);
                             buildRecyclerView(listToUse);
@@ -401,10 +440,12 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                     snack.show();
                     break;
 
-                case ItemTouchHelper.RIGHT: //left to right
+                case ItemTouchHelper.RIGHT: //left to right, archive
                     final LibraryCardItem cardItem = getListToUse().get(position);
                     cardItem.switchState();
-                    shiftPositionValues(-1, position);
+                    shiftPositionValues(-1, position, getListToUse());
+                    saveToFirebase();
+
                     update(cardItem, position, 0);
 
                     String message;
@@ -419,17 +460,10 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                         @Override
                         public void onClick(View v) {
                             cardItem.switchState();
-                            cardItem.setPosition(position-1);
-                            documentReference = fStore.collection("users").document(userID)
-                                    .collection("library").document(cardItem.getItemTitle());
-                            documentReference.delete();
-                            completeList.remove(cardItem);
-
-                            completeList.add(cardItem);
-                            separateLists(completeList);
-                            buildRecyclerView(listToUse);
-                            shiftPositionValues(+1,position);
+                            shiftPositionValues(+1,position, getListToUse());
                             saveToFirebase();
+
+                            update(cardItem, position, 2);
                         }
                     });
 
@@ -534,5 +568,9 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                     addNoteBtn.show();
             }
         });
+
+        Log.d("update after","library: "+libraryItems.size());
+        Log.d("update after","archive: "+archivedItems.size());
+        Log.d("update after","complete: "+completeList.size());
     }
 }

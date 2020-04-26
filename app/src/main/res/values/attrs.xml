@@ -8,5 +8,12 @@
         <attr name="tintcolor" format="color" />
         <attr name="buttoncolor" format="color" />
 
+<!--        annie's trials -->
+        <attr name="baseSelect" format="color"/>
+        <attr name="baseUnselect" format="color"/>
+        <attr name="baseAccent" format="color"/>
+        <attr name="logoColor" format="color"/>
+        <attr name="baseDark" format="color"/>
+
     </declare-styleable>
 </resources>
