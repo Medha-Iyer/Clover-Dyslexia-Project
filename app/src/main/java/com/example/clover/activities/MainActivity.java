@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         CardView mspelling = findViewById(R.id.spelling_game_btn);
         mspelling.setOnClickListener(this);
 
-        Button mbooks = findViewById(R.id.book_btn);
+        CardView mbooks = findViewById(R.id.book_btn);
         mbooks.setOnClickListener(this);
 
         //initialize and assign variable, do this for every button or other interactive feature
