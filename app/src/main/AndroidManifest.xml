@@ -23,9 +23,8 @@
         <meta-data
             android:name="com.google.android.vision.API_KEY"
             android:value="@string/API_key">
-
         </meta-data>
-        android:theme="@style/LightTheme2">
+<!--        android:theme="@style/LightTheme2">-->
 
         <activity android:name=".activities.ProfileNameDialog"></activity>
         <activity
