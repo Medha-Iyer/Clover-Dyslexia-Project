@@ -9,7 +9,7 @@
     <item
         android:id="@+id/camera"
         android:title="Camera"
-        android:icon="@drawable/ic_camera"/>
+        android:icon="@drawable/photograph"/>
 
     <item
         android:id="@+id/home"

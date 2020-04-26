@@ -10,21 +10,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
-import com.example.clover.adapters.GameAdapter;
-import com.example.clover.adapters.ProfileViewPagerAdapter;
+import com.example.clover.adapters.FragmentAdapter;
 import com.example.clover.fragments.ProfilePersonalInfo;
 import com.example.clover.fragments.ProfileProgressCheck;
-import com.example.clover.pojo.GameItem;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,10 +26,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
 
 public class Profile extends AppCompatActivity {
     TextView fullName;
@@ -85,7 +74,7 @@ public class Profile extends AppCompatActivity {
         //setting up tabs for fragments
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        ProfileViewPagerAdapter vpAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager());
+        FragmentAdapter vpAdapter = new FragmentAdapter(getSupportFragmentManager());
         vpAdapter.AddFragment(new ProfilePersonalInfo(), "Personal Info");
         vpAdapter.AddFragment(new ProfileProgressCheck(), "Progress Check");
         //setting up adapter for fragments

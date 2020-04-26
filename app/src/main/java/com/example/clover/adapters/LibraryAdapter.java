@@ -1,5 +1,6 @@
 package com.example.clover.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.clover.activities.Library;
 import com.example.clover.pojo.LibraryCardItem;
 import com.example.clover.R;
 
@@ -84,7 +86,11 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
     @Override //referring to item at certain position
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
         LibraryCardItem currentItem = mExampleList.get(position);
-        holder.mEditBtn.setImageResource(R.drawable.ic_edit);
+        currentItem.setPosition(position);
+
+        if (currentItem.getState()) {
+            holder.mEditBtn.setImageResource(R.drawable.ic_edit);
+        }
         holder.mTitle.setText(currentItem.getItemTitle());
         holder.mText.setText(currentItem.getItemText());
     }
