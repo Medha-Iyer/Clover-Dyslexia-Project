@@ -124,7 +124,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                             Toast.makeText(Register.this, "User successfully created an account", Toast.LENGTH_SHORT).show();
                             userID = fAuth.getCurrentUser().getUid();
                             DocumentReference documentReference = fStore.collection("users").document(userID);
-                            UserItem user = new UserItem(fullname, email, age, "50", "50", false, "2131296529");
+                            UserItem user = new UserItem(fullname, email, age, "50", "50", false, "0");
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
