@@ -31,7 +31,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#F7CBFF</item>
         <item name="colorPrimaryDark">#b76bc6</item>
-        <item name="colorAccent">#9FE6FA</item>
+        <item name="colorAccent">#96adfc</item>
         <item name="backgroundColor">#F1EDEA</item>
         <item name="cardbackground">#F7CBFF</item>
         <item name="textcolor">#808080</item>
