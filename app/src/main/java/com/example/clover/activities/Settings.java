@@ -8,6 +8,7 @@ import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -63,6 +64,40 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private static int theme;
 
 
+    //allows access of variables outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int pitch, int speed, boolean darkMode, int theme);
+    }
+
+//    private class ThemeAsyncTask extends AsyncTask<Void, Void, Integer>{
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Integer integer) {
+//            super.onPostExecute(integer);
+//        }
+//
+//        @Override
+//        protected Integer doInBackground(Void... voids) {
+//            int themeId;
+//            FirebaseAuth fAuth = FirebaseAuth.getInstance();
+//            FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+//            String userId = fAuth.getCurrentUser().getUid();
+//            DocumentReference documentReference = fStore.collection("users").document(userId);
+//            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                @Override
+//                public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                    UserItem themes = documentSnapshot.toObject(UserItem.class);
+//                    themeId = Integer.parseInt(themes.getTheme());
+//                }
+//            });
+//        } //returns the ID of the theme it will be set to
+//
+//    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,26 +118,28 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     }else{
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                     }
+
+                    if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                        switch(theme){
+                            case R.style.DarkTheme1:
+                                setTheme(R.style.DarkTheme1);
+                                Log.d(TAG, "dark theme set");
+                            case R.style.DarkTheme2:
+                                setTheme(R.style.DarkTheme2);
+                        }
+                    }else{
+                        switch(theme){
+                            case R.style.AppTheme:
+                                setTheme(R.style.AppTheme);
+                            case R.style.LightTheme2:
+                                setTheme(R.style.LightTheme2);
+                        }
+                    }
                 }
+                setContentView(R.layout.activity_settings);
+                Log.d(TAG, "set content view");
             }
         });
-
-        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            switch(theme){
-                case R.style.DarkTheme1:
-                    setTheme(R.style.DarkTheme1);
-                case R.style.DarkTheme2:
-                    setTheme(R.style.DarkTheme2);
-            }
-        }else{
-            switch(theme){
-                case R.style.AppTheme:
-                    setTheme(R.style.AppTheme);
-                case R.style.LightTheme2:
-                    setTheme(R.style.LightTheme2);
-            }
-        }
-        setContentView(R.layout.activity_settings);
 
         //initialize and assign variable, do this for every
         BottomNavigationView navView = findViewById(R.id.nav_bar);
@@ -391,12 +428,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
             }
         });
-    }
-
-
-    //allows access of variables outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int pitch, int speed, boolean darkMode, int theme);
     }
 
 }
