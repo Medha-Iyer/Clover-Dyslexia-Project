@@ -3,12 +3,16 @@ package com.example.clover.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.adapters.FragmentAdapter;
@@ -25,16 +29,46 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class Profile extends AppCompatActivity {
     TextView fullName;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    String userId;
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
+    private  final String TAG = "Profile";
+    private boolean darkmode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //This has to be implemented in every screen to update mode and theme.
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Profile.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            setTheme(R.style.DarkTheme1);
+        }else{
+            setTheme(R.style.AppTheme);
+        }
         setContentView(R.layout.activity_profile);
 
         //setting up tabs for fragments
