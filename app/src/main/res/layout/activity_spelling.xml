@@ -5,92 +5,198 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/speak_word"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="100dp"
-        android:src="@drawable/speaker"/>
-
-    <Button
-        android:id="@+id/check_word"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/show_word"
-        android:layout_marginTop="160dp"
-        android:layout_marginRight="35dp"
-        android:textSize="15dp"
-        android:text="Check Word!"
-        android:padding="10dp"
-        android:fontFamily="@font/opendyslexic_bold"
-        android:background="@drawable/rounded_nav"/>
-
-    <Button
-        android:id="@+id/check_again"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/show_word"
-        android:layout_marginTop="160dp"
-        android:layout_marginRight="35dp"
-        android:textSize="15dp"
-        android:text="Check Again!"
-        android:padding="10dp"
-        android:fontFamily="@font/opendyslexic_bold"
-        android:background="@drawable/rounded_nav"/>
-
-    <Button
-        android:id="@+id/next_word"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/show_word"
-        android:layout_marginTop="160dp"
-        android:layout_marginRight="35dp"
-        android:textSize="15dp"
-        android:text="Next Word"
-        android:padding="10dp"
-        android:fontFamily="@font/opendyslexic_bold"
-        android:background="@drawable/rounded_nav"/>
-
     <TextView
-        android:id="@+id/show_word"
-        android:layout_width="325dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="200dp"
-        android:background="@drawable/rounded_nav"
-        android:text="Loading word..."
-        android:fontFamily="@font/opendyslexic_regular"
-        android:textSize="35dp"
-        android:textAlignment="center"
-        android:padding="5dp" />
-
-    <TextView
-        android:id="@+id/correct_text"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/input_word"
-        android:layout_above="@+id/input_word"
         android:layout_margin="5dp"
-        android:text="Correct!"
-        android:textColor="@color/darkGreen"
-        android:fontFamily="@font/opendyslexic_regular"/>
-
-    <EditText
-        android:id="@+id/input_word"
-        android:layout_width="325dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/nav_bar"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="250dp"
-        android:hint="Type word here..."
-        android:inputType="text|textVisiblePassword"
-        android:imeOptions="actionDone"
-        android:textSize="25dp"/>
+        android:padding="5dp"
+        android:text="S P E L L I N G"
+        android:textAlignment="center"
+        android:shadowColor="@android:color/white"
+        android:shadowDx="4"
+        android:shadowDy="4"
+        android:shadowRadius="2"
+        android:fontFamily="@font/quicksand_regular"
+        android:textColor="?attr/baseDark"
+        android:textSize="50sp"/>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/content_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/nav_bar"
+        android:layout_below="@+id/title"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="40dp"
+        app:cardCornerRadius="20dp"
+        app:cardBackgroundColor="@android:color/white"
+        android:elevation="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/speak_word"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:src="@drawable/ic_sound"
+                android:tint="?attr/baseDark"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:layout_below="@id/speak_word"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_centerHorizontal="true"
+                app:cardCornerRadius="15dp">
+
+                <ImageView
+                    android:id="@+id/word_view"
+                    android:theme="@style/LightTheme2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/rounded_nav"
+                    android:background="?attr/baseAccent"
+                    android:scaleType="fitXY"/>
+
+                <!--        <ImageView-->
+                <!--            android:id="@+id/lock_icon"-->
+                <!--            android:layout_width="match_parent"-->
+                <!--            android:layout_height="match_parent"-->
+                <!--            android:layout_margin="10dp"-->
+                <!--            android:src="@drawable/lock"-->
+                <!--            android:tint="?attr/baseDark"-->
+                <!--            android:scaleType="centerInside"            />-->
+
+                <TextView
+                    android:id="@+id/show_word"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Loading word..."
+                    android:fontFamily="@font/opendyslexic_regular"
+                    android:textSize="35dp"
+                    android:textAlignment="center"
+                    android:padding="5dp"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/correct_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/input_word"
+                android:layout_below="@+id/view"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="Correct!"
+                android:textColor="@color/darkGreen"
+                android:fontFamily="@font/opendyslexic_regular"/>
+
+            <EditText
+                android:id="@+id/input_word"
+                android:layout_width="325dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/view"
+                android:layout_marginTop="50dp"
+                android:layout_marginLeft="20dp"
+                android:hint="Type word here..."
+                android:inputType="text|textVisiblePassword"
+                android:imeOptions="actionDone"
+                android:textSize="25dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/next_word"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/view"
+                android:layout_alignParentRight="true"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="5dp"
+                android:layout_marginTop="140dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="20dp"
+                app:cardBackgroundColor="?attr/baseAccent">
+
+                    <TextView
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="15dp"
+                        android:text="NEXT WORD"
+                        android:fontFamily="@font/opendyslexic_regular"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/check_again"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/view"
+                android:layout_alignParentRight="true"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="5dp"
+                android:layout_marginTop="140dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="20dp"
+                app:cardBackgroundColor="?attr/baseAccent">
+
+                <TextView
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15dp"
+                    android:text="CHECK AGAIN"
+                    android:fontFamily="@font/opendyslexic_regular"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/check_word"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/view"
+                android:layout_alignParentRight="true"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="5dp"
+                android:layout_marginTop="140dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="20dp"
+                app:cardBackgroundColor="?attr/baseAccent">
+
+                <TextView
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15dp"
+                    android:text="CHECK WORD"
+                    android:fontFamily="@font/opendyslexic_regular"/>
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
 
     //needs to be placed on every single activity
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -2,8 +2,9 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,94 +26,59 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
-//import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
-public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener {
+public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener, View.OnClickListener {
 
-    //take photo function
-    private Button takePhotoBtn, fromGalleryBtn, convertTextBtn, saveLibraryBtn;
+    //layout things
+    CardView convertTextBtn, saveLibraryBtn, takePhotoBtn, fromGalleryBtn;
     private ImageView imageView;
     private TextView tv;
-    private static Bitmap imageBitmap;
+    private Bitmap imageBitmap;
 
     //saving to library
     private String fileName, fileText;
-    private ArrayList<LibraryCardItem> libraryList = new ArrayList<>();
+    public static LibraryCardItem newCard;
 
-    //constants to save UI states
-    public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String SAVED_LIST = "savedList";
+    //constants for taking photos
+    private static final int SELECT_PICTURE = 0;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        loadData();
-        saveData();
+        //reset card item value
+        LibraryCardItem newCard = null;
+
+        /*set up layout*/
+        imageView = findViewById(R.id.image_view);
 
         //make text view scrollable
         tv = (TextView) findViewById(R.id.text_view);
         tv.setMovementMethod(new ScrollingMovementMethod());
 
-        imageView = findViewById(R.id.image_view);
-
         //take photo function
         takePhotoBtn = findViewById(R.id.take_photo);
-        takePhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-                tv.setText("Displaying text...");
-            }
-        });
+        takePhotoBtn.setOnClickListener(this);
 
         //photo from gallery function
         fromGalleryBtn = findViewById(R.id.from_gallery);
-        fromGalleryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dispatchFromGalleryIntent();
-                tv.setText("Displaying text...");
-            }
-        });
+        fromGalleryBtn.setOnClickListener(this);
 
         convertTextBtn = findViewById(R.id.convert_text);
-        convertTextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(imageBitmap != null) {
-                    detectTextFromImage();
-                    saveLibraryBtn.setVisibility(View.VISIBLE);
-                }else{
-                    Toast.makeText(getApplicationContext(), "Please upload photo.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        convertTextBtn.setOnClickListener(this);
 
-        saveLibraryBtn = findViewById(R.id.save_to_library);
-        saveLibraryBtn.setVisibility(View.GONE);
-        saveLibraryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveToLibrary();
-                saveLibraryBtn.setVisibility(View.GONE);
-                tv.setText("Displaying text...");
-                imageView.setImageResource(R.drawable.ic_insertphoto);
-                imageBitmap = null;
-            }
-        });
+        saveLibraryBtn = findViewById(R.id.save_card);
+        saveLibraryBtn.setOnClickListener(this);
 
         //for bottom navigation bar
         BottomNavigationView navView = findViewById(R.id.nav_bar);
@@ -121,23 +87,24 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
+                switch (menuItem.getItemId()) {
                     case R.id.camera:
                         return true;
                     case R.id.library:
-                        sendListToLibrary();
+                        startActivity(new Intent(getApplicationContext(), Library.class));
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.home:
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        overridePendingTransition(0,0);
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.profile:
                         startActivity(new Intent(getApplicationContext(), Profile.class));
-                        overridePendingTransition(0,0);
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.settings:
                         startActivity(new Intent(getApplicationContext(), Settings.class));
-                        overridePendingTransition(0,0);
+                        overridePendingTransition(0, 0);
                         return true;
                 }
                 return false;
@@ -145,40 +112,36 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         });
     }
 
-    //from android studio website for taking photo function
-    static final int SELECT_PICTURE = 0;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.take_photo:
+                dispatchTakePictureIntent();
+                tv.setText("Displaying text...");
+                break;
+            case R.id.from_gallery:
+                dispatchFromGalleryIntent();
+                tv.setText("Displaying text...");
+                break;
+            case R.id.convert_text:
+                if (imageBitmap != null) {
+                    detectTextFromImage();
+                    saveLibraryBtn.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please upload photo.", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.save_card:
+                if (imageBitmap != null && tv !=  null) {
+                    saveToLibrary();
+                    tv.setText("Displaying text...");
+                    imageView.setImageResource(R.drawable.ic_insertphoto);
+                    imageBitmap = null;
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please upload photo.", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
-    }
-
-    private void dispatchFromGalleryIntent(){
-        Intent galleryIntent = new Intent();
-        galleryIntent.setType("image/*");
-        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(galleryIntent,
-                "Select Picture"), SELECT_PICTURE);
-    }
-
-    //for saving to library!!!
-    private void saveToLibrary(){
-        //save file name pop-up
-        CameraNameDialog exampleDialog = new CameraNameDialog();
-        exampleDialog.show(getSupportFragmentManager(), "example dialog");
-    }
-
-    @Override //after pop-up, this method does something with the name
-    public void applyTexts(String name) {
-        fileName = name;
-        LibraryCardItem newCard = new LibraryCardItem(fileName, fileText);
-        //newCard.setId(0);
-        libraryList.add(newCard);
-        saveData();
-        sendListToLibrary();
     }
 
     @Override
@@ -200,22 +163,22 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         }
     }
 
-        private void detectTextFromImage(){
+        private void detectTextFromImage() {
             TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
-            if(!textRecognizer.isOperational()){
+            if (!textRecognizer.isOperational()) {
                 Toast.makeText(getApplicationContext(), "Could not get the text", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 Frame frame = new Frame.Builder().setBitmap(imageBitmap).build();
                 SparseArray<TextBlock> items = textRecognizer.detect(frame);
                 StringBuilder sb = new StringBuilder();
-                for(int i=0; i<items.size(); i++){
+                for (int i = 0; i < items.size(); i++) {
                     TextBlock myItem = items.valueAt(i);
                     sb.append(myItem.getValue());
                     sb.append("\n");
                 }
                 displayTextFromImage(sb);
             }
-    }
+        }
 
     private void displayTextFromImage(StringBuilder sb) {
         if (sb.toString().length() == 0) {
@@ -225,39 +188,50 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         }
     }
 
-
-
-    //to save UI states
-    private void saveData(){
-        //no other app can change our shared preferences
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(libraryList);
-        editor.putString(SAVED_LIST, json);
-        editor.apply();
-    }
-
-    private void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString(SAVED_LIST, null);
-        Type type = new TypeToken<ArrayList<LibraryCardItem>>() {}.getType();
-        libraryList = gson.fromJson(json, type);
-
-        if (libraryList == null){
-            libraryList = new ArrayList<LibraryCardItem>();
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+    private void dispatchFromGalleryIntent() {
+        Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(galleryIntent,
+                "Select Picture"), SELECT_PICTURE);
+    }
+//    private void detectTextFromImage() {
+//        final FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
+//        FirebaseVisionTextRecognizer firebaseVisionTextRecognizer = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+//        firebaseVisionTextRecognizer.processImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+//            @Override
+//            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+//                displayTextFromImage(firebaseVisionText);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(Camera.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
-    public void sendListToLibrary(){
-        loadData();
-        saveData();
+
+    //name file popup
+    private void saveToLibrary() {
+        //save file name pop-up
+        CameraNameDialog exampleDialog = new CameraNameDialog();
+        exampleDialog.show(getSupportFragmentManager(), "example dialog");
+    }
+
+    @Override //after pop-up, creates card and goes to Library activity
+    public void applyTexts(String name) {
+        fileName = name;
+        newCard = new LibraryCardItem(fileName, fileText);
+
         Intent i = new Intent(Camera.this, Library.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("library list", libraryList);
-        i.putExtras(bundle);
         startActivity(i);
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
     }
 }

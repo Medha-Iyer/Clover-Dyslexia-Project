@@ -36,6 +36,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button mbooks = findViewById(R.id.book_btn);
         mbooks.setOnClickListener(this);
 
+        CardView mlocked1 = findViewById(R.id.unlocked1);
+        mlocked1.setOnClickListener(this);
+
+        CardView mlocked2 = findViewById(R.id.unlocked2);
+        mlocked2.setOnClickListener(this);
+
         //initialize and assign variable, do this for every button or other interactive feature
         BottomNavigationView navView = findViewById(R.id.nav_bar);
         //set home as selected
@@ -83,6 +89,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.book_btn:
                 i=new Intent(MainActivity.this,Books.class);
                 startActivity(i);
+                break;
+            case R.id.unlocked1:
+                Toast.makeText(this, "Get Clover Pro to unlock this game.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.unlocked2:
+                Toast.makeText(this, "Get Clover Pro to unlock this game.", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

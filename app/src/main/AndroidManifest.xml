@@ -25,8 +25,9 @@
             android:value="@string/API_key">
 
         </meta-data>
+        android:theme="@style/LightTheme2">
 
-        <activity android:name=".ProfileNameDialog" />
+        <activity android:name=".activities.ProfileNameDialog"></activity>
         <activity
             android:name=".activities.ProfileProgress"
             android:parentActivityName=".activities.Profile"
@@ -36,9 +37,17 @@
         <activity
             android:name=".activities.VoiceResults"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.Settings" />
         <activity
-            android:name=".activities.Spelling"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".activities.Profile"
+            android:theme="@style/ProfileTheme" />
+
+        <activity
+            android:name=".activities.Library"
+            android:launchMode="singleTop"
+            android:theme="@style/LightTheme2"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".activities.LibraryEditCard"
             android:parentActivityName=".activities.Library"
@@ -46,15 +55,7 @@
         <activity
             android:name=".activities.LibraryPopActivity"
             android:theme="@style/AppTheme.PopMe" />
-        <activity android:name=".activities.Settings" />
-        <activity
-            android:name=".activities.Profile"
-            android:theme="@style/ProfileTheme" />
-        <activity
-            android:name=".activities.Library"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustNothing" />
+
         <activity android:name=".activities.Register" />
         <activity android:name=".activities.Login">
             <intent-filter>
@@ -63,15 +64,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.Voice"
+
+        <activity android:name=".activities.MainActivity"/>
+        <activity android:name=".activities.Voice"
             android:parentActivityName=".activities.MainActivity" />
+        <activity
+            android:name=".activities.Spelling"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/LightTheme2"/>
+
         <activity android:name=".activities.Camera">
             <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
                 android:value="ocr" />
         </activity>
-        <activity android:name=".activities.MainActivity" />
+
     </application>
 
 </manifest>
