@@ -34,8 +34,6 @@ import java.util.Map;
 
 public class Register extends AppCompatActivity implements View.OnClickListener {
 
-    RelativeLayout mainRegister;
-    ImageView splashlogo;
     private TextView mLoginHere;
     private CardView mRegisterButton;
     EditText mFullName, mEmail, mAge, mPassword;
@@ -43,21 +41,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     private ProgressBar mPbar;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
-    private Handler handler  = new Handler();
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if(fAuth.getCurrentUser() != null) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-            }else {
-                mainRegister.setVisibility(View.VISIBLE);
-                splashlogo.setVisibility(View.GONE);
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +49,6 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_register);
 
         //initialize and assign variable, do this for every button or other interactive feature
-        mainRegister = findViewById(R.id.mainregister);
-        splashlogo = findViewById(R.id.splashlogo);
         mLoginHere = findViewById(R.id.loginHere);
         mLoginHere.setOnClickListener(this);
         mRegisterButton = findViewById(R.id.registerButton);
@@ -79,7 +61,6 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
 
-        handler.postDelayed(runnable, 2000); //2000 is the timeout for the splash
     }
 
     @Override

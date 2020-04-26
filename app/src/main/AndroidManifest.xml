@@ -20,11 +20,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.ProfileNameDialog"></activity>
+
+        <meta-data
+            android:name="com.google.android.vision.API_KEY"
+            android:value="@string/API_key">
+
+        </meta-data>
         <activity
             android:name=".activities.ProfileProgress"
             android:parentActivityName=".activities.Profile"
             android:theme="@style/AppTheme.PopMe" />
         <activity android:name=".activities.SpellingResults" />
+        <activity android:name=".activities.Books" />
         <activity
             android:name=".activities.VoiceResults"
             android:theme="@style/AppTheme.NoActionBar" />

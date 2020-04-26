@@ -7,6 +7,7 @@ import androidx.cardview.widget.CardView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.pojo.LightbulbAnimation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,16 +28,28 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
-    private RelativeLayout mainLogin;
+    AnimationDrawable lightbulb;
+
+    private RelativeLayout mainLogin, mainLayout;
     private ImageView splashlogo;
-    private TextView mcreateAccount, mforgotPassword;
+    private TextView mcreateAccount, mforgotPassword, splashwords;
     private CardView mloginButton;
     EditText mEmail, mPassword;
     private ProgressBar mPbar;
     FirebaseAuth fAuth;
     private Handler handler = new Handler();
+
+    Runnable hideViews = new Runnable() {
+        @Override
+        public void run() {
+            splashlogo.setVisibility(View.GONE);
+            splashwords.setVisibility(View.GONE);
+            mainLayout.setBackgroundColor(getResources().getColor(R.color.mainBlue));
+        }
+    };
 
     Runnable runnable = new Runnable() {
         @Override
@@ -44,9 +58,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             }else {
-                mainLogin.setVisibility(View.VISIBLE);
-                splashlogo.setVisibility(View.GONE);
+                mainLogin.setBackgroundColor(getResources().getColor(R.color.mainBlue));
+                splashwords.animate().alpha(0f).setDuration(1000);
+                splashlogo.animate().alpha(0f).setDuration(1000);
+                mainLogin.animate().alpha(1f).setDuration(1000);
             }
+            handler.postDelayed(hideViews, 1000);
         }
     };
 
@@ -57,7 +74,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         //initialize and assign variable, do this for every button or other interactive feature
         mainLogin = findViewById(R.id.mainlogin);
+        mainLayout = findViewById(R.id.mainLayout);
+        splashwords = findViewById(R.id.splashwords);
         splashlogo = findViewById(R.id.splashlogo);
+        splashlogo.setImageResource(R.drawable.lightbulb_animation);
+        lightbulb = (AnimationDrawable) splashlogo.getDrawable();
         mcreateAccount = findViewById(R.id.createAccount);
         mcreateAccount.setOnClickListener(this);
         mforgotPassword = findViewById(R.id.forgotPassword);
@@ -69,11 +90,38 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         mPbar = findViewById(R.id.progressBar);
         fAuth = FirebaseAuth.getInstance();
 
-        handler.postDelayed(runnable, 3000); //3000 is the timeout for the splash
+        handler.postDelayed(runnable, 4000); //4000 is the timeout for the splash
 
     }
 
 //    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        final LightbulbAnimation anim = new LightbulbAnimation(lightbulb) {
+//            @Override
+//            public void onAnimationFinish() {
+//                splashwords.animate().alpha(1f).setDuration(200);
+//                handler.postDelayed(runnable, 1000); //3000 is the timeout for the splash
+//            }
+//
+//            @Override
+//            public void onAnimationStart() {
+//            }
+//        };
+//
+//        //splashlogo.setBackground(anim);
+//        anim.start();
+//    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        lightbulb.start();
+        splashwords.animate().alpha(1f).setDuration(2050);
+    }
+
+
+    //    @Override
 //    protected void onPause(){
 //        super.onPause();
 //        if(fAuth.getCurrentUser() != null) {
