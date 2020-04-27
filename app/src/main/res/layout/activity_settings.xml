@@ -72,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="One"
-            android:onClick="checkButton"
+            android:onClick="radioClick"
             android:checked="true"/>
 
         <RadioButton
@@ -80,14 +80,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Two"
-            android:onClick="checkButton"/>
+            android:onClick="radioClick"/>
 
         <RadioButton
             android:id="@+id/radio_three"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Three"
-            android:onClick="checkButton"/>
+            android:onClick="radioClick"/>
 
     </RadioGroup>
 
@@ -105,7 +105,7 @@
         android:layout_alignParentBottom="true"/>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/logoutButton"
+        android:id="@+id/logoutCard"
         android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_above="@id/nav_bar"

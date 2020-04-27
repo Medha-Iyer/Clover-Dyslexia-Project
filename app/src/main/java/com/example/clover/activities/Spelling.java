@@ -2,6 +2,7 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
@@ -60,16 +61,44 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
     //to get the right age from list
     private int age, pitch, speed;
-    private String userId;
     private Scanner scanner;
 
-    FirebaseFirestore fStore;
-    FirebaseAuth fAuth;
-    DocumentReference documentReference;
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
+    private  final String TAG = "Spelling";
+    private boolean darkmode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //This has to be implemented in every screen to update mode and theme.
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Spelling.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            setTheme(R.style.DarkTheme1);
+        }else{
+            setTheme(R.style.AppTheme);
+        }
         setContentView(R.layout.activity_spelling);
 
         wordView = findViewById(R.id.word_view);
