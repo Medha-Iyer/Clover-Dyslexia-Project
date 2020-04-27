@@ -7,9 +7,6 @@
     android:background="?attr/backgroundColor"
     tools:context=".activities.MainActivity">
 
-    />
-    //needs to be placed on every single activity
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"

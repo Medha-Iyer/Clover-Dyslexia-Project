@@ -74,7 +74,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
         wordView = findViewById(R.id.word_view);
         viewWord = findViewById(R.id.show_word);
-//        lockIcon = findViewById(R.id.lock_icon);
         correctView = findViewById(R.id.correct_text);
         userWord = findViewById(R.id.input_word);
 
@@ -192,8 +191,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
     private void setUpWord(){
         //show word for 5 seconds before disappearing
-//        lockIcon.setVisibility(View.GONE);
-//        viewWord.setVisibility(View.VISIBLE);
         viewWord.setText(randomLine(wordList));
         Settings.speak(mTTS, currentWord, pitch, speed);
         mHandler.postDelayed(mShowLoadingRunnable, 2000);
@@ -204,8 +201,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
         @Override
         public void run() {
             viewWord.setText("Enter word...");
-//            viewWord.setVisibility(View.GONE);
-//            lockIcon.setVisibility(View.VISIBLE);
             userWord.setVisibility(View.VISIBLE);
             checkWordBtn.setVisibility(View.VISIBLE);
         }
@@ -248,7 +243,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             checkAgainBtn.setVisibility(View.VISIBLE);
 
             if(code==0){
-                completedList.get(0).setItemIcon(R.drawable.x);
+                completedList.get(0).setItemIcon(R.drawable.cross);
             }
         }
 
@@ -319,7 +314,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
         checkWordBtn.setVisibility(View.GONE);
         checkAgainBtn.setVisibility(View.GONE);
         nextWordBtn.setVisibility(View.GONE);
-//        lockIcon.setVisibility(View.VISIBLE);
         viewWord.setText("Enter word...");
         wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_nav));
     }

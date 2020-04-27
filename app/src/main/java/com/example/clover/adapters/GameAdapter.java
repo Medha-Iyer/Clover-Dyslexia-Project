@@ -15,15 +15,37 @@ import java.util.ArrayList;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolder>{
     private ArrayList<GameItem> gameList;
+    public OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick (int position);
+    }
+
+    public void setOnItemClickListener (OnItemClickListener listener){
+        mListener = listener;
+    }
 
     public class VoiceViewHolder extends RecyclerView.ViewHolder {
         TextView Voiceword;
-        ImageView Voiceicon;
+        ImageView Voiceicon, HearIcon;
 
-        public VoiceViewHolder(@NonNull View itemView) {
+        public VoiceViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             Voiceword = itemView.findViewById(R.id.voiceText);
             Voiceicon = itemView.findViewById(R.id.voiceIcon);
+            HearIcon = itemView.findViewById(R.id.hearIcon);
+
+            HearIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -35,7 +57,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.VoiceViewHolde
     @Override
     public VoiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.game_list, parent, false);
-        VoiceViewHolder vvh = new VoiceViewHolder(view);
+        VoiceViewHolder vvh = new VoiceViewHolder(view, mListener);
         return vvh;
     }
 
