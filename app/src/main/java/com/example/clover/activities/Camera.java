@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.pojo.LibraryCardItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.Frame;
@@ -67,7 +68,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     DocumentReference documentReference = fStore.collection("users").document(userId);
-    private  final String TAG = "Spelling";
+    private final String TAG = "Camera";
     private boolean darkmode;
 
     @Override
@@ -85,6 +86,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
 
                 if (documentSnapshot.exists()) {
                     darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
@@ -93,11 +95,12 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                 }
             }
         });
+        Utils.onActivityCreateSetTheme(this);
 
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            setTheme(R.style.DarkTheme1);
+            Utils.changeToDark(this);
         }else{
-            setTheme(R.style.AppTheme);
+            Utils.changeToLight(this);
         }
         setContentView(R.layout.activity_camera);
 

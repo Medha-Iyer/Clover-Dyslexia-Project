@@ -7,7 +7,7 @@ public class UserItem {
     private String age;
     private String pitch;
     private String speed;
-    private boolean darkMode;
+    private boolean darkmode;
     private String theme;
 
     public UserItem(){
@@ -20,7 +20,7 @@ public class UserItem {
         age = a;
         pitch = p;
         speed = s;
-        darkMode = d;
+        darkmode = d;
         theme = t;
     }
 
@@ -45,7 +45,7 @@ public class UserItem {
     }
 
     public boolean getDarkmode(){
-        return darkMode;
+        return darkmode;
     }
 
     public String getTheme(){

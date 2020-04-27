@@ -18,6 +18,7 @@ public class Utils
     public final static int DARK_THEME_PINK = 3;
     public final static int THEME_GREEN = 4;
     public final static int DARK_THEME_GREEN = 5;
+
     /**
      * Set the theme of the Activity, and restart it by creating a new Activity of the same type.
      */
@@ -73,15 +74,15 @@ public class Utils
 
     public static void changeToDark(Activity activity){
         if(sTheme%2 == 0){
-            sTheme++;
-            changeToTheme(activity, sTheme);
+            Log.d("Utils", "dark" + Integer.toString(sTheme+1));
+            changeToTheme(activity, sTheme+1);
         }
     }
 
     public static void changeToLight(Activity activity){
         if(sTheme%2 != 0){
-            sTheme--;
-            changeToTheme(activity, sTheme);
+            Log.d("Utils", "light" + Integer.toString(sTheme-1));
+            changeToTheme(activity, sTheme-1);
         }
     }
 

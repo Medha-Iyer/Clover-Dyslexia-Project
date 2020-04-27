@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.clover.R;
 import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.pojo.LibraryCardItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -92,6 +93,7 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
 
                 if (documentSnapshot.exists()) {
                     darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
@@ -100,12 +102,14 @@ public class Library extends AppCompatActivity implements LibraryAdapter.OnItemC
                 }
             }
         });
+        Utils.onActivityCreateSetTheme(this);
 
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            setTheme(R.style.DarkTheme1);
+            Utils.changeToDark(this);
         }else{
-            setTheme(R.style.AppTheme);
+            Utils.changeToLight(this);
         }
+
         setContentView(R.layout.activity_library);
 
         //Initialize variables

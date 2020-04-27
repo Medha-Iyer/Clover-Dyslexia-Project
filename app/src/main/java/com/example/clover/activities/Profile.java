@@ -23,6 +23,7 @@ import com.example.clover.adapters.ProfileViewPagerAdapter;
 import com.example.clover.fragments.ProfilePersonalInfo;
 import com.example.clover.fragments.ProfileProgressCheck;
 import com.example.clover.pojo.GameItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -48,7 +49,7 @@ public class Profile extends AppCompatActivity {
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     DocumentReference documentReference = fStore.collection("users").document(userId);
-    private  final String TAG = "Profile";
+    private final String TAG = "Profile";
     private boolean darkmode;
 
     @Override
@@ -66,6 +67,7 @@ public class Profile extends AppCompatActivity {
 
                 if (documentSnapshot.exists()) {
                     darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
@@ -74,11 +76,12 @@ public class Profile extends AppCompatActivity {
                 }
             }
         });
+        Utils.onActivityCreateSetTheme(this);
 
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            setTheme(R.style.DarkTheme1);
+            Utils.changeToDark(this);
         }else{
-            setTheme(R.style.AppTheme);
+            Utils.changeToLight(this);
         }
         setContentView(R.layout.activity_profile);
 

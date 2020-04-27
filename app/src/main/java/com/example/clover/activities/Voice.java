@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.pojo.GameItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -76,6 +77,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
 
                 if (documentSnapshot.exists()) {
                     darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
@@ -84,11 +86,12 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
                 }
             }
         });
+        Utils.onActivityCreateSetTheme(this);
 
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            setTheme(R.style.DarkTheme1);
+            Utils.changeToDark(this);
         }else{
-            setTheme(R.style.AppTheme);
+            Utils.changeToLight(this);
         }
         setContentView(R.layout.activity_voice);
 
