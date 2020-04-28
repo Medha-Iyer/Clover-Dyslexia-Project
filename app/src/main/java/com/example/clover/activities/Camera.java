@@ -91,8 +91,16 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                 }
 
                 if (documentSnapshot.exists()) {
-                    darkmode = documentSnapshot.getBoolean("darkmode");
-                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    if(documentSnapshot.getBoolean("darkmode") != null){
+                        darkmode = documentSnapshot.getBoolean("darkmode");
+                    } else {
+                        darkmode = false;
+                    }
+                    if(documentSnapshot.getString("theme") != null){
+                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    } else {
+                        Utils.setTheme(0);
+                    }
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
@@ -262,8 +270,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         startActivityForResult(Intent.createChooser(galleryIntent,
                 "Select Picture"), SELECT_PICTURE);
     }
-
-        private void detectTextFromImage(){
+    private void detectTextFromImage(){
             TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
             if(!textRecognizer.isOperational()){
                 Toast.makeText(getApplicationContext(), "Could not get the text", Toast.LENGTH_SHORT).show();
@@ -279,12 +286,12 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                 displayTextFromImage(sb);
             }
         }
-
     private void displayTextFromImage(StringBuilder sb) {
         if (sb.toString().length() == 0) {
             Toast.makeText(this, "No Text Found in image.", Toast.LENGTH_SHORT).show();
         } else {
             tv.setText(sb.toString());
+            fileText = tv.getText().toString();
         }
     }
 
@@ -304,7 +311,6 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         startActivity(i);
         overridePendingTransition(0, 0);
     }
-
 
     //for the speaker function
     @Override

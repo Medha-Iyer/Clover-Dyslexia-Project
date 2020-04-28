@@ -88,12 +88,16 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
 
                 if (documentSnapshot.exists()) {
-                    if (documentSnapshot.getBoolean("darkmode") != null){
+                    if(documentSnapshot.getBoolean("darkmode") != null){
                         darkmode = documentSnapshot.getBoolean("darkmode");
                     } else {
                         darkmode = false;
                     }
-                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    if(documentSnapshot.getString("theme") != null){
+                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    } else {
+                        Utils.setTheme(0);
+                    }
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{

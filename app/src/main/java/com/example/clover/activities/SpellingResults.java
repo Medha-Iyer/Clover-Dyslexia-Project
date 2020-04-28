@@ -73,8 +73,16 @@ public class SpellingResults extends AppCompatActivity implements View.OnClickLi
                 }
 
                 if (documentSnapshot.exists()) {
-                    darkmode = documentSnapshot.getBoolean("darkmode");
-                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    if(documentSnapshot.getBoolean("darkmode") != null){
+                        darkmode = documentSnapshot.getBoolean("darkmode");
+                    } else {
+                        darkmode = false;
+                    }
+                    if(documentSnapshot.getString("theme") != null){
+                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    } else {
+                        Utils.setTheme(0);
+                    }
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
