@@ -76,7 +76,11 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                 }
 
                 if (documentSnapshot.exists()) {
-                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    if (documentSnapshot.getBoolean("darkmode") != null){
+                        darkmode = documentSnapshot.getBoolean("darkmode");
+                    } else {
+                        darkmode = false;
+                    }
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{

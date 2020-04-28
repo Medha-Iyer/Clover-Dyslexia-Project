@@ -115,7 +115,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
 
                 if (documentSnapshot.exists()) {
-                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    if (documentSnapshot.getBoolean("darkmode") != null){
+                        darkmode = documentSnapshot.getBoolean("darkmode");
+                    } else {
+                        darkmode = false;
+                    }
                     Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -341,7 +345,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 if (documentSnapshot.exists()) {
                     pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
                     speed = Integer.parseInt(documentSnapshot.getString("speed"));
-                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    if (documentSnapshot.getBoolean("darkmode") != null){
+                        darkmode = documentSnapshot.getBoolean("darkmode");
+                    } else {
+                        darkmode = false;
+                    }
                     theme = Integer.parseInt(documentSnapshot.getString("theme"));
                     Log.d(TAG, "This is darkmode " + darkmode);
                     f.onCallback(pitch, speed, darkmode, theme);
