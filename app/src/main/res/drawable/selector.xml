@@ -9,7 +9,7 @@
     //if this icon is not selected, then the icon will turn this color
     <item
         android:state_selected="false"
-        android:color="?attr/baseUnselect"/>
+        android:color="?attr/accentUnselect"/>
 
 </selector>
 
