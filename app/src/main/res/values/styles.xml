@@ -28,6 +28,19 @@
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
+    <style name="LightTheme3" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="baseLight">#D9E7C4</item>
+        <item name="baseDark">#BC315C</item>
+        <item name="accentSelect">#3CA377</item>
+        <item name="accentUnselect">#5A326D</item>
+        <item name="logoColor">#75dbaf</item>
+        <item name="backgroundColor">#FFFFFF</item>
+        <item name="textcolor">#303030</item>
+        <item name="invertTextcolor">#FFFFFF</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
     <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">@font/quicksand_bold</item>
         <item name="android:textColor">@android:color/white</item>
@@ -53,12 +66,45 @@
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
+
     <!-- DARK THEMES -->
+
     <style name="DarkTheme1" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="baseLight">#864149</item>
+        <item name="baseDark">#d5ede7</item>
+        <item name="accentSelect">#93c8dd</item>
+        <item name="accentUnselect">#73b75e</item>
+        <item name="logoColor">#3f8942</item>
         <item name="backgroundColor">#303030</item>
-        <!--        alternate card background #424242-->
-        <item name="textcolor">#F1EDEA</item>
+        <item name="textcolor">#FFFFFF</item>
+        <item name="invertTextcolor">#303030</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
+    <style name="DarkTheme2" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="accentSelect">#e6ceed</item>
+        <item name="accentUnselect">#96adfc</item>
+        <item name="baseLight">#efd8e1</item>
+        <item name="logoColor">#5f9648</item>
+        <item name="baseDark">#506296</item>
+        <item name="backgroundColor">#303030</item>
+        <item name="textcolor">#FFFFFF</item>
+        <item name="invertTextcolor">#303030</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
+    <style name="DarkTheme3" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="baseLight">#BC315C</item>
+        <item name="baseDark">#D9E7C4</item>
+        <item name="accentSelect">#3CA377</item>
+        <item name="accentUnselect">#5A326D</item>
+        <item name="logoColor">#75dbaf</item>
+        <item name="backgroundColor">#FFFFFF</item>
+        <item name="textcolor">#303030</item>
+        <item name="invertTextcolor">#FFFFFF</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
@@ -83,18 +129,18 @@
 <!--    &lt;!&ndash;        <item name="colorAccent">@color/colorAccent</item>&ndash;&gt;-->
 <!--    &lt;!&ndash;    </style>&ndash;&gt;-->
 
-<!--    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">-->
-<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
-<!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
-<!--        <item name="colorAccent">@color/colorAccent</item>-->
-<!--    </style>-->
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
-<!--    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">-->
-<!--        <item name="android:textColorPrimary">@android:color/white</item>-->
-<!--        <item name="android:textColorSecondary">@color/cardview_dark_background</item>-->
-<!--    </style>-->
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@color/cardview_dark_background</item>
+    </style>
 
-<!--    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />-->
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>

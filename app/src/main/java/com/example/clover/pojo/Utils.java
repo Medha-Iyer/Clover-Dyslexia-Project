@@ -42,6 +42,12 @@ public class Utils
             case DARK_THEME_PINK:
                 index = 1;
                 break;
+            case THEME_GREEN:
+                index = 2;
+                break;
+            case DARK_THEME_GREEN:
+                index = 2;
+                break;
         }
         activity.finish();
         activity.startActivity(new Intent(activity, activity.getClass()));
@@ -63,6 +69,12 @@ public class Utils
                 break;
             case DARK_THEME_PINK:
                 activity.setTheme(R.style.DarkTheme2);
+                break;
+            case THEME_GREEN:
+                activity.setTheme(R.style.LightTheme3);
+                break;
+            case DARK_THEME_GREEN:
+                activity.setTheme(R.style.DarkTheme3);
                 break;
         }
     }

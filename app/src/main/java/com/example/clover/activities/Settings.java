@@ -212,33 +212,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v){
-//        switch(selectedTheme){
-//            case R.id.radio_one:
-//                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-//                    theme = R.style.DarkTheme1;
-//                    saveData();
-//                    restartApp();
-//                }else{
-//                    theme = R.style.AppTheme;
-//                    saveData();
-//                    restartApp();
-//                }
-//                break;
-//            case R.id.radio_two:
-//                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-//                    theme = R.style.DarkTheme2;
-//                    saveData();
-//                    restartApp();
-//                }else{
-//                    theme = R.style.LightTheme2;
-//                    saveData();
-//                    restartApp();
-//                }
-//                break;
-//            case R.id.radio_three:
-//                break;
-//        }
-
         switch (v.getId()){
             case R.id.logoutCard:
                 FirebaseAuth.getInstance().signOut();
@@ -278,6 +251,16 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
                 break;
             case R.id.radio_three:
+                if(checked){
+                    if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                        theme = R.style.DarkTheme3;
+                        Utils.changeToTheme(this, Utils.DARK_THEME_GREEN);
+                    }else{
+                        theme = R.style.LightTheme3;
+                        Log.d(TAG, "Light theme 2");
+                        Utils.changeToTheme(this, Utils.THEME_GREEN);
+                    }
+                }
                 break;
         }
     }
