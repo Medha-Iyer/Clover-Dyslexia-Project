@@ -6,12 +6,14 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.text.method.ScrollingMovementMethod;
+import android.util.SparseArray;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +24,12 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.pojo.LibraryCardItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -31,13 +37,17 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
+//import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,7 +71,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     DocumentReference documentReference = fStore.collection("users").document(userId);
-    private  final String TAG = "Spelling";
+    private final String TAG = "Camera";
     private boolean darkmode;
 
     private TextToSpeech mTTS;
@@ -81,11 +91,8 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                 }
 
                 if (documentSnapshot.exists()) {
-                    if (documentSnapshot.getBoolean("darkmode") != null){
-                        darkmode = documentSnapshot.getBoolean("darkmode");
-                    } else {
-                        darkmode = false;
-                    }
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
@@ -94,11 +101,12 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                 }
             }
         });
+        Utils.onActivityCreateSetTheme(this);
 
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            setTheme(R.style.DarkTheme1);
+            Utils.changeToDark(this);
         }else{
-            setTheme(R.style.AppTheme);
+            Utils.changeToLight(this);
         }
         setContentView(R.layout.activity_camera);
 
@@ -160,7 +168,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
+                switch (menuItem.getItemId()){
                     case R.id.camera:
                         return true;
                     case R.id.library:
@@ -254,31 +262,29 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         startActivityForResult(Intent.createChooser(galleryIntent,
                 "Select Picture"), SELECT_PICTURE);
     }
-    private void detectTextFromImage() {
-        final FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
-        FirebaseVisionTextRecognizer firebaseVisionTextRecognizer = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
-        firebaseVisionTextRecognizer.processImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-            @Override
-            public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                displayTextFromImage(firebaseVisionText);
+
+        private void detectTextFromImage(){
+            TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
+            if(!textRecognizer.isOperational()){
+                Toast.makeText(getApplicationContext(), "Could not get the text", Toast.LENGTH_SHORT).show();
+            }else{
+                Frame frame = new Frame.Builder().setBitmap(imageBitmap).build();
+                SparseArray<TextBlock> items = textRecognizer.detect(frame);
+                StringBuilder sb = new StringBuilder();
+                for(int i=0; i<items.size(); i++){
+                    TextBlock myItem = items.valueAt(i);
+                    sb.append(myItem.getValue());
+                    sb.append("\n");
+                }
+                displayTextFromImage(sb);
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Camera.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    private void displayTextFromImage(FirebaseVisionText firebaseVisionText) {
-        List<FirebaseVisionText.TextBlock> blockList = firebaseVisionText.getTextBlocks();
-        if (blockList.size() == 0) {
+        }
+
+    private void displayTextFromImage(StringBuilder sb) {
+        if (sb.toString().length() == 0) {
             Toast.makeText(this, "No Text Found in image.", Toast.LENGTH_SHORT).show();
         } else {
-            for (FirebaseVisionText.TextBlock block : blockList) {
-                String text = block.getText();
-                tv.setText(text);
-                fileText = text;
-            }
+            tv.setText(sb.toString());
         }
     }
 

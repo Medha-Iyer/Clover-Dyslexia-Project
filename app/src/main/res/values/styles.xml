@@ -1,18 +1,50 @@
 <resources>
+    <!--make sure the different styles chosen share the same parent-->
+
+<!--    LIGHT THEMES-->
+    <style name="LightTheme1" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="baseLight">#d5ede7</item>
+        <item name="baseDark">#864149</item>
+        <item name="accentSelect">#93c8dd</item>
+        <item name="accentUnselect">#73b75e</item>
+        <item name="logoColor">#3f8942</item>
+        <item name="backgroundColor">#FFFFFF</item>
+        <item name="textcolor">#303030</item>
+        <item name="invertTextcolor">#FFFFFF</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
 
     <style name="LightTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">@font/quicksand_regular</item>
-        <item name="baseSelect">#e6ceed</item>
-        <item name="baseUnselect">#96adfc</item>
-        <item name="baseAccent">#efd8e1</item>
+        <item name="accentSelect">#e6ceed</item>
+        <item name="accentUnselect">#96adfc</item>
+        <item name="baseLight">#efd8e1</item>
         <item name="logoColor">#5f9648</item>
         <item name="baseDark">#506296</item>
         <item name="backgroundColor">#FFFFFF</item>
+        <item name="textcolor">#303030</item>
+        <item name="invertTextcolor">#FFFFFF</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
+    <style name="LightTheme3" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="baseLight">#D9E7C4</item>
+        <item name="baseDark">#BC315C</item>
+        <item name="accentSelect">#3CA377</item>
+        <item name="accentUnselect">#5A326D</item>
+        <item name="logoColor">#75dbaf</item>
+        <item name="backgroundColor">#FFFFFF</item>
+        <item name="textcolor">#303030</item>
+        <item name="invertTextcolor">#FFFFFF</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
     <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">@font/quicksand_bold</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
     <style name="AppTheme.PopMe" parent="LightTheme2">
@@ -20,86 +52,82 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
-
-
-    <!--make sure the different styles chosen share the same parent-->
-    <!-- Light/Day themes. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">#93C8DD</item>
-        <item name="colorPrimaryDark">#435202</item>
-        <item name="colorAccent">#864149</item>
-        <item name="backgroundColor">#D5EDE7</item>
-        <item name="cardbackground">#C4D186</item>
-        <item name="textcolor">#808080</item>
-        <item name="tintcolor">#000000</item>
-        <item name="buttoncolor">#C4D186</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
+
 
     <style name="ProfileTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#93C8DD</item>
+        <item name="colorPrimary">#C4D186</item>
         <item name="colorPrimaryDark">#435202</item>
         <item name="colorAccent">#864149</item>
         <item name="backgroundColor">#F1EDEA</item>
-        <item name="cardbackground">#C4D186</item>
         <item name="textcolor">#808080</item>
-        <item name="tintcolor">#000000</item>
-        <item name="buttoncolor">#C4D186</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
-<!--    <style name="LightTheme2" parent="Theme.AppCompat.Light.NoActionBar">-->
-<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
-<!--        <item name="colorPrimary">#F7CBFF</item>-->
-<!--        <item name="colorPrimaryDark">#b76bc6</item>-->
-<!--        <item name="colorAccent">#9FE6FA</item>-->
-<!--        <item name="backgroundColor">#F1EDEA</item>-->
-<!--        <item name="cardbackground">#F7CBFF</item>-->
-<!--        <item name="textcolor">#808080</item>-->
-<!--        <item name="tintcolor">#000000</item>-->
-<!--        <item name="buttoncolor">#F7CBFF</item>-->
-<!--        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>-->
-<!--    </style>-->
 
+    <!-- DARK THEMES -->
 
-    <!-- Dark/Night themes. -->
     <style name="DarkTheme1" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">#93C8DD</item>
-        <item name="colorPrimaryDark">#435202</item>
-        <item name="colorAccent">#864149</item>
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="baseLight">#864149</item>
+        <item name="baseDark">#d5ede7</item>
+        <item name="accentSelect">#93c8dd</item>
+        <item name="accentUnselect">#73b75e</item>
+        <item name="logoColor">#3f8942</item>
         <item name="backgroundColor">#303030</item>
-        <item name="cardbackground">#C4D186</item>
-        <!--        alternate card background #424242-->
-        <item name="textcolor">#F1EDEA</item>
-        <item name="tintcolor">#FFFFFF</item>
-        <item name="buttoncolor">#C4D186</item>
+        <item name="textcolor">#FFFFFF</item>
+        <item name="invertTextcolor">#303030</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
     <style name="DarkTheme2" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">#F7CBFF</item>
-        <item name="colorPrimaryDark">#b76bc6</item>
-        <item name="colorAccent">#9FE6FA</item>
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="accentSelect">#e6ceed</item>
+        <item name="accentUnselect">#96adfc</item>
+        <item name="baseLight">#efd8e1</item>
+        <item name="logoColor">#5f9648</item>
+        <item name="baseDark">#506296</item>
         <item name="backgroundColor">#303030</item>
-        <item name="cardbackground">#F7CBFF</item>
-        <item name="textcolor">#F1EDEA</item>
-        <item name="tintcolor">#FFFFFF</item>
-        <item name="buttoncolor">#F7CBFF</item>
+        <item name="textcolor">#FFFFFF</item>
+        <item name="invertTextcolor">#303030</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
-    <!-- Base application theme. -->
-    <!--    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">-->
-    <!-- Customize your theme here. -->
-    <!--        <item name="colorPrimary">@color/colorPrimary</item>-->
-    <!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
-    <!--        <item name="colorAccent">@color/colorAccent</item>-->
-    <!--    </style>-->
+    <style name="DarkTheme3" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+        <item name="baseLight">#BC315C</item>
+        <item name="baseDark">#D9E7C4</item>
+        <item name="accentSelect">#3CA377</item>
+        <item name="accentUnselect">#5A326D</item>
+        <item name="logoColor">#75dbaf</item>
+        <item name="backgroundColor">#FFFFFF</item>
+        <item name="textcolor">#303030</item>
+        <item name="invertTextcolor">#FFFFFF</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
+<!--    <style name="DarkTheme2" parent="Theme.AppCompat.Light.NoActionBar">-->
+<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+<!--        <item name="colorPrimary">#F7CBFF</item>-->
+<!--        <item name="colorPrimaryDark">#b76bc6</item>-->
+<!--        <item name="colorAccent">#9FE6FA</item>-->
+<!--        <item name="backgroundColor">#303030</item>-->
+<!--        <item name="cardbackground">#F7CBFF</item>-->
+<!--        <item name="textcolor">#F1EDEA</item>-->
+<!--        <item name="tintcolor">#FFFFFF</item>-->
+<!--        <item name="buttoncolor">#F7CBFF</item>-->
+<!--        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Base application theme. &ndash;&gt;-->
+<!--    &lt;!&ndash;    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">&ndash;&gt;-->
+<!--    &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+<!--    &lt;!&ndash;        <item name="colorPrimary">@color/colorPrimary</item>&ndash;&gt;-->
+<!--    &lt;!&ndash;        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>&ndash;&gt;-->
+<!--    &lt;!&ndash;        <item name="colorAccent">@color/colorAccent</item>&ndash;&gt;-->
+<!--    &lt;!&ndash;    </style>&ndash;&gt;-->
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>

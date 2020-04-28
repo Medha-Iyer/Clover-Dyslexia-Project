@@ -2,42 +2,57 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_gradient"
+    android:background="#303030"
     tools:context="com.example.clover.activities.Login"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
+<!--    "@drawable/login_gradient"-->
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
         <ImageView
             android:id="@+id/splashlogo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:src="@drawable/clovertemp" />
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:src="@drawable/lightbulb_animation" />
+<!--        android:adjustViewBounds="true"-->
+<!--        android:scaleType="fitCenter"-->
+
+        <TextView
+            android:id="@+id/splashwords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/splashlogo"
+            android:text="Clover"
+            android:textSize="75dp"
+            android:textColor="#47AB47"
+            android:fontFamily="@font/opendyslexic_bold"
+            android:alpha="0">
+        </TextView>
 
         <RelativeLayout
             android:id="@+id/mainlogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/splashlogo"
-            android:visibility="gone">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:alpha="0">
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="147dp"
-                android:layout_height="112dp"
-                android:layout_alignParentTop="true"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="39dp"
-                app:srcCompat="@drawable/clovertemp"
+                android:layout_marginTop="110dp"
+                app:srcCompat="@drawable/ic_clover"
                 android:elevation="2dp"/>
 
             <TextView

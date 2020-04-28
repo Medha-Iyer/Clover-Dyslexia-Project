@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.text.InputType;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.pojo.GameItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -67,7 +67,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     DocumentReference documentReference = fStore.collection("users").document(userId);
-    private  final String TAG = "Spelling";
+    private final String TAG = "Spelling";
     private boolean darkmode;
 
     @Override
@@ -84,11 +84,8 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                 }
 
                 if (documentSnapshot.exists()) {
-                    if (documentSnapshot.getBoolean("darkmode") != null){
-                        darkmode = documentSnapshot.getBoolean("darkmode");
-                    } else {
-                        darkmode = false;
-                    }
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
@@ -97,16 +94,19 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                 }
             }
         });
+        Utils.onActivityCreateSetTheme(this);
 
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            setTheme(R.style.DarkTheme1);
+            Utils.changeToDark(this);
         }else{
-            setTheme(R.style.AppTheme);
+            Utils.changeToLight(this);
         }
+
         setContentView(R.layout.activity_spelling);
 
         wordView = findViewById(R.id.word_view);
         viewWord = findViewById(R.id.show_word);
+//        lockIcon = findViewById(R.id.lock_icon);
         correctView = findViewById(R.id.correct_text);
         userWord = findViewById(R.id.input_word);
 

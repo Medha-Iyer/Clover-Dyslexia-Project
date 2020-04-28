@@ -4,12 +4,12 @@
     //if this icon is selected, then the icon will turn this color
     <item
         android:state_selected="true"
-        android:color="?attr/baseSelect"/>
+        android:color="?attr/accentSelect"/>
 
     //if this icon is not selected, then the icon will turn this color
     <item
         android:state_selected="false"
-        android:color="?attr/baseUnselect"/>
+        android:color="?attr/accentUnselect"/>
 
 </selector>
 

@@ -19,21 +19,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/LightTheme2">
-      
-        <activity android:name=".activities.ProfileNameDialog"></activity>
+        <activity android:name=".activities.ProfilePicDialog"></activity>
+
+        <meta-data
+            android:name="com.google.android.vision.API_KEY"
+            android:value="@string/API_key"></meta-data>
+
         <activity
             android:name=".activities.ProfileProgress"
             android:parentActivityName=".activities.Profile"
             android:theme="@style/AppTheme.PopMe" />
         <activity android:name=".activities.SpellingResults" />
+        <activity android:name=".activities.Books" />
         <activity
             android:name=".activities.VoiceResults"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/LightTheme1" />
 
         <activity android:name=".activities.Settings" />
         <activity
             android:name=".activities.Profile"
-            android:theme="@style/ProfileTheme" />
+            android:theme="@style/LightTheme1" />
 
         <activity
             android:name=".activities.Library"

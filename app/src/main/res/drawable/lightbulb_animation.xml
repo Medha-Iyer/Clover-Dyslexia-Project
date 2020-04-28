@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+    <item android:drawable= "@drawable/animation1"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation2"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation3"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation4"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation5"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation6"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation7"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation8"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation9"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation10"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation11"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation12"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation13"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation14"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation15"
+        android:duration= "50" />
+
+    <item android:drawable= "@drawable/animation16"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation17"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation18"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation19"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation20"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation21"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation22"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation23"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation24"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation25"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation26"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation27"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation28"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation29"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation30"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation31"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation32"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation33"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation34"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation35"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation36"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation37"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation38"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation39"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation40"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation41"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation42"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation43"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation44"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation45"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation46"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation47"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation48"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation49"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation50"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation51"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation52"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation53"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation54"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation55"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation56"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation57"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation58"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation59"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation60"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation61"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation62"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation63"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation64"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation65"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation66"
+        android:duration= "25" />
+
+    <item android:drawable= "@drawable/animation67"
+        android:duration= "25" />
+
+</animation-list>

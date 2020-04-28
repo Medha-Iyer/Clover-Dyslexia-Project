@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.text.method.ScrollingMovementMethod;
@@ -103,14 +102,9 @@ public class LibraryPopActivity extends AppCompatActivity implements View.OnClic
         params.gravity = Gravity.CENTER;
         params.x = 0;
         params.y = -20;
-        params.dimAmount = (float) 0.7;
         getWindow().setAttributes(params);
 
-        //dim background
-        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-        layoutParams.dimAmount = 0.75f;
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().setAttributes(layoutParams);
+
     }
 
     //for the speaker function

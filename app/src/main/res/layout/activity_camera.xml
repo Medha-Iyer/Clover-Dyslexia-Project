@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/baseAccent"
+    android:background="?attr/baseLight"
     tools:context=".activities.Camera">
 
     <ImageView
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:layout_centerHorizontal="true"
-        android:background="?attr/baseAccent"
+        android:background="?attr/baseLight"
         android:padding="5dp"
         android:text="C A M E R A"
         android:textAlignment="center"
@@ -134,7 +134,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="20dp"
-                app:cardBackgroundColor="?attr/baseSelect">
+                app:cardBackgroundColor="?attr/accentSelect">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -179,7 +179,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="20dp"
-                app:cardBackgroundColor="?attr/baseSelect">
+                app:cardBackgroundColor="?attr/accentSelect">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -278,7 +278,7 @@
                         android:layout_centerHorizontal="true"
                         android:id="@+id/card_image4"
                         android:tint="@android:color/white"
-                        android:src="@drawable/ic_save"
+                        app:srcCompat="@drawable/ic_save"
                         android:layout_marginTop="25dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

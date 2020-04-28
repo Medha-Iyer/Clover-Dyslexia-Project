@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +23,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.adapters.LibraryAdapter;
+import com.example.clover.pojo.LibraryCardItem;
+import com.example.clover.pojo.Utils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.example.clover.adapters.FragmentAdapter;
 import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.fragments.LibraryBooks;
@@ -45,6 +54,8 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.lang.reflect.Type;
+import java.util.Collections;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -74,25 +85,24 @@ public class Library extends AppCompatActivity {
                 }
 
                 if (documentSnapshot.exists()) {
-                    if (documentSnapshot.getBoolean("darkmode") != null){
-                        darkmode = documentSnapshot.getBoolean("darkmode");
-                    } else {
-                        darkmode = false;
-                    }
-                    if (darkmode) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    } else {
+                    }else{
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                     }
                 }
             }
         });
+        Utils.onActivityCreateSetTheme(this);
 
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            setTheme(R.style.DarkTheme1);
-        } else {
-            setTheme(R.style.AppTheme);
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            Utils.changeToDark(this);
+        }else{
+            Utils.changeToLight(this);
         }
+
         setContentView(R.layout.activity_library);
 
         //setting up tabs for fragments

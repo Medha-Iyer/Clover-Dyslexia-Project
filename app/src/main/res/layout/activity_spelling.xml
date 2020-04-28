@@ -65,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/rounded_nav"
-                    android:background="?attr/baseAccent"
+                    android:background="?attr/baseLight"
                     android:scaleType="fitXY"/>
 
                 <!--        <ImageView-->
@@ -128,7 +128,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="20dp"
-                app:cardBackgroundColor="?attr/baseAccent">
+                app:cardBackgroundColor="?attr/baseLight">
 
                     <TextView
                         android:layout_centerHorizontal="true"
@@ -154,7 +154,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="20dp"
-                app:cardBackgroundColor="?attr/baseAccent">
+                app:cardBackgroundColor="?attr/baseLight">
 
                 <TextView
                     android:layout_centerHorizontal="true"
@@ -180,7 +180,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="20dp"
-                app:cardBackgroundColor="?attr/baseAccent">
+                app:cardBackgroundColor="?attr/baseLight">
 
                 <TextView
                     android:layout_centerHorizontal="true"

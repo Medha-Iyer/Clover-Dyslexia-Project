@@ -72,39 +72,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         void onCallback(int pitch, int speed, boolean darkMode, int theme);
     }
 
-//    private class ThemeAsyncTask extends AsyncTask<Void, Void, Integer>{
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Integer integer) {
-//            super.onPostExecute(integer);
-//        }
-//
-//        @Override
-//        protected Integer doInBackground(Void... voids) {
-//            int themeId;
-//            FirebaseAuth fAuth = FirebaseAuth.getInstance();
-//            FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-//            String userId = fAuth.getCurrentUser().getUid();
-//            DocumentReference documentReference = fStore.collection("users").document(userId);
-//            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                @Override
-//                public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                    UserItem themes = documentSnapshot.toObject(UserItem.class);
-//                    themeId = Integer.parseInt(themes.getTheme());
-//                }
-//            });
-//        } //returns the ID of the theme it will be set to
-//
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         saveThemeData();
+        //This has to be implemented in every screen to update mode and theme.
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
@@ -132,8 +105,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         Utils.onActivityCreateSetTheme(this);
 
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            Log.d(TAG, "Switching to dark mode");
             Utils.changeToDark(this);
         }else{
+            Log.d(TAG, "Switching to light mode");
             Utils.changeToLight(this);
         }
         setContentView(R.layout.activity_settings);
@@ -237,33 +212,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v){
-//        switch(selectedTheme){
-//            case R.id.radio_one:
-//                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-//                    theme = R.style.DarkTheme1;
-//                    saveData();
-//                    restartApp();
-//                }else{
-//                    theme = R.style.AppTheme;
-//                    saveData();
-//                    restartApp();
-//                }
-//                break;
-//            case R.id.radio_two:
-//                if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-//                    theme = R.style.DarkTheme2;
-//                    saveData();
-//                    restartApp();
-//                }else{
-//                    theme = R.style.LightTheme2;
-//                    saveData();
-//                    restartApp();
-//                }
-//                break;
-//            case R.id.radio_three:
-//                break;
-//        }
-
         switch (v.getId()){
             case R.id.logoutCard:
                 FirebaseAuth.getInstance().signOut();
@@ -281,14 +229,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
                         theme = R.style.DarkTheme1;
                         Log.d(TAG, "Dark theme 1");
-                        Utils.setTheme(Utils.DARK_THEME_DEFAULT);
-                        saveData();
                         Utils.changeToTheme(this, Utils.DARK_THEME_DEFAULT);
                     }else{
-                        theme = R.style.AppTheme;
-                        Log.d(TAG, "App theme");
-                        Utils.setTheme(Utils.THEME_DEFAULT);
-                        saveData();
+                        theme = R.style.LightTheme1;
+                        Log.d(TAG, "Light theme 1");
                         Utils.changeToTheme(this, Utils.THEME_DEFAULT);
                         break;
                     }
@@ -307,6 +251,16 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
                 break;
             case R.id.radio_three:
+                if(checked){
+                    if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                        theme = R.style.DarkTheme3;
+                        Utils.changeToTheme(this, Utils.DARK_THEME_GREEN);
+                    }else{
+                        theme = R.style.LightTheme3;
+                        Log.d(TAG, "Light theme 2");
+                        Utils.changeToTheme(this, Utils.THEME_GREEN);
+                    }
+                }
                 break;
         }
     }

@@ -18,6 +18,7 @@ public class Utils
     public final static int DARK_THEME_PINK = 3;
     public final static int THEME_GREEN = 4;
     public final static int DARK_THEME_GREEN = 5;
+
     /**
      * Set the theme of the Activity, and restart it by creating a new Activity of the same type.
      */
@@ -41,6 +42,12 @@ public class Utils
             case DARK_THEME_PINK:
                 index = 1;
                 break;
+            case THEME_GREEN:
+                index = 2;
+                break;
+            case DARK_THEME_GREEN:
+                index = 2;
+                break;
         }
         activity.finish();
         activity.startActivity(new Intent(activity, activity.getClass()));
@@ -52,7 +59,7 @@ public class Utils
         {
             default:
             case THEME_DEFAULT:
-                activity.setTheme(R.style.AppTheme);
+                activity.setTheme(R.style.LightTheme1);
                 break;
             case DARK_THEME_DEFAULT:
                 activity.setTheme(R.style.DarkTheme1);
@@ -62,6 +69,12 @@ public class Utils
                 break;
             case DARK_THEME_PINK:
                 activity.setTheme(R.style.DarkTheme2);
+                break;
+            case THEME_GREEN:
+                activity.setTheme(R.style.LightTheme3);
+                break;
+            case DARK_THEME_GREEN:
+                activity.setTheme(R.style.DarkTheme3);
                 break;
         }
     }
@@ -73,15 +86,15 @@ public class Utils
 
     public static void changeToDark(Activity activity){
         if(sTheme%2 == 0){
-            sTheme++;
-            changeToTheme(activity, sTheme);
+            Log.d("Utils", "dark" + Integer.toString(sTheme+1));
+            changeToTheme(activity, sTheme+1);
         }
     }
 
     public static void changeToLight(Activity activity){
         if(sTheme%2 != 0){
-            sTheme--;
-            changeToTheme(activity, sTheme);
+            Log.d("Utils", "light" + Integer.toString(sTheme-1));
+            changeToTheme(activity, sTheme-1);
         }
     }
 

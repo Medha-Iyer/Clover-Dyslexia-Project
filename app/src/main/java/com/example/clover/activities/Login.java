@@ -3,13 +3,16 @@ package com.example.clover.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,61 +22,149 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.pojo.LightbulbAnimation;
+import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
-    private RelativeLayout mainLogin;
+    AnimationDrawable lightbulb;
+
+    private RelativeLayout mainLogin, mainLayout;
     private ImageView splashlogo;
-    private TextView mcreateAccount, mforgotPassword;
+    private TextView mcreateAccount, mforgotPassword, splashwords;
     private CardView mloginButton;
     EditText mEmail, mPassword;
     private ProgressBar mPbar;
-    FirebaseAuth fAuth;
     private Handler handler = new Handler();
+
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
+    private final String TAG = "Login";
+    private boolean darkmode;
+
+    Runnable hideViews = new Runnable() {
+        @Override
+        public void run() {
+            splashlogo.setVisibility(View.GONE);
+            splashwords.setVisibility(View.GONE);
+            mainLayout.setBackgroundColor(getResources().getColor(R.color.mainBlue));
+        }
+    };
 
     Runnable runnable = new Runnable() {
         @Override
-        public void run() {
+        public void run() { //TODO splash screen shows up after logout but we only want it when the app starts
             if(fAuth.getCurrentUser() != null) {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             }else {
-                mainLogin.setVisibility(View.VISIBLE);
-                splashlogo.setVisibility(View.GONE);
+                mainLogin.setBackgroundColor(getResources().getColor(R.color.mainBlue));
+                splashwords.animate().alpha(0f).setDuration(1000);
+                splashlogo.animate().alpha(0f).setDuration(1000);
+                mainLogin.animate().alpha(1f).setDuration(1000);
             }
+            handler.postDelayed(hideViews, 1000);
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //This has to be implemented in every screen to update mode and theme.
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Login.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+        Utils.onActivityCreateSetTheme(this);
+
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            Utils.changeToDark(this);
+        }else{
+            Utils.changeToLight(this);
+        }
+
         setContentView(R.layout.activity_login);
 
-        //initialize and assign variable, do this for every button or other interactive feature
-        mainLogin = findViewById(R.id.mainlogin);
-        splashlogo = findViewById(R.id.splashlogo);
-        mcreateAccount = findViewById(R.id.createAccount);
-        mcreateAccount.setOnClickListener(this);
-        mforgotPassword = findViewById(R.id.forgotPassword);
-        mforgotPassword.setOnClickListener(this);
-        mloginButton = findViewById(R.id.loginButton);
-        mloginButton.setOnClickListener(this);
-        mEmail = findViewById(R.id.email);
-        mPassword = findViewById(R.id.password);
-        mPbar = findViewById(R.id.progressBar);
-        fAuth = FirebaseAuth.getInstance();
+    //initialize and assign variable, do this for every button or other interactive feature
+    mainLogin = findViewById(R.id.mainlogin);
+    mainLayout = findViewById(R.id.mainLayout);
+    splashwords = findViewById(R.id.splashwords);
+    splashlogo = findViewById(R.id.splashlogo);
+    splashlogo.setImageResource(R.drawable.lightbulb_animation);
+    lightbulb = (AnimationDrawable) splashlogo.getDrawable();
+    mcreateAccount = findViewById(R.id.createAccount);
+    mcreateAccount.setOnClickListener(this);
+    mforgotPassword = findViewById(R.id.forgotPassword);
+    mforgotPassword.setOnClickListener(this);
+    mloginButton = findViewById(R.id.loginButton);
+    mloginButton.setOnClickListener(this);
+    mEmail = findViewById(R.id.email);
+    mPassword = findViewById(R.id.password);
+    mPbar = findViewById(R.id.progressBar);
+    fAuth = FirebaseAuth.getInstance();
 
-        handler.postDelayed(runnable, 3000); //3000 is the timeout for the splash
+    handler.postDelayed(runnable, 4000); //4000 is the timeout for the splash
 
-    }
+}
 
 //    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        final LightbulbAnimation anim = new LightbulbAnimation(lightbulb) {
+//            @Override
+//            public void onAnimationFinish() {
+//                splashwords.animate().alpha(1f).setDuration(200);
+//                handler.postDelayed(runnable, 1000); //3000 is the timeout for the splash
+//            }
+//
+//            @Override
+//            public void onAnimationStart() {
+//            }
+//        };
+//
+//        //splashlogo.setBackground(anim);
+//        anim.start();
+//    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        lightbulb.start();
+        splashwords.animate().alpha(1f).setDuration(2050);
+    }
+
+
+    //    @Override
 //    protected void onPause(){
 //        super.onPause();
 //        if(fAuth.getCurrentUser() != null) {

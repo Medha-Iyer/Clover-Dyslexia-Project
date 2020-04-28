@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userID = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userID);
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
     private final String TAG = "MainActivity";
     private boolean darkmode;
 
@@ -46,13 +46,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 if (documentSnapshot.exists()) {
-
-                    if (documentSnapshot.getBoolean("darkmode") != null){
-                        darkmode = documentSnapshot.getBoolean("darkmode");
-                    } else {
-                        darkmode = false;
-                    }
-//                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     if(darkmode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
@@ -82,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         CardView mlocked2 = findViewById(R.id.unlocked2);
         mlocked2.setOnClickListener(this);
+
+        CardView mbooks = findViewById(R.id.book_btn);
+        mbooks.setOnClickListener(this);
 
         //initialize and assign variable, do this for every button or other interactive feature
         BottomNavigationView navView = findViewById(R.id.nav_bar);
@@ -127,12 +125,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 i=new Intent(MainActivity.this,Spelling.class);
                 startActivity(i);
                 break;
+            case R.id.book_btn:
+                i=new Intent(MainActivity.this,Books.class);
+                startActivity(i);
+                break;
             case R.id.unlocked1:
                 Toast.makeText(this, "Get Clover Pro to unlock this game.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.unlocked2:
                 Toast.makeText(this, "Get Clover Pro to unlock this game.", Toast.LENGTH_SHORT).show();
-                break;
         }
     }
 }

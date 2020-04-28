@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_add"
         android:tint="@android:color/white"
-        android:backgroundTint="?attr/baseAccent"
+        android:backgroundTint="?attr/baseLight"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="75dp"
@@ -57,7 +57,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/baseSelect"
+                android:background="?attr/accentSelect"
                 app:title="Library"
                 app:titleTextColor="@android:color/white"
                 android:theme="@style/ToolbarTheme"/>

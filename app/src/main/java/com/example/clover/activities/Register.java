@@ -2,6 +2,7 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.pojo.UserItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -26,7 +28,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.auth.User;
 
 import java.util.HashMap;
@@ -34,39 +39,53 @@ import java.util.Map;
 
 public class Register extends AppCompatActivity implements View.OnClickListener {
 
-    RelativeLayout mainRegister;
-    ImageView splashlogo;
     private TextView mLoginHere;
     private CardView mRegisterButton;
     EditText mFullName, mEmail, mAge, mPassword;
-    String userID;
     private ProgressBar mPbar;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    private Handler handler  = new Handler();
-    private static final String TAG = MainActivity.class.getSimpleName();
 
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if(fAuth.getCurrentUser() != null) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-            }else {
-                mainRegister.setVisibility(View.VISIBLE);
-                splashlogo.setVisibility(View.GONE);
-            }
-        }
-    };
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userID = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userID);
+    private final String TAG = "Register";
+    private boolean darkmode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //This has to be implemented in every screen to update mode and theme.
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Register.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+        Utils.onActivityCreateSetTheme(this);
+
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            Utils.changeToDark(this);
+        }else{
+            Utils.changeToLight(this);
+        }
+
         setContentView(R.layout.activity_register);
 
         //initialize and assign variable, do this for every button or other interactive feature
-        mainRegister = findViewById(R.id.mainregister);
-        splashlogo = findViewById(R.id.splashlogo);
         mLoginHere = findViewById(R.id.loginHere);
         mLoginHere.setOnClickListener(this);
         mRegisterButton = findViewById(R.id.registerButton);
@@ -79,7 +98,6 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
 
-        handler.postDelayed(runnable, 2000); //2000 is the timeout for the splash
     }
 
     @Override

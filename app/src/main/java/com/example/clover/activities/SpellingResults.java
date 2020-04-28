@@ -2,6 +2,7 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +21,7 @@ import com.example.clover.adapters.GameAdapter;
 import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.pojo.GameItem;
 import com.example.clover.pojo.LibraryCardItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -42,12 +44,16 @@ public class SpellingResults extends AppCompatActivity implements View.OnClickLi
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<GameItem> spellingList = new ArrayList<GameItem>();
 
-    private FirebaseAuth fAuth;
-    private FirebaseFirestore fStore;
-    private String userId;
-    private DocumentReference documentReference;
-
     private Button playAgain;
+
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
+    private DocumentReference progressRef;
+
+    private final String TAG = "SpellingResults";
+    private boolean darkmode;
 
     private TextToSpeech mTTS;
     private int age, pitch, speed;
@@ -56,6 +62,35 @@ public class SpellingResults extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //This has to be implemented in every screen to update mode and theme.
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(SpellingResults.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+        Utils.onActivityCreateSetTheme(this);
+
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            Utils.changeToDark(this);
+        }else{
+            Utils.changeToLight(this);
+        }
+
         setContentView(R.layout.activity_spelling_results);
 
         fStore = FirebaseFirestore.getInstance();
