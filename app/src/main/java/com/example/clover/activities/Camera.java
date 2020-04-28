@@ -55,6 +55,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     private ImageView imageView;
     private TextView tv;
     private static Bitmap imageBitmap;
+    public static LibraryCardItem newCard;
 
     //saving to library
     private String fileName, fileText;
@@ -146,7 +147,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             }
         });
 
-        saveLibraryBtn = findViewById(R.id.save_to_library);
+        saveLibraryBtn = findViewById(R.id.save_card);
         saveLibraryBtn.setVisibility(View.GONE);
         saveLibraryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,7 +220,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     @Override //after pop-up, this method does something with the name
     public void applyTexts(String name) {
         fileName = name;
-        LibraryCardItem newCard = new LibraryCardItem(fileName, fileText);
+        newCard = new LibraryCardItem(fileName, fileText);
         //newCard.setId(0);
         libraryList.add(newCard);
         saveData();
