@@ -3,6 +3,7 @@ package com.example.clover.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,10 +41,11 @@ import java.util.Scanner;
 public class Spelling extends AppCompatActivity implements View.OnClickListener {
 
     BottomNavigationView navView;
-    ImageView hearWordBtn;
+    ImageView wordView;
+    ImageView hearWordBtn, lockIcon;
     TextView viewWord, correctView;
     EditText userWord;
-    Button checkWordBtn, checkAgainBtn, nextWordBtn;
+    CardView checkWordBtn, checkAgainBtn, nextWordBtn;
 
     private TextToSpeech mTTS;
 
@@ -102,7 +104,9 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
         setContentView(R.layout.activity_spelling);
 
+        wordView = findViewById(R.id.word_view);
         viewWord = findViewById(R.id.show_word);
+//        lockIcon = findViewById(R.id.lock_icon);
         correctView = findViewById(R.id.correct_text);
         userWord = findViewById(R.id.input_word);
 
@@ -229,7 +233,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     private Runnable mShowLoadingRunnable = new Runnable() {
         @Override
         public void run() {
-            viewWord.setText("Loading...");
+            viewWord.setText("Enter word...");
             userWord.setVisibility(View.VISIBLE);
             checkWordBtn.setVisibility(View.VISIBLE);
         }
@@ -250,7 +254,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             correctView.setTextColor(getResources().getColor(R.color.darkGreen));
 
             if(code==0) {
-                viewWord.setBackground(getResources().getDrawable(R.drawable.rounded_light_green));
+                wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_light_green));
                 score++;
                 completedList.get(0).setItemIcon(R.drawable.check);
             }
@@ -268,11 +272,11 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             correctView.setText("Incorrect!");
             correctView.setTextColor(getResources().getColor(R.color.darkRed));
 
-            viewWord.setBackground(getResources().getDrawable(R.drawable.rounded_light_red));
+            wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_light_red));
             checkAgainBtn.setVisibility(View.VISIBLE);
 
             if(code==0){
-                completedList.get(0).setItemIcon(R.drawable.x);
+                completedList.get(0).setItemIcon(R.drawable.cross);
             }
         }
 
@@ -343,7 +347,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
         checkWordBtn.setVisibility(View.GONE);
         checkAgainBtn.setVisibility(View.GONE);
         nextWordBtn.setVisibility(View.GONE);
-        viewWord.setBackground(getResources().getDrawable(R.drawable.rounded_nav));
-        viewWord.setText("Loading word...");
+        viewWord.setText("Enter word...");
+        wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_nav));
     }
 }

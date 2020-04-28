@@ -218,8 +218,8 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
                         displayScore.setText(String.valueOf(score));
                         voiceGame.add(new GameItem(currentWord, R.drawable.check));
                     }else{
-                        bool.setImageResource(R.drawable.x);
-                        voiceGame.add(new GameItem(currentWord, R.drawable.x));
+                        bool.setImageResource(R.drawable.cross);
+                        voiceGame.add(new GameItem(currentWord, R.drawable.cross));
                     }
                     if(voiceGame.size()==2){ //TODO change to 10
                         sendListToVoice();

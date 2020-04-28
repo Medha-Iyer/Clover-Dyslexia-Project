@@ -2,27 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/LightTheme2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity"
     android:background="?attr/backgroundColor">
 
-    />
-    //needs to be placed on every single activity
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/rounded_nav"
         android:elevation="8dp"
         app:itemBackground="@android:color/white"
         app:itemIconTint="@drawable/selector"
-        app:menu="@menu/menu_nav"
-        android:layout_alignParentBottom="true"/>
+        app:menu="@menu/menu_nav"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/nav_bar"
         tools:context=".activities.MainActivity">
         <GridLayout
             android:layout_width="match_parent"
@@ -35,7 +34,6 @@
                 android:id="@+id/voice_game_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_centerHorizontal="true"
@@ -52,7 +50,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:src="@drawable/voice_game"
+                        app:srcCompat="@drawable/voice_game"
                         android:layout_width="80dp"
                         android:layout_height="80dp"/>
 
@@ -82,27 +80,27 @@
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp"
-                android:gravity="center"
-                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-                <ImageView
-                    android:src="@drawable/abc"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"/>
+                    <ImageView
+                        app:srcCompat="@drawable/abc"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"/>
 
-                <TextView
-                    android:layout_marginTop="12dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp"
-                    android:text="SPELLING"
-                    android:fontFamily="@font/opendyslexic_regular"/>
-            </LinearLayout>
+                    <TextView
+                        android:layout_marginTop="12dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:text="SPELLING"
+                        android:fontFamily="@font/opendyslexic_regular"/>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -116,7 +114,7 @@
                 app:cardElevation="6dp"
                 app:cardCornerRadius="12dp"
                 android:layout_margin="12dp"
-                app:cardBackgroundColor="@color/lighterGreen">
+                app:cardBackgroundColor="?attr/baseAccent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -126,7 +124,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:src="@drawable/book"
+                        app:srcCompat="@drawable/book"
                         android:layout_width="80dp"
                         android:layout_height="80dp"/>
 
@@ -162,7 +160,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:src="@drawable/lockgame"
+                        app:srcCompat="@drawable/lock"
                         android:layout_width="80dp"
                         android:layout_height="80dp"/>
 
@@ -199,7 +197,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:src="@drawable/lockgame"
+                        app:srcCompat="@drawable/lock"
                         android:layout_width="80dp"
                         android:layout_height="80dp"/>
 
@@ -213,6 +211,7 @@
                         android:fontFamily="@font/opendyslexic_regular"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
         </GridLayout>
     </ScrollView>
 </RelativeLayout>

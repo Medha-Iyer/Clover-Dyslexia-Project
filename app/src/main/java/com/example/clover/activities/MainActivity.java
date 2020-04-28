@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Utils.changeToLight(this);
         }
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home);
 
         CardView mvoice = findViewById(R.id.voice_game_btn);
         mvoice.setOnClickListener(this);
@@ -125,15 +125,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 i=new Intent(MainActivity.this,Spelling.class);
                 startActivity(i);
                 break;
+            case R.id.book_btn:
+                i=new Intent(MainActivity.this,Books.class);
+                startActivity(i);
+                break;
             case R.id.unlocked1:
                 Toast.makeText(this, "Get Clover Pro to unlock this game.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.unlocked2:
                 Toast.makeText(this, "Get Clover Pro to unlock this game.", Toast.LENGTH_SHORT).show();
-            case R.id.book_btn:
-                i=new Intent(MainActivity.this,Books.class);
-                startActivity(i);
-                break;
         }
     }
 }

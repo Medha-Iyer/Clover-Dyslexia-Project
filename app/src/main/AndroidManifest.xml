@@ -44,7 +44,7 @@
             android:name=".activities.Library"
             android:launchMode="singleTop"
             android:theme="@style/LightTheme2"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name=".activities.LibraryEditCard"
             android:parentActivityName=".activities.Library"
