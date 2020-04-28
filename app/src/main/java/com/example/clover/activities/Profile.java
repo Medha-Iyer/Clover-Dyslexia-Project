@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.adapters.GameAdapter;
-import com.example.clover.adapters.ProfileViewPagerAdapter;
+import com.example.clover.adapters.FragmentAdapter;
 import com.example.clover.fragments.ProfilePersonalInfo;
 import com.example.clover.fragments.ProfileProgressCheck;
 import com.example.clover.pojo.GameItem;
@@ -88,7 +88,7 @@ public class Profile extends AppCompatActivity {
         //setting up tabs for fragments
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        ProfileViewPagerAdapter vpAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager());
+        FragmentAdapter vpAdapter = new FragmentAdapter(getSupportFragmentManager());
         vpAdapter.AddFragment(new ProfilePersonalInfo(), "Personal Info");
         vpAdapter.AddFragment(new ProfileProgressCheck(), "Progress Check");
         //setting up adapter for fragments

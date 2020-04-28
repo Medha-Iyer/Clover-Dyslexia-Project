@@ -12,7 +12,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.clover.R;
-import com.example.clover.adapters.ProfileViewPagerAdapter;
+import com.example.clover.adapters.FragmentAdapter;
 import com.example.clover.fragments.ProfileCorrect;
 import com.example.clover.fragments.ProfileIncorrect;
 import com.google.android.material.tabs.TabLayout;
@@ -36,7 +36,7 @@ public class ProfileProgress extends AppCompatActivity {
         //setting up tabs for fragments
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        ProfileViewPagerAdapter vpAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager());
+        FragmentAdapter vpAdapter = new FragmentAdapter(getSupportFragmentManager());
         vpAdapter.AddFragment(new ProfileCorrect(), "Correct");
         vpAdapter.AddFragment(new ProfileIncorrect(), "Wrong");
         //setting up adapter for fragments
