@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_container">
+    android:id="@+id/fragment_container"
+    android:background="?attr/invertTextcolor">
 
 
 
@@ -16,25 +17,24 @@
         android:padding="4dp"
         android:scrollbars="vertical"
         android:background="@android:color/darker_gray"
-        android:layout_marginTop="55dp"
-        />
+        android:layout_marginTop="55dp" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="?attr/invertTextcolor"
         app:tabGravity="fill"
         app:tabMode="fixed"
         app:tabTextColor="@android:color/black"
-        app:tabIndicatorColor="@color/lightGreen"/>
+        app:tabIndicatorColor="?attr/logoColor"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_add"
-        android:tint="@android:color/white"
+        android:tint="?attr/invertTextcolor"
         android:backgroundTint="?attr/baseLight"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -59,7 +59,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/accentSelect"
                 app:title="Library"
-                app:titleTextColor="@android:color/white"
+                app:titleTextColor="?attr/invertTextcolor"
                 android:theme="@style/ToolbarTheme"/>
 
             <com.miguelcatalan.materialsearchview.MaterialSearchView

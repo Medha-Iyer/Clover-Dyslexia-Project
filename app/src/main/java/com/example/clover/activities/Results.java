@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +18,7 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.adapters.GameAdapter;
-import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.pojo.GameItem;
-import com.example.clover.pojo.LibraryCardItem;
 import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,23 +31,30 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-public class VoiceResults extends AppCompatActivity implements View.OnClickListener {
+public class Results extends AppCompatActivity implements View.OnClickListener, GameAdapter.OnItemClickListener {
 
-    private Button playAgain;
-
+    //for recycler view format
     private RecyclerView mRecyclerView;
     private GameAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<GameItem> voiceList = new ArrayList<GameItem>();
+    private ArrayList<GameItem> list = new ArrayList<GameItem>();
 
-    private DocumentReference progressRef;
+    private CardView playAgain, goHomeBtn;
+
+    private int gameKey;
+
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     DocumentReference documentReference = fStore.collection("users").document(userId);
-    private final String TAG = "MainActivity";
+
+    private final String TAG = "SpellingResults";
     private boolean darkmode;
+
+    private TextToSpeech mTTS;
+    private int age, pitch, speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +64,10 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                 if (e != null) {
-                    Toast.makeText(VoiceResults.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Results.this, "Error while loading!", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, e.toString());
                     return;
                 }
-
                 if (documentSnapshot.exists()) {
                     if(documentSnapshot.getBoolean("darkmode") != null){
                         darkmode = documentSnapshot.getBoolean("darkmode");
@@ -83,32 +88,59 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
             }
         });
         Utils.onActivityCreateSetTheme(this);
-
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
             Utils.changeToDark(this);
         }else{
             Utils.changeToLight(this);
         }
+        setContentView(R.layout.activity_results);
 
-        setContentView(R.layout.activity_voice_results);
-
-        Bundle bundleObject = getIntent().getExtras();
-        if (bundleObject != null) { //TODO find out why this always says null
-            voiceList = (ArrayList<GameItem>) bundleObject.getSerializable("voice list");
-        }
-        buildRecyclerView(voiceList);
+        fStore = FirebaseFirestore.getInstance();
+        fAuth = FirebaseAuth.getInstance();
+        userId = fAuth.getCurrentUser().getUid();
+        documentReference = fStore.collection("users").document(userId);
 
         playAgain = findViewById(R.id.play_again);
         playAgain.setOnClickListener(this);
-        fAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
 
-        saveProgress();
+        goHomeBtn = findViewById(R.id.home_button);
+        goHomeBtn.setOnClickListener(this);
 
-        //navView.setSelectedItemId();
-        BottomNavigationView navView = findViewById(R.id.nav_bar);
+        // declare if text to speech is being used
+        mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = mTTS.setLanguage(Locale.getDefault());
+
+                    if (result == TextToSpeech.LANG_MISSING_DATA
+                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                } else {
+                    Log.e("TTS", "Initialization failed");
+                }
+            }
+        });
+
+        readData(new Results.FirebaseCallback() {
+            @Override
+            public void onCallback(int a, int p, int s) {
+                Bundle bundleObject = getIntent().getExtras();
+                if (bundleObject != null) {
+                    list = (ArrayList<GameItem>) bundleObject.getSerializable("game list");
+                    gameKey = (int) bundleObject.getSerializable("game key");
+                }
+
+                buildRecyclerView(list);
+
+                saveProgress();
+            }
+        });
+
         //perform item selected listener
+        BottomNavigationView navView = findViewById(R.id.nav_bar); //initialize and assign variable, do this for every
+        navView.setSelectedItemId(R.id.home); //set home as selected
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -118,10 +150,10 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.library:
-                        startActivity(new Intent(getApplicationContext(), Library.class));
-                        overridePendingTransition(0,0);
                         return true;
                     case R.id.home:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        overridePendingTransition(0,0);
                         return true;
                     case R.id.profile:
                         startActivity(new Intent(getApplicationContext(), Profile.class));
@@ -141,29 +173,44 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_again:
-                startActivity(new Intent(getApplicationContext(), Voice.class));
+                if(gameKey == 0){
+                    startActivity(new Intent(getApplicationContext(), Voice.class));
+                } else if (gameKey == 1){
+                    startActivity(new Intent(getApplicationContext(), Spelling.class));
+                }
+                break;
+            case R.id.home_button:
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                break;
         }
     }
 
-    public void buildRecyclerView(ArrayList<GameItem> voiceList) {
-        mRecyclerView = findViewById(R.id.voiceRecycler);
-        mRecyclerView.setHasFixedSize(true);
+    @Override
+    public void onItemClick(int position) {
+        String currentWord = list.get(position).getItemWord();
+        Settings.speak(mTTS, currentWord, pitch, speed);
+    }
+
+    public void buildRecyclerView(ArrayList<GameItem> savedList) {
+        mRecyclerView =  findViewById(R.id.spellingRecycler);
+        mRecyclerView.setHasFixedSize(true); //might need to change false
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new GameAdapter(voiceList);
+        mAdapter = new GameAdapter(savedList); //passes to adapter, then presents to viewholder
 
         mRecyclerView.setLayoutManager((mLayoutManager));
         mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener((GameAdapter.OnItemClickListener) Results.this);
     }
 
     public void saveProgress(){
         String word;
-        for(int i=0; i< voiceList.size(); i++){
-            word = voiceList.get(i).getItemWord();
-            progressRef = fStore.collection("users")
+        for(int i=0; i< list.size(); i++){
+            word = list.get(i).getItemWord();
+            documentReference = fStore.collection("users")
                     .document(userId)
-                    .collection("voiceprogress")
+                    .collection("spellingprogress")
                     .document(word);
-            progressRef.set(voiceList.get(i))
+            documentReference.set(list.get(i))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -178,5 +225,42 @@ public class VoiceResults extends AppCompatActivity implements View.OnClickListe
                     });
 
         }
+    }
+
+    //for the speaker function
+    @Override
+    protected void onDestroy() {
+        if (mTTS != null) {
+            mTTS.stop();
+            mTTS.shutdown();
+        }
+
+        super.onDestroy();
+    }
+
+    //get the right list depending on age
+    private void readData(final Results.FirebaseCallback f){
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Results.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d("read data", e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    age = Integer.parseInt(documentSnapshot.getString("age"));
+                    pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
+                    speed = Integer.parseInt(documentSnapshot.getString("speed"));
+                    f.onCallback(age, pitch, speed);
+                }
+            }
+        });
+    }
+
+    //allows access of variable age outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
     }
 }

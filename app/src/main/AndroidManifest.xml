@@ -29,12 +29,8 @@
             android:name=".activities.ProfileProgress"
             android:parentActivityName=".activities.Profile"
             android:theme="@style/AppTheme.PopMe" />
-        <activity android:name=".activities.SpellingResults" />
+        <activity android:name=".activities.Results" />
         <activity android:name=".activities.Books" />
-        <activity
-            android:name=".activities.VoiceResults"
-            android:theme="@style/LightTheme1" />
-
         <activity android:name=".activities.Settings" />
         <activity
             android:name=".activities.Profile"

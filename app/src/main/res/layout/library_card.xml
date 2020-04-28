@@ -6,6 +6,7 @@
     android:layout_margin="4dp"
     android:background="@android:color/darker_gray"
     android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="?attr/invertTextcolor"
     app:cardCornerRadius="4dp"
     app:cardElevation="5dp">
 
@@ -21,7 +22,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_margin="8dp"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/textcolor"
             android:textSize="25sp" />
 
         <TextView
@@ -31,7 +32,7 @@
             android:layout_alignParentTop="true"
             android:padding="8dp"
             android:text="Saved Text 1"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/textcolor"
             android:textSize="25sp" />
 
         <TextView
@@ -44,7 +45,7 @@
             android:fontFamily="@font/opendyslexic_regular"
             android:maxLines="1"
             android:text="text 1 content..."
-            android:textColor="@android:color/black"
+            android:textColor="?attr/textcolor"
             android:textSize="15sp" />
 
     </RelativeLayout>

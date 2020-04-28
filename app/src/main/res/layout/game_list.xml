@@ -8,7 +8,10 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="12dp">
+        android:layout_margin="12dp"
+        app:cardBackgroundColor="?attr/invertTextcolor"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="5dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -23,6 +26,7 @@
                 android:padding="5dp"
                 android:text="hello"
                 android:textSize="30sp"
+                android:textColor="?attr/textcolor"
                 android:fontFamily="@font/opendyslexic_regular"/>
 
             <ImageView

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/invertTextcolor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
@@ -11,14 +12,14 @@
         android:layout_height="wrap_content"
         android:text="Books"
         android:textSize="50dp"
+        android:textColor="?attr/textcolor"
         android:layout_centerInParent="true"
         tools:layout_editor_absoluteX="144dp"
         tools:layout_editor_absoluteY="377dp" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content">
 
         <FrameLayout
             android:id="@+id/toolbar_container"
@@ -30,8 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/accentSelect"
-                android:theme="@style/ToolbarTheme"
-                app:titleTextColor="@android:color/white"
+                app:titleTextColor="?attr/invertTextcolor"
                 app:title="Library"/>
 
             <com.miguelcatalan.materialsearchview.MaterialSearchView

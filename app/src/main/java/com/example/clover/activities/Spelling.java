@@ -9,13 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
-import android.text.InputType;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,17 +28,17 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.time.chrono.HijrahDate;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Spelling extends AppCompatActivity implements View.OnClickListener {
+    public static final int GAME_KEY = 1;
 
     BottomNavigationView navView;
     ImageView wordView;
-    ImageView hearWordBtn, lockIcon;
+    ImageView hearWordBtn;
     TextView viewWord, correctView;
     EditText userWord;
     CardView checkWordBtn, checkAgainBtn, nextWordBtn;
@@ -53,8 +49,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     private String currentWord;
     private ArrayList<String> wordList = new ArrayList<String>();
     private ArrayList<GameItem> completedList = new ArrayList<GameItem>();
-
-    private int score = 0;
 
     //show word for a few seconds
     private Handler mHandler = new Handler();
@@ -67,6 +61,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     DocumentReference documentReference = fStore.collection("users").document(userId);
+
     private final String TAG = "Spelling";
     private boolean darkmode;
 
@@ -82,7 +77,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                     Log.d(TAG, e.toString());
                     return;
                 }
-
                 if (documentSnapshot.exists()) {
                     if(documentSnapshot.getBoolean("darkmode") != null){
                         darkmode = documentSnapshot.getBoolean("darkmode");
@@ -103,18 +97,15 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             }
         });
         Utils.onActivityCreateSetTheme(this);
-
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
             Utils.changeToDark(this);
         }else{
             Utils.changeToLight(this);
         }
-
         setContentView(R.layout.activity_spelling);
 
         wordView = findViewById(R.id.word_view);
         viewWord = findViewById(R.id.show_word);
-//        lockIcon = findViewById(R.id.lock_icon);
         correctView = findViewById(R.id.correct_text);
         userWord = findViewById(R.id.input_word);
 
@@ -127,11 +118,12 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
         nextWordBtn = findViewById(R.id.next_word);
         nextWordBtn.setOnClickListener(this);
 
-        reset();
-
         //speak word if click on speaker button
         hearWordBtn = findViewById(R.id.speak_word);
         hearWordBtn.setOnClickListener(this);
+
+        reset();
+
         // declare if text to speech is being used
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -150,12 +142,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                 }
             }
         });
-
-        //call from firebase
-        fStore = FirebaseFirestore.getInstance();
-        fAuth = FirebaseAuth.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-        documentReference = fStore.collection("users").document(userId);
 
         //getting the correct list based on age
         //loads age from firebase
@@ -249,7 +235,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
     //check if word is correct
     private void checkIfCorrect(int code){
-
         String result = userWord.getText().toString();
         if(result.equals("")){
             Toast.makeText(this, "Please type in the word...", Toast.LENGTH_SHORT).show();
@@ -263,7 +248,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
             if(code==0) {
                 wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_light_green));
-                score++;
                 completedList.get(0).setItemIcon(R.drawable.check);
             }
 
@@ -293,23 +277,13 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void sendToSpellingResults(){
-        Intent i = new Intent(Spelling.this, SpellingResults.class);
+        Intent i = new Intent(Spelling.this, Results.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("spelling list", completedList);
+        bundle.putSerializable("game list", completedList);
+        bundle.putSerializable("game key", GAME_KEY);
         i.putExtras(bundle);
         startActivity(i);
         overridePendingTransition(0,0);
-    }
-
-    //for the speaker function
-    @Override
-    protected void onDestroy() {
-        if (mTTS != null) {
-            mTTS.stop();
-            mTTS.shutdown();
-        }
-
-        super.onDestroy();
     }
 
     //get random word from wordList
@@ -341,6 +315,17 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                 }
             }
         });
+    }
+
+    //for the speaker function
+    @Override
+    protected void onDestroy() {
+        if (mTTS != null) {
+            mTTS.stop();
+            mTTS.shutdown();
+        }
+
+        super.onDestroy();
     }
 
     //allows access of variable age outside of the snapshotlistener

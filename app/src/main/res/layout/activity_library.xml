@@ -5,12 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/invertTextcolor"
     tools:context=".activities.Library">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -18,26 +18,25 @@
             android:layout_height="match_parent"
             android:padding="4dp"
             android:scrollbars="vertical"
-            android:background="@android:color/darker_gray"
-            android:layout_marginTop="55dp"
-            />
+            android:background="?attr/baseLight"
+            android:layout_marginTop="55dp" />
 
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"/>
+            android:background="?attr/invertTextcolor"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="55dp"
-            android:background="@android:color/white"
+            android:background="?attr/invertTextcolor"
             app:tabGravity="fill"
             app:tabMode="fixed"
-            app:tabTextColor="@android:color/black"
+            app:tabTextColor="?attr/textcolor"
             app:tabIndicatorColor="?attr/accentSelect"/>
 
 

@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/baseLight">
 
     <TextView
         android:id="@+id/title"
@@ -14,7 +15,7 @@
         android:padding="5dp"
         android:text="S P E L L I N G"
         android:textAlignment="center"
-        android:shadowColor="@android:color/white"
+        android:shadowColor="?attr/invertTextcolor"
         android:shadowDx="4"
         android:shadowDy="4"
         android:shadowRadius="2"
@@ -32,7 +33,7 @@
         android:layout_marginRight="40dp"
         android:layout_marginBottom="40dp"
         app:cardCornerRadius="20dp"
-        app:cardBackgroundColor="@android:color/white"
+        app:cardBackgroundColor="?attr/invertTextcolor"
         android:elevation="10dp">
 
         <RelativeLayout
@@ -61,21 +62,11 @@
 
                 <ImageView
                     android:id="@+id/word_view"
-                    android:theme="@style/LightTheme2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/rounded_nav"
                     android:background="?attr/baseLight"
                     android:scaleType="fitXY"/>
-
-                <!--        <ImageView-->
-                <!--            android:id="@+id/lock_icon"-->
-                <!--            android:layout_width="match_parent"-->
-                <!--            android:layout_height="match_parent"-->
-                <!--            android:layout_margin="10dp"-->
-                <!--            android:src="@drawable/lock"-->
-                <!--            android:tint="?attr/baseDark"-->
-                <!--            android:scaleType="centerInside"            />-->
 
                 <TextView
                     android:id="@+id/show_word"
@@ -86,6 +77,7 @@
                     android:fontFamily="@font/opendyslexic_regular"
                     android:textSize="35dp"
                     android:textAlignment="center"
+                    android:textColor="?attr/textcolor"
                     android:padding="5dp"/>
 
             </androidx.cardview.widget.CardView>
@@ -114,7 +106,8 @@
                 android:hint="Type word here..."
                 android:inputType="text|textVisiblePassword"
                 android:imeOptions="actionDone"
-                android:textSize="25dp"/>
+                android:textSize="25dp"
+                android:textColor="?attr/textcolor"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/next_word"
@@ -135,7 +128,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:textColor="@android:color/black"
+                        android:textColor="?attr/textcolor"
                         android:textSize="15dp"
                         android:text="NEXT WORD"
                         android:fontFamily="@font/opendyslexic_regular"/>
@@ -161,7 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/textcolor"
                     android:textSize="15dp"
                     android:text="CHECK AGAIN"
                     android:fontFamily="@font/opendyslexic_regular"/>
@@ -187,7 +180,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/textcolor"
                     android:textSize="15dp"
                     android:text="CHECK WORD"
                     android:fontFamily="@font/opendyslexic_regular"/>

@@ -25,7 +25,8 @@
             android:layout_margin="10dp"
             android:text="hey"
             android:textAlignment="center"
-            android:textSize="40dp" />
+            android:textSize="40dp"
+            android:textColor="?attr/textcolor"/>
 
         <ImageView
             android:id="@+id/hear_text"
@@ -33,7 +34,8 @@
             android:layout_height="40dp"
             android:layout_gravity="end"
             android:layout_margin="10dp"
-            app:srcCompat="@drawable/ic_hear"/>
+            app:srcCompat="@drawable/ic_hear"
+            android:tint="@android:color/darker_gray"/>
 
     </androidx.cardview.widget.CardView>
 
@@ -49,6 +51,7 @@
         android:padding="10dp"
         android:scrollbars="vertical"
         android:text="hey"
-        android:textSize="25dp" />
+        android:textSize="25dp"
+        android:textColor="?attr/textcolor"/>
 </RelativeLayout>
 

@@ -146,7 +146,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                 if (toolbar.getTitle().equals("Library")) { //if you're going to Archive
                     showArchive.setIcon(R.drawable.ic_library_white);
                     addNoteBtn.setVisibility(View.GONE);
-                    getContext().getTheme().resolveAttribute(R.attr.baseLight, typedValue, true);
+                    getContext().getTheme().resolveAttribute(R.attr.baseDark, typedValue, true);
                     toolbar.setTitle("Archives");
                 } else { //if you're switching back to Library
                     showArchive.setIcon(R.drawable.ic_archive_white);
