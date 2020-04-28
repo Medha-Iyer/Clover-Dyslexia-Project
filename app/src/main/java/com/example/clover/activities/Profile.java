@@ -4,28 +4,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.cardview.widget.CardView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
-import com.example.clover.adapters.GameAdapter;
 import com.example.clover.adapters.FragmentAdapter;
 import com.example.clover.fragments.ProfilePersonalInfo;
 import com.example.clover.fragments.ProfileProgressCheck;
-import com.example.clover.pojo.GameItem;
 import com.example.clover.pojo.Utils;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,20 +33,27 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Profile extends AppCompatActivity {
+public class Profile extends AppCompatActivity implements View.OnClickListener, ProfilePicDialog.PictureDialogListener {
     TextView fullName;
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private CardView profile_card;
+    private ImageView pfp_temp;
+    private CircleImageView pfp;
 
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    StorageReference profileRef = storageReference.child("users/" + userId + "/profile.jpg");
     DocumentReference documentReference = fStore.collection("users").document(userId);
     private final String TAG = "Profile";
     private boolean darkmode;
@@ -103,11 +109,26 @@ public class Profile extends AppCompatActivity {
         viewPager.setAdapter(vpAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
+        pfp_temp = findViewById(R.id.profile_temp);
+        pfp = findViewById(R.id.profile_photo);
+        profile_card = findViewById(R.id.profile_card);
+        profile_card.setOnClickListener(this);
         fullName = findViewById(R.id.prof_name);
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         userId = fAuth.getCurrentUser().getUid();
+
+        storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference profileRef = storageReference.child("users/" + userId + "/profile.jpg");
+        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                pfp_temp.setVisibility(View.INVISIBLE);
+                pfp.setVisibility(View.VISIBLE);
+                Picasso.get().load(uri).into(pfp);
+            }
+        });
 
         DocumentReference documentReference = fStore.collection("users").document(userId);
         documentReference.addSnapshotListener(Profile.this, new EventListener<DocumentSnapshot>() {
@@ -146,6 +167,43 @@ public class Profile extends AppCompatActivity {
                         return true;
                 }
                 return false;
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View v){
+        switch(v.getId()){
+            case R.id.profile_card:
+                ProfilePicDialog uploadPfp = new ProfilePicDialog();
+                uploadPfp.show(getSupportFragmentManager(), "upload profile");
+        }
+    }
+
+    public void uploadPicture(Bitmap b, Uri u){
+        //pfp.setImageBitmap(b);
+        pfp_temp.setVisibility(View.INVISIBLE);
+        pfp.setVisibility(View.VISIBLE);
+        uploadImageToFirebase(u);
+    }
+
+    private void uploadImageToFirebase(Uri uri){
+        final StorageReference fileRef = storageReference.child("users/" + userId + "/profile.jpg");
+        fileRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(pfp);
+                    }
+                });
+                Toast.makeText(Profile.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Profile.this, "Upload failed", Toast.LENGTH_SHORT).show();
             }
         });
     }

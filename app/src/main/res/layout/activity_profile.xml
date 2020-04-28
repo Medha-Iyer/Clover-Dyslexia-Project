@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.Profile"
-    android:background="@drawable/pastelgreen">
+    android:background="?attr/baseLight">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
@@ -34,7 +34,7 @@
         android:layout_height="145dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
-        app:cardBackgroundColor="@color/pastelGreen"
+        app:cardBackgroundColor="?attr/accentUnselect"
         app:cardCornerRadius="250dp"
         app:cardElevation="0dp">
 
@@ -46,11 +46,23 @@
             app:cardElevation="0dp">
 
             <ImageView
+                android:id="@+id/profile_temp"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_profile_temp"
+                android:tint="?attr/accentUnselect"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_photo"
                 android:layout_width="125dp"
                 android:layout_height="125dp"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_profile_temp" />
+                android:src="@drawable/profile"
+                android:visibility="invisible"
+                app:civ_border_color="?attr/invertTextcolor"
+                app:civ_border_width="2dp" />
+
         </androidx.cardview.widget.CardView>
     </androidx.cardview.widget.CardView>
 

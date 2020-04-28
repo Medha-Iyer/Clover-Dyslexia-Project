@@ -63,7 +63,7 @@
                     android:id="@+id/word_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?attr/baseLight"
+                    android:background="?attr/accentSelect"
                     android:scaleType="fitXY"
                     android:src="@drawable/rounded_nav" />
 
@@ -117,7 +117,7 @@
                 android:layout_marginTop="140dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="?attr/baseLight"
+                app:cardBackgroundColor="?attr/accentSelect"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="6dp">
 

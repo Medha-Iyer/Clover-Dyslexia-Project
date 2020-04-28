@@ -46,7 +46,7 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 app:srcCompat="@drawable/ic_hear"
-                android:tint="@android:color/darker_gray"/>
+                android:tint="?attr/baseDark"/>
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

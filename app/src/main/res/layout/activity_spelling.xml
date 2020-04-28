@@ -65,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/rounded_nav"
-                    android:background="?attr/baseLight"
+                    android:background="?attr/accentSelect"
                     android:scaleType="fitXY"/>
 
                 <TextView
@@ -121,7 +121,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="20dp"
-                app:cardBackgroundColor="?attr/baseLight">
+                app:cardBackgroundColor="?attr/accentSelect">
 
                     <TextView
                         android:layout_centerHorizontal="true"
@@ -147,7 +147,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="20dp"
-                app:cardBackgroundColor="?attr/baseLight">
+                app:cardBackgroundColor="?attr/accentSelect">
 
                 <TextView
                     android:layout_centerHorizontal="true"
@@ -173,7 +173,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="20dp"
-                app:cardBackgroundColor="?attr/baseLight">
+                app:cardBackgroundColor="?attr/accentSelect">
 
                 <TextView
                     android:layout_centerHorizontal="true"

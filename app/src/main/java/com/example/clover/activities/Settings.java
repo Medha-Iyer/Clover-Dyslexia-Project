@@ -272,6 +272,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onPause(){
         super.onPause();
+        saveData();
     }
 
     public void restartApp() {
