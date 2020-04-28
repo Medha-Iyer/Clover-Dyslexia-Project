@@ -94,6 +94,15 @@
                 android:textSize="15dp"
                 android:padding="10dp"/>
 
+            <ImageView
+                android:id="@+id/audio_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/image_view"
+                android:layout_marginRight="20dp"
+                app:srcCompat="@drawable/ic_hear"
+                android:tint="@android:color/darker_gray"/>
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

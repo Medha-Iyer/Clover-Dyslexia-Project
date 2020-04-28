@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.speech.tts.TextToSpeech;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
@@ -38,12 +39,13 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener, View.OnClickListener {
 
     //layout things
     CardView convertTextBtn, saveLibraryBtn, takePhotoBtn, fromGalleryBtn;
-    private ImageView imageView;
+    private ImageView imageView, hearBtn;
     private TextView tv;
     private Bitmap imageBitmap;
 
@@ -61,6 +63,9 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     DocumentReference documentReference = fStore.collection("users").document(userId);
     private  final String TAG = "Spelling";
     private boolean darkmode;
+
+    private TextToSpeech mTTS;
+    private int pitch, speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +126,33 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         saveLibraryBtn = findViewById(R.id.save_card);
         saveLibraryBtn.setOnClickListener(this);
 
+        hearBtn = (ImageView) findViewById(R.id.audio_icon);
+        hearBtn.setVisibility(View.GONE);
+        hearBtn.setOnClickListener(this);
+
+        // declare if text to speech is being used
+        mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = mTTS.setLanguage(Locale.getDefault());
+
+                    if (result == TextToSpeech.LANG_MISSING_DATA
+                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                } else {
+                    Log.e("TTS", "Initialization failed");
+                }
+            }
+        });
+
+        readData(new Camera.FirebaseCallback() {
+            @Override
+            public void onCallback(int p, int s) {
+            }
+        });
+
         //for bottom navigation bar
         BottomNavigationView navView = findViewById(R.id.nav_bar);
         navView.setSelectedItemId(R.id.camera); //set camera as selected
@@ -156,6 +188,10 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.audio_icon:
+                Log.d("on click","why no work?");
+                Settings.speak(mTTS, fileText, pitch,speed);
+                break;
             case R.id.take_photo:
                 dispatchTakePictureIntent();
                 tv.setText("Displaying text...");
@@ -167,7 +203,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             case R.id.convert_text:
                 if (imageBitmap != null) {
                     detectTextFromImage();
-                    saveLibraryBtn.setVisibility(View.VISIBLE);
+                    hearBtn.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please upload photo.", Toast.LENGTH_SHORT).show();
                 }
@@ -178,6 +214,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                     tv.setText("Displaying text...");
                     imageView.setImageResource(R.drawable.ic_insertphoto);
                     imageBitmap = null;
+                    hearBtn.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please upload photo.", Toast.LENGTH_SHORT).show();
                 }
@@ -260,5 +297,42 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         Intent i = new Intent(Camera.this, Library.class);
         startActivity(i);
         overridePendingTransition(0, 0);
+    }
+
+
+    //for the speaker function
+    @Override
+    protected void onDestroy() {
+        if (mTTS != null) {
+            mTTS.stop();
+            mTTS.shutdown();
+        }
+
+        super.onDestroy();
+    }
+
+    //get the right list depending on age
+    private void readData(final Camera.FirebaseCallback f){
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Camera.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d("read data", e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
+                    speed = Integer.parseInt(documentSnapshot.getString("speed"));
+                    f.onCallback(pitch, speed);
+                }
+            }
+        });
+    }
+
+    //allows access of variable age outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int pitch, int speed);
     }
 }
