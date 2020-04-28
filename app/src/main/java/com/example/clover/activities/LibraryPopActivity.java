@@ -3,7 +3,6 @@ package com.example.clover.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
@@ -48,13 +47,8 @@ public class LibraryPopActivity extends AppCompatActivity { //change to Activity
         params.gravity = Gravity.CENTER;
         params.x = 0;
         params.y = -20;
-        params.dimAmount = (float) 0.7;
         getWindow().setAttributes(params);
 
-        //dim background
-        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-        layoutParams.dimAmount = 0.75f;
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().setAttributes(layoutParams);
+
     }
 }

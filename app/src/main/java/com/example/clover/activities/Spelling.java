@@ -2,7 +2,7 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.text.InputType;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.pojo.GameItem;
+import com.example.clover.pojo.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -40,11 +40,10 @@ import java.util.Scanner;
 public class Spelling extends AppCompatActivity implements View.OnClickListener {
 
     BottomNavigationView navView;
-    ImageView wordView;
-    ImageView hearWordBtn, lockIcon;
+    ImageView hearWordBtn;
     TextView viewWord, correctView;
     EditText userWord;
-    CardView checkWordBtn, checkAgainBtn, nextWordBtn;
+    Button checkWordBtn, checkAgainBtn, nextWordBtn;
 
     private TextToSpeech mTTS;
 
@@ -60,21 +59,50 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
     //to get the right age from list
     private int age, pitch, speed;
-    private String userId;
     private Scanner scanner;
 
-    FirebaseFirestore fStore;
-    FirebaseAuth fAuth;
-    DocumentReference documentReference;
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
+    private final String TAG = "Spelling";
+    private boolean darkmode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //This has to be implemented in every screen to update mode and theme.
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Spelling.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    darkmode = documentSnapshot.getBoolean("darkmode");
+                    Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+        Utils.onActivityCreateSetTheme(this);
+
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            Utils.changeToDark(this);
+        }else{
+            Utils.changeToLight(this);
+        }
+
         setContentView(R.layout.activity_spelling);
 
-        wordView = findViewById(R.id.word_view);
         viewWord = findViewById(R.id.show_word);
-//        lockIcon = findViewById(R.id.lock_icon);
         correctView = findViewById(R.id.correct_text);
         userWord = findViewById(R.id.input_word);
 
@@ -192,8 +220,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
 
     private void setUpWord(){
         //show word for 5 seconds before disappearing
-//        lockIcon.setVisibility(View.GONE);
-//        viewWord.setVisibility(View.VISIBLE);
         viewWord.setText(randomLine(wordList));
         Settings.speak(mTTS, currentWord, pitch, speed);
         mHandler.postDelayed(mShowLoadingRunnable, 2000);
@@ -203,9 +229,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     private Runnable mShowLoadingRunnable = new Runnable() {
         @Override
         public void run() {
-            viewWord.setText("Enter word...");
-//            viewWord.setVisibility(View.GONE);
-//            lockIcon.setVisibility(View.VISIBLE);
+            viewWord.setText("Loading...");
             userWord.setVisibility(View.VISIBLE);
             checkWordBtn.setVisibility(View.VISIBLE);
         }
@@ -226,7 +250,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             correctView.setTextColor(getResources().getColor(R.color.darkGreen));
 
             if(code==0) {
-                wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_light_green));
+                viewWord.setBackground(getResources().getDrawable(R.drawable.rounded_light_green));
                 score++;
                 completedList.get(0).setItemIcon(R.drawable.check);
             }
@@ -244,7 +268,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             correctView.setText("Incorrect!");
             correctView.setTextColor(getResources().getColor(R.color.darkRed));
 
-            wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_light_red));
+            viewWord.setBackground(getResources().getDrawable(R.drawable.rounded_light_red));
             checkAgainBtn.setVisibility(View.VISIBLE);
 
             if(code==0){
@@ -319,8 +343,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
         checkWordBtn.setVisibility(View.GONE);
         checkAgainBtn.setVisibility(View.GONE);
         nextWordBtn.setVisibility(View.GONE);
-//        lockIcon.setVisibility(View.VISIBLE);
-        viewWord.setText("Enter word...");
-        wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_nav));
+        viewWord.setBackground(getResources().getDrawable(R.drawable.rounded_nav));
+        viewWord.setText("Loading word...");
     }
 }

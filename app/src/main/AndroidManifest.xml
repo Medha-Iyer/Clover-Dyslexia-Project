@@ -18,15 +18,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/LightTheme2">
+        <activity android:name=".activities.ProfilePicDialog"></activity>
 
         <meta-data
             android:name="com.google.android.vision.API_KEY"
-            android:value="@string/API_key">
-        </meta-data>
-<!--        android:theme="@style/LightTheme2">-->
+            android:value="@string/API_key"></meta-data>
 
-        <activity android:name=".activities.ProfileNameDialog"></activity>
         <activity
             android:name=".activities.ProfileProgress"
             android:parentActivityName=".activities.Profile"
