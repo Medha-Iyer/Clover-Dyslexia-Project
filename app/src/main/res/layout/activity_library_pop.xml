@@ -15,7 +15,7 @@
             android:layout_margin="5dp"
             app:cardCornerRadius="4dp"
             app:cardElevation="0dp"
-            android:backgroundTint="?attr/baseAccent">
+            android:backgroundTint="?attr/baseLight">
 
             <TextView
                 android:id="@+id/titleView"

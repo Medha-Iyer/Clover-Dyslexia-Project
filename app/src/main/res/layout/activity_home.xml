@@ -38,7 +38,7 @@
                 android:layout_columnWeight="1"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="12dp"
-                app:cardBackgroundColor="?attr/baseAccent"
+                app:cardBackgroundColor="?attr/baseLight"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp">
 
@@ -76,7 +76,7 @@
                 android:layout_below="@id/voice_game_btn"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="12dp"
-                app:cardBackgroundColor="?attr/baseAccent"
+                app:cardBackgroundColor="?attr/baseLight"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp">
 
@@ -114,7 +114,7 @@
                 app:cardElevation="6dp"
                 app:cardCornerRadius="12dp"
                 android:layout_margin="12dp"
-                app:cardBackgroundColor="?attr/baseAccent">
+                app:cardBackgroundColor="?attr/baseLight">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -148,7 +148,7 @@
                 android:layout_below="@id/spelling_game_btn"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="12dp"
-                app:cardBackgroundColor="?attr/baseAccent"
+                app:cardBackgroundColor="?attr/baseLight"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp">
 
@@ -185,7 +185,7 @@
                 android:layout_below="@id/unlocked1"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="12dp"
-                app:cardBackgroundColor="?attr/baseAccent"
+                app:cardBackgroundColor="?attr/baseLight"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp">
 

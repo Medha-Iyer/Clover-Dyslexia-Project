@@ -3,6 +3,7 @@ package com.example.clover.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,7 +52,7 @@ import java.util.List;
 public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener, View.OnClickListener {
 
     //take photo function
-    private Button takePhotoBtn, fromGalleryBtn, convertTextBtn, saveLibraryBtn;
+    private CardView takePhotoBtn, fromGalleryBtn, convertTextBtn, saveLibraryBtn;
     private ImageView imageView;
     private TextView tv;
     private static Bitmap imageBitmap;

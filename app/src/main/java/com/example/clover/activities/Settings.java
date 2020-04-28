@@ -258,8 +258,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         Log.d(TAG, "Dark theme 1");
                         Utils.changeToTheme(this, Utils.DARK_THEME_DEFAULT);
                     }else{
-                        theme = R.style.AppTheme;
-                        Log.d(TAG, "App theme");
+                        theme = R.style.LightTheme1;
+                        Log.d(TAG, "Light theme 1");
                         Utils.changeToTheme(this, Utils.THEME_DEFAULT);
                         break;
                     }
