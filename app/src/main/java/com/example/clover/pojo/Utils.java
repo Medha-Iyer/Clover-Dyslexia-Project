@@ -6,7 +6,16 @@ import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import androidx.annotation.NonNull;
+
 import com.example.clover.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class Utils
 {
@@ -19,6 +28,11 @@ public class Utils
     public final static int THEME_GREEN = 4;
     public final static int DARK_THEME_GREEN = 5;
 
+    static FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    static FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private static String userId = fAuth.getCurrentUser().getUid();
+    static DocumentReference documentReference = fStore.collection("users").document(userId);
+
     /**
      * Set the theme of the Activity, and restart it by creating a new Activity of the same type.
      */
@@ -28,6 +42,8 @@ public class Utils
             return;
         }
         sTheme = theme;
+        saveData();
+        Log.d("Utils", Integer.toString(sTheme));
         switch (sTheme) {
             default:
             case THEME_DEFAULT:
@@ -103,6 +119,24 @@ public class Utils
     }
 
     public static int getTheme(){
+        Log.d("Utils", Integer.toString(sTheme));
         return sTheme;
+    }
+
+    public static void saveData(){
+        documentReference.update(
+                "theme", Integer.toString(sTheme))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Data saved to Firestore");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
     }
 }

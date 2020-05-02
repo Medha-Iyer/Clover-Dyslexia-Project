@@ -48,6 +48,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,7 +61,8 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     private Bitmap imageBitmap;
 
     //saving to library
-    private String fileName, fileText;
+    private String fileName, fileTextComplete;
+    private ArrayList<String> fileTextSentences, fileTextWords;
     public static LibraryCardItem newCard;
 
     //constants for taking photos
@@ -206,7 +208,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         switch (v.getId()){
             case R.id.audio_icon:
                 Log.d("on click","why no work?");
-                Settings.speak(mTTS, fileText, pitch,speed);
+                Settings.speak(mTTS, fileTextComplete, pitch,speed);
                 break;
             case R.id.take_photo:
                 dispatchTakePictureIntent();
@@ -291,7 +293,18 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             Toast.makeText(this, "No Text Found in image.", Toast.LENGTH_SHORT).show();
         } else {
             tv.setText(sb.toString());
-            fileText = tv.getText().toString();
+            fileTextComplete = tv.getText().toString();
+            String[] sentence = fileTextComplete.split(".");
+            fileTextSentences.addAll(Arrays.asList(sentence));
+            splitIntoWords();
+        }
+    }
+
+    private void splitIntoWords(){
+        String[] words;
+        for(String sentence : fileTextSentences){
+            words = sentence.split(" ");
+            fileTextWords.addAll(Arrays.asList(words));
         }
     }
 
@@ -305,7 +318,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     @Override //after pop-up, creates card and goes to Library activity
     public void applyTexts(String name) {
         fileName = name;
-        newCard = new LibraryCardItem(fileName, fileText);
+        newCard = new LibraryCardItem(fileName, fileTextComplete);
 
         Intent i = new Intent(Camera.this, Library.class);
         startActivity(i);

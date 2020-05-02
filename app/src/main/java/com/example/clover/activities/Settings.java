@@ -275,6 +275,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         saveData();
     }
 
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        saveData();
+    }
+
     public void restartApp() {
         Intent i = new Intent(getApplicationContext(), Settings.class);
         startActivity(i);
@@ -317,7 +323,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         });
     }
 
-    public void saveThemeData(){
+    public void saveThemeData(){ //TODO can I delete this now because UTILS?
         documentReference.update(
                  "theme", Integer.toString(Utils.getTheme()))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
