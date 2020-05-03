@@ -54,6 +54,7 @@ public class ProfilePicDialog extends AppCompatDialogFragment implements View.On
 
     public interface PictureDialogListener{
         void uploadPicture(Bitmap b, Uri u);
+        void uploadBackgroundPicture(Bitmap b, Uri u);
     }
 
     public PictureDialogListener pUpdate;
@@ -102,13 +103,21 @@ public class ProfilePicDialog extends AppCompatDialogFragment implements View.On
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get("data");
             imageUri = data.getData();
-            pUpdate.uploadPicture(imageBitmap, imageUri);
+            if (Profile.picCode == 0){
+                pUpdate.uploadPicture(imageBitmap, imageUri);
+            } else if (Profile.picCode == 1){
+                pUpdate.uploadBackgroundPicture(imageBitmap, imageUri);
+            }
             getDialog().dismiss();
         } else if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
             try {
                 imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-                pUpdate.uploadPicture(imageBitmap, imageUri);
+                if (Profile.picCode == 0){
+                    pUpdate.uploadPicture(imageBitmap, imageUri);
+                } else if (Profile.picCode == 1){
+                    pUpdate.uploadBackgroundPicture(imageBitmap, imageUri);
+                }
                 getDialog().dismiss();
             } catch (IOException e) {
                 e.printStackTrace();

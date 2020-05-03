@@ -36,7 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/rounded_nav"
-        android:theme="@style/ToolbarTheme"
         app:titleTextColor="?attr/invertTextcolor"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

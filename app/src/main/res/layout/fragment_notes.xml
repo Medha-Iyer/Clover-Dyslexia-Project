@@ -45,8 +45,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content">
 
         <FrameLayout
             android:id="@+id/toolbar_container"
@@ -59,8 +58,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/accentSelect"
                 app:title="Library"
-                app:titleTextColor="?attr/invertTextcolor"
-                android:theme="@style/ToolbarTheme"/>
+                app:titleTextColor="?attr/invertTextcolor"/>
 
             <com.miguelcatalan.materialsearchview.MaterialSearchView
                 android:id="@+id/search_view"

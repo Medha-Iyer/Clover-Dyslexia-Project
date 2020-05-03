@@ -1,10 +1,9 @@
 package com.example.clover.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.text.method.ScrollingMovementMethod;
@@ -13,14 +12,13 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.clover.fragments.SettingsPreferences;
+import com.example.clover.pojo.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -28,41 +26,71 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
-public class LibraryPopActivity extends AppCompatActivity implements View.OnClickListener { //change to Activity?
+public class LibraryPopActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private final String TAG = "LibraryPop";
+    private boolean darkmode;
+    private String title;
+    private String content;
+
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
+
+    private TextToSpeech mTTS;
+    private int pitch, speed;
 
     private TextView mTitle;
     private TextView mText;
     private ImageView mHearIcon;
 
-    private FirebaseAuth fAuth;
-    private FirebaseFirestore fStore;
-    private String userId;
-    private DocumentReference documentReference;
-
-    private TextToSpeech mTTS;
-    private int pitch, speed;
-
-    private String title;
-    private String content;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(LibraryPopActivity.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+                if (documentSnapshot.exists()) {
+                    if(documentSnapshot.getBoolean("darkmode") != null){
+                        darkmode = documentSnapshot.getBoolean("darkmode");
+                    } else {
+                        darkmode = false;
+                    }
+                    if(documentSnapshot.getString("theme") != null){
+                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    } else {
+                        Utils.setTheme(0);
+                    }
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+        Utils.changeToPopup(this, getWindow());
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            Utils.changeToDark(this);
+        }else{
+            Utils.changeToLight(this);
+        }
         setContentView(R.layout.activity_library_pop);
 
         mHearIcon = findViewById(R.id.hear_text);
         mHearIcon.setOnClickListener(this);
+
         mTitle = findViewById(R.id.titleView);
         mText = findViewById(R.id.textView);
         mText.setMovementMethod(new ScrollingMovementMethod());
-
-        fStore = FirebaseFirestore.getInstance();
-        fAuth = FirebaseAuth.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-        documentReference = fStore.collection("users").document(userId);
 
         // declare if text to speech is being used
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -146,7 +174,7 @@ public class LibraryPopActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.hear_text:
-                Settings.speak(mTTS, title+content, pitch,speed);
+                SettingsPreferences.speak(mTTS, title+content, pitch,speed);
                 break;
         }
     }

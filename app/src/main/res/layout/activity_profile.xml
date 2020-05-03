@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.Profile"
-    android:background="?attr/baseLight">
+    android:background="?attr/invertTextcolor">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
@@ -23,18 +23,24 @@
     <ImageView
         android:id="@+id/profile_background"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_margin="10dp"
+        android:layout_height="375dp"
         android:scaleType="centerCrop"
         android:src="@drawable/green_background" />
+
+    <ImageView
+        android:id="@+id/profiletint"
+        android:layout_width="match_parent"
+        android:layout_height="375dp"
+        android:scaleType="centerCrop"
+        android:background="?attr/invertBackground" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/profile_card"
         android:layout_width="145dp"
         android:layout_height="145dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        app:cardBackgroundColor="?attr/accentUnselect"
+        android:layout_marginTop="50dp"
+        app:cardBackgroundColor="?attr/baseLight"
         app:cardCornerRadius="250dp"
         app:cardElevation="0dp">
 
@@ -47,34 +53,37 @@
 
             <ImageView
                 android:id="@+id/profile_temp"
-                android:layout_width="125dp"
-                android:layout_height="125dp"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/ic_profile_temp"
-                android:tint="?attr/accentUnselect"/>
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_photo"
-                android:layout_width="125dp"
-                android:layout_height="125dp"
-                android:layout_gravity="center"
-                android:src="@drawable/profile"
-                android:visibility="invisible"
-                app:civ_border_color="?attr/invertTextcolor"
-                app:civ_border_width="2dp" />
+                android:tint="?attr/baseLight"/>
 
         </androidx.cardview.widget.CardView>
     </androidx.cardview.widget.CardView>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_photo"
+        android:layout_width="145dp"
+        android:layout_height="145dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        app:srcCompat="@drawable/ic_profile_temp"
+        android:visibility="invisible"
+        app:civ_border_color="?attr/baseLight"
+        app:civ_border_width="5dp" />
 
     <TextView
         android:id="@+id/prof_name"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_below="@id/profile_card"
+        android:layout_marginTop="20dp"
         android:layout_centerInParent="true"
         android:fontFamily="@font/opendyslexic_bold"
         android:text="Name"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:textColor="?attr/textcolor"/>
 
     <TextView
         android:id="@+id/prof_date"
@@ -84,32 +93,23 @@
         android:text="Date joined"
         android:fontFamily="@font/opendyslexic_regular"
         android:textSize="15sp"
+        android:textColor="?attr/textcolor"
         android:layout_centerHorizontal="true"/>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/progressRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/prof_date"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@android:color/white"
-        app:tabGravity="fill"
-        app:tabMode="fixed"
-        app:tabTextColor="@android:color/black"
-        app:tabIndicatorColor="@color/lightGreen"/>
+        android:layout_below="@+id/profile_background"
+        android:layout_above="@+id/nav_bar"
+        android:background="@android:color/transparent"
+        android:scrollbars="horizontal"/>
 
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewPager"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tabLayout"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@android:color/white"
-        android:layout_above="@+id/nav_bar"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        app:srcCompat="@drawable/line_divider"
+        android:tint="?attr/textcolor"/>
 
 </RelativeLayout>

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.fragments.SettingsPreferences;
 import com.example.clover.pojo.LibraryCardItem;
 import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -208,7 +209,11 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         switch (v.getId()){
             case R.id.audio_icon:
                 Log.d("on click","why no work?");
+<<<<<<< .merge_file_a17712
                 Settings.speak(mTTS, fileTextComplete, pitch,speed);
+=======
+                SettingsPreferences.speak(mTTS, fileText, pitch,speed);
+>>>>>>> .merge_file_a15724
                 break;
             case R.id.take_photo:
                 dispatchTakePictureIntent();
