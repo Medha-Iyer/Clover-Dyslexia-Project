@@ -41,6 +41,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     AnimationDrawable lightbulb;
 
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId;
+    private DocumentReference documentReference;
+
     private RelativeLayout mainLogin, mainLayout;
     private ImageView splashlogo;
     private TextView mcreateAccount, mforgotPassword, splashwords;
@@ -49,12 +54,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private ProgressBar mPbar;
     private Handler handler = new Handler();
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-//    private String userId= fAuth.getCurrentUser().getUid();
-    private String userId;
-    DocumentReference documentReference;
-//    DocumentReference documentReference = fStore.collection("users").document(userId);
     private final String TAG = "Login";
     private boolean darkmode;
 
@@ -133,27 +132,27 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
         setContentView(R.layout.activity_login);
 
-    //initialize and assign variable, do this for every button or other interactive feature
-    mainLogin = findViewById(R.id.mainlogin);
-    mainLayout = findViewById(R.id.mainLayout);
-    splashwords = findViewById(R.id.splashwords);
-    splashlogo = findViewById(R.id.splashlogo);
-    splashlogo.setImageResource(R.drawable.lightbulb_animation);
-    lightbulb = (AnimationDrawable) splashlogo.getDrawable();
-    mcreateAccount = findViewById(R.id.createAccount);
-    mcreateAccount.setOnClickListener(this);
-    mforgotPassword = findViewById(R.id.forgotPassword);
-    mforgotPassword.setOnClickListener(this);
-    mloginButton = findViewById(R.id.loginButton);
-    mloginButton.setOnClickListener(this);
-    mEmail = findViewById(R.id.email);
-    mPassword = findViewById(R.id.password);
-    mPbar = findViewById(R.id.progressBar);
-    fAuth = FirebaseAuth.getInstance();
+        //initialize and assign variable, do this for every button or other interactive feature
+        mainLogin = findViewById(R.id.mainlogin);
+        mainLayout = findViewById(R.id.mainLayout);
+        splashwords = findViewById(R.id.splashwords);
+        splashlogo = findViewById(R.id.splashlogo);
+        splashlogo.setImageResource(R.drawable.lightbulb_animation);
+        lightbulb = (AnimationDrawable) splashlogo.getDrawable();
+        mcreateAccount = findViewById(R.id.createAccount);
+        mcreateAccount.setOnClickListener(this);
+        mforgotPassword = findViewById(R.id.forgotPassword);
+        mforgotPassword.setOnClickListener(this);
+        mloginButton = findViewById(R.id.loginButton);
+        mloginButton.setOnClickListener(this);
+        mEmail = findViewById(R.id.email);
+        mPassword = findViewById(R.id.password);
+        mPbar = findViewById(R.id.progressBar);
+        fAuth = FirebaseAuth.getInstance();
 
-    handler.postDelayed(runnable, 4000); //4000 is the timeout for the splash
+        handler.postDelayed(runnable, 4000); //4000 is the timeout for the splash
 
-}
+    }
 
 //    @Override
 //    protected void onStart() {

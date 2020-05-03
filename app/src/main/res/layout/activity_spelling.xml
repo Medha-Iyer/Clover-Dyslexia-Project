@@ -118,6 +118,7 @@
                 android:layout_marginTop="50dp"
                 android:layout_marginLeft="20dp"
                 android:hint="Type word here..."
+                android:textColorHint="?attr/textcolor"
                 android:inputType="text|textVisiblePassword"
                 android:imeOptions="actionDone"
                 android:textSize="25dp"
@@ -138,6 +139,7 @@
                 app:cardBackgroundColor="?attr/accentSelect">
 
                     <TextView
+                        android:id="@+id/next_word_text"
                         android:layout_centerHorizontal="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

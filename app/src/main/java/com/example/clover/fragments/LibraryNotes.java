@@ -87,10 +87,46 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_notes, container, false);
-
-        toolbar = view.findViewById(R.id.toolbar);
+        setUpSearch();
+        toolbar = view.findViewById(R.id.toolbarNotes);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
+        toolbar.inflateMenu(R.menu.example_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()){
+                    case R.id.action_search:
+                        MaterialSearchView searchView = (MaterialSearchView) view.findViewById(R.id.search_view);
+                        searchView.setMenuItem(item);
+                        break;
+                    case R.id.show_archive:
+                        TypedValue typedValue = new TypedValue();
+
+                        if (toolbar.getTitle().equals("Library")) { //if you're going to Archive
+                            showArchive.setIcon(R.drawable.ic_library_white);
+                            addNoteBtn.setVisibility(View.GONE);
+                            getContext().getTheme().resolveAttribute(R.attr.baseDark, typedValue, true);
+                            toolbar.setTitle("Archives");
+                        } else { //if you're switching back to Library
+                            showArchive.setIcon(R.drawable.ic_archive_white);
+                            addNoteBtn.setVisibility(View.VISIBLE);
+                            getContext().getTheme().resolveAttribute(R.attr.accentSelect, typedValue, true);
+                            toolbar.setTitle("Library");
+                        }
+                        buildRecyclerView(getListToUse());
+
+                        // it's probably a good idea to check if the color wasn't specified as a resource
+                        if (typedValue.resourceId != 0) {
+                            toolbar.setBackgroundResource(typedValue.resourceId);
+                        } else {
+                            // this should work whether there was a resource id or not
+                            toolbar.setBackgroundColor(typedValue.data);
+                        }
+                }
+                return false;
+            }
+        });
 
         addNoteBtn = view.findViewById(R.id.add_button);
         addNoteBtn.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +167,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.example_menu, menu);
+        super.onCreateOptionsMenu(menu, menuInflater);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         MaterialSearchView searchView = (MaterialSearchView) view.findViewById(R.id.search_view);
@@ -544,8 +581,9 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                 result.add(item);
             }
         }
-
-        mAdapter.setLibraryItems(result);
+        if (listToUse.size()!=0){
+            mAdapter.setLibraryItems(result);
+        }
     }
     public void buildRecyclerView(ArrayList<LibraryCardItem> savedList) {
         mRecyclerView = view.findViewById(R.id.recyclerView);

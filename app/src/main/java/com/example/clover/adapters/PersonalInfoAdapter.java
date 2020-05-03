@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
-import com.example.clover.activities.ProfileNameDialog;
 import com.example.clover.pojo.PersonalInfoItem;
 
 import java.util.ArrayList;

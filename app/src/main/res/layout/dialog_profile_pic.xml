@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
+    android:padding="5dp"
+    android:background="?attr/invertTextcolor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
@@ -14,13 +15,23 @@
         app:srcCompat="@drawable/ic_close"
         android:tint="?attr/textcolor" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="18dp"
+        android:text="Photo from..."
+        android:textSize="20dp"
+        android:textColor="?attr/textcolor"
+        android:fontFamily="@font/opendyslexic_regular"/>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/camera_pfp"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_margin="20dp"
         android:layout_below="@+id/action_cancel"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="24dp"
+        android:layout_centerHorizontal="true"
         app:cardBackgroundColor="?attr/accentSelect"
         app:cardCornerRadius="10sp"
         app:cardElevation="8dp">
@@ -38,17 +49,14 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
                 android:src="@drawable/ic_camera"
-                android:tint="?attr/invertTextcolor" />
+                android:tint="?attr/textcolor" />
 
             <TextView
+                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="50dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
                 android:text="CAMERA"
-                android:textColor="?attr/invertTextcolor"
+                android:textColor="?attr/textcolor"
                 android:textSize="20sp" />
 
         </RelativeLayout>
@@ -59,9 +67,10 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@+id/camera_pfp"
-        android:layout_marginTop="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="24dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_centerHorizontal="true"
         app:cardBackgroundColor="?attr/accentSelect"
         app:cardCornerRadius="10sp"
         app:cardElevation="8dp">
@@ -79,17 +88,14 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
                 android:src="@drawable/ic_gallery"
-                android:tint="?attr/invertTextcolor" />
+                android:tint="?attr/textcolor" />
 
             <TextView
+                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="50dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
                 android:text="GALLERY"
-                android:textColor="?attr/invertTextcolor"
+                android:textColor="?attr/textcolor"
                 android:textSize="20sp" />
 
         </RelativeLayout>

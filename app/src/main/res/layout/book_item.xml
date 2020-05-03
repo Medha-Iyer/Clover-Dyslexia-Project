@@ -56,7 +56,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentRight="true"
             android:layout_alignBottom="@id/book_cover"
-            app:srcCompat="@drawable/ic_save"/>
+            app:srcCompat="@drawable/ic_save" />
 
         <ImageView
             android:id="@+id/book_speak"

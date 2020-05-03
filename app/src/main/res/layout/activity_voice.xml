@@ -135,6 +135,7 @@
                 app:cardElevation="6dp">
 
                 <TextView
+                    android:id="@+id/next_word_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"

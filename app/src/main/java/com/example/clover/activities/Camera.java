@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.fragments.SettingsPreferences;
 import com.example.clover.pojo.LibraryCardItem;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -227,7 +228,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         switch (v.getId()){
             case R.id.audio_icon:
                 Log.d("on click","why no work?");
-                Settings.speak(mTTS, fileTextComplete, pitch,speed);
+                SettingsPreferences.speak(mTTS, fileTextComplete, pitch,speed);
                 break;
             case R.id.take_photo:
                 dispatchTakePictureIntent();
