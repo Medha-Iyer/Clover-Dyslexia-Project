@@ -24,6 +24,11 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.pojo.LibraryCardItem;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,6 +64,9 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     private ImageView imageView, hearBtn;
     private TextView tv;
     private Bitmap imageBitmap;
+
+    //ads
+    private AdView mAdView;
 
     //saving to library
     private String fileName, fileTextComplete;
@@ -119,6 +127,17 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             Utils.changeToLight(this);
         }
         setContentView(R.layout.activity_camera);
+
+        setContentView(R.layout.activity_camera);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
 
         //reset card item value
         LibraryCardItem newCard = null;

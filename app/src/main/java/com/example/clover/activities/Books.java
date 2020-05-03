@@ -3,16 +3,32 @@ package com.example.clover.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
+import com.example.clover.adapters.BookAdapter;
+import com.example.clover.adapters.PersonalInfoAdapter;
+import com.example.clover.fragments.ProfilePersonalInfo;
+import com.example.clover.pojo.PersonalInfoItem;
 import com.example.clover.pojo.Utils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,14 +36,28 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-public class Books extends AppCompatActivity implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.Locale;
+
+public class Books extends AppCompatActivity implements View.OnClickListener, BookAdapter.OnItemClickListener {
 
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userID = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userID);
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
+
+    private RecyclerView mRecyclerView;
+    private BookAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private ArrayList<PersonalInfoItem> bookList = new ArrayList<PersonalInfoItem>();
     private final String TAG = "Books";
+
+    private TextToSpeech mTTS;
+    private int pitch, speed;
     private boolean darkmode;
+
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,19 +102,141 @@ public class Books extends AppCompatActivity implements View.OnClickListener {
 
         setContentView(R.layout.activity_books);
 
-        CardView brian = findViewById(R.id.brian);
-        brian.setOnClickListener(this);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
 
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
+
+        // declare if text to speech is being used
+        mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = mTTS.setLanguage(Locale.getDefault());
+
+                    if (result == TextToSpeech.LANG_MISSING_DATA
+                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                } else {
+                    Log.e("TTS", "Initialization failed");
+                }
+            }
+        });
+
+        readData();
+
+        BottomNavigationView navView = findViewById(R.id.nav_bar);
+        //set home as selected
+        navView.setSelectedItemId(R.id.home);
+        //perform item selected listener
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.camera:
+                        startActivity(new Intent(getApplicationContext(), Camera.class));
+                        overridePendingTransition(0,0);
+                        return true;
+                    case R.id.library:
+                        startActivity(new Intent(getApplicationContext(), Library.class));
+                        overridePendingTransition(0,0);
+                        return true;
+                    case R.id.home:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        overridePendingTransition(0,0);
+                    case R.id.profile:
+                        startActivity(new Intent(getApplicationContext(), Profile.class));
+                        overridePendingTransition(0,0);
+                        return true;
+                    case R.id.settings:
+                        startActivity(new Intent(getApplicationContext(), Settings.class));
+                        overridePendingTransition(0,0);
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        userId = fAuth.getCurrentUser().getUid();
+
+        bookList.add(0, new PersonalInfoItem("My Name is Brain Brian", "This is a book about a kids who is dyslexic", R.drawable.briancover));
+        bookList.add(1, new PersonalInfoItem("The Alphabet War: A Story about Dyslexia", "When Adam started kindergarten, the teacher wanted him to learn about letters. But -p- looked like -q, - and -b- looked like -d.- In first grade, he had to put the letters into words so he could read. That was the beginning of the Alphabet War.", R.drawable.alphabetcover));
+        buildRecyclerView(bookList);
+
+    }
+
+    public void buildRecyclerView(ArrayList<PersonalInfoItem> books) {
+        mRecyclerView = findViewById(R.id.bookRecycler);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new BookAdapter(books); //passes to adapter, then presents to viewholder
+
+        mRecyclerView.setLayoutManager((mLayoutManager));
+        mRecyclerView.setAdapter(mAdapter);
+
+        mAdapter.setOnItemClickListener(Books.this);
     }
 
     @Override
     public void onClick(View v) {
         Intent i;
         switch (v.getId()) {
-            case R.id.brian:
-                i=new Intent(Intent.ACTION_VIEW, Uri.parse("https://openlibrary.org/works/OL3163138W/My_Name_Is_Brain_Brian"));
-                startActivity(i);
+//            case R.id.brian:
+//                i=new Intent(Intent.ACTION_VIEW, Uri.parse("https://openlibrary.org/works/OL3163138W/My_Name_Is_Brain_Brian"));
+//                startActivity(i);
         }
     }
 
+    private void readData(){
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Books.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d("read data", e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
+                    speed = Integer.parseInt(documentSnapshot.getString("speed"));
+                    //f.onCallback(pitch, speed);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onSaveClick(PersonalInfoItem item, int position) {
+        Log.d(TAG, "saved");
+    }
+
+    @Override
+    public void onSpeakClick(PersonalInfoItem item, int position) {
+        Settings.speak(mTTS, item.getItemTitle() + item.getItemText(), pitch,speed);
+    }
+
+    //allows access of variables outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int pitch, int speed);
+    }
+
+    //for the speaker function
+    @Override
+    protected void onDestroy() {
+        if (mTTS != null) {
+            mTTS.stop();
+            mTTS.shutdown();
+        }
+
+        super.onDestroy();
+    }
 }

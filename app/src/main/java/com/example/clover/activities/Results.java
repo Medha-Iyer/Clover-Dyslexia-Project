@@ -20,6 +20,11 @@ import com.example.clover.R;
 import com.example.clover.adapters.GameAdapter;
 import com.example.clover.pojo.GameItem;
 import com.example.clover.pojo.Utils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -43,8 +48,6 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
 
     private CardView playAgain, goHomeBtn;
 
-    private int gameKey;
-
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
@@ -54,7 +57,9 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
     private boolean darkmode;
 
     private TextToSpeech mTTS;
-    private int age, pitch, speed;
+    private int age, pitch, speed, gameKey;
+
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +98,18 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
         }else{
             Utils.changeToLight(this);
         }
+
         setContentView(R.layout.activity_results);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
 
         fStore = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();

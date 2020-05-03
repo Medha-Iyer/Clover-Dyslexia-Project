@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    android:layout_centerHorizontal="true"
+    android:layout_columnWeight="1"
+    android:layout_rowWeight="1"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="?attr/baseLight">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp">
+
+        <ImageView
+            android:id="@+id/book_cover"
+            android:layout_width="131dp"
+            android:layout_height="171dp"
+            android:padding="5dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/briancover"
+            />
+
+        <TextView
+            android:id="@+id/book_title"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/book_cover"
+            android:textColor="?attr/textcolor"
+            android:textSize="18sp"
+            android:text="My Name is Brain Brian"
+            android:fontFamily="@font/opendyslexic_regular"/>
+
+        <TextView
+            android:id="@+id/book_description"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/book_title"
+            android:layout_toRightOf="@id/book_cover"
+            android:textColor="?attr/textcolor"
+            android:textSize="18sp"
+            android:text="This is the description of the book"
+            android:fontFamily="@font/opendyslexic_regular"/>
+
+        <ImageView
+            android:id="@+id/book_save"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/book_cover"
+            app:srcCompat="@drawable/ic_save"/>
+
+        <ImageView
+            android:id="@+id/book_speak"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignBottom="@id/book_cover"
+            android:layout_toLeftOf="@id/book_save"
+            app:srcCompat="@drawable/ic_hear" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

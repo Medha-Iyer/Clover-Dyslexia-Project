@@ -25,6 +25,14 @@ import com.example.clover.fragments.ProfileProgressCheck;
 import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.clover.pojo.GameItem;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +50,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Profile extends AppCompatActivity implements View.OnClickListener, ProfilePicDialog.PictureDialogListener {
     TextView fullName;
+
+    private AdView mAdView;
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -97,7 +107,18 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         }else{
             Utils.changeToLight(this);
         }
+
         setContentView(R.layout.activity_profile);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
 
         //setting up tabs for fragments
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);

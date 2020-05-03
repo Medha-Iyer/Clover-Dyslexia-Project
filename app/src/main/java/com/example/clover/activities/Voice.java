@@ -22,6 +22,11 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.pojo.GameItem;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.example.clover.pojo.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +54,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
     private ArrayList<GameItem> completedList = new ArrayList<GameItem>();
     ArrayList<String> speakResult;
 
+    private AdView mAdView;
     private TextView voiceResult, gameWord, bool;
     private ImageView wordView;
     private ImageView speakWord;
@@ -107,6 +113,16 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
             Utils.changeToLight(this);
         }
         setContentView(R.layout.activity_voice);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
 
         //Initialize all variables
         wordView = findViewById(R.id.word_view);

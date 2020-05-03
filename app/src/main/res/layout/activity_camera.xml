@@ -36,15 +36,25 @@
         android:textColor="?attr/baseDark"
         android:textSize="50sp"/>
 
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+    </com.google.android.gms.ads.AdView>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/content_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/nav_bar"
+        android:layout_above="@+id/action_layout"
         android:layout_below="@+id/title"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
-        android:layout_marginBottom="100dp"
         app:cardCornerRadius="20dp"
         app:cardBackgroundColor="?attr/invertTextcolor"
         android:elevation="10dp">
@@ -96,10 +106,13 @@
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
+        android:id="@+id/action_layout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
         android:layout_above="@+id/nav_bar">
 
         <GridLayout
