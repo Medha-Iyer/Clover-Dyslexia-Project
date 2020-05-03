@@ -151,7 +151,7 @@ public class LibraryPopActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    //allows access of variable age outside of the snapshotlistener
+    //allows access of variables outside of the snapshotlistener
     private interface FirebaseCallback{
         void onCallback(int pitch, int speed);
     }
