@@ -273,6 +273,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                 imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 ImageView imageView = findViewById(R.id.image_view);
                 imageView.setImageBitmap(imageBitmap);
+                Log.d(TAG, "image set");
             } catch (IOException e) {
                 e.printStackTrace();
             }

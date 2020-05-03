@@ -16,6 +16,7 @@
         android:elevation="8dp"
         app:itemBackground="@android:color/white"
         app:itemIconTint="@drawable/selector"
+        app:itemTextColor="@drawable/selector"
         app:menu="@menu/menu_nav"/>
 
     <com.google.android.gms.ads.AdView

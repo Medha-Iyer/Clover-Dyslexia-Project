@@ -25,8 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-import uk.co.deanwild.flowtextview.FlowTextView;
-
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
     private ArrayList<PersonalInfoItem> booksList;
     private OnItemClickListener mListener;
