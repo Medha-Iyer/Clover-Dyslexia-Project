@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:hint="Insert title..."
             android:inputType="text"
+            android:textColorHint="?attr/textcolor"
             android:textColor="?attr/textcolor"/>
 
         <EditText
@@ -28,6 +29,7 @@
             android:layout_below="@+id/edit_title"
             android:hint="Insert text..."
             android:inputType="textMultiLine"
+            android:textColorHint="?attr/textcolor"
             android:textColor="?attr/textcolor"/>
     </RelativeLayout>
 
@@ -36,6 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/rounded_nav"
-        app:titleTextColor="?attr/invertTextcolor"/>
+        app:titleTextColor="?attr/textcolor"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

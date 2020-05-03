@@ -1,9 +1,9 @@
 package com.example.clover.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,15 +17,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
-import com.example.clover.activities.Camera;
+import com.example.clover.activities.PopActivity;
 import com.example.clover.adapters.BookAdapter;
-import com.example.clover.adapters.LibraryAdapter;
-import com.example.clover.pojo.LibraryCardItem;
 import com.example.clover.pojo.PersonalInfoItem;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -265,6 +262,16 @@ public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickLis
                 SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
             }
         });
+    }
+
+    @Override
+    public void onItemClick(PersonalInfoItem item) {
+        Intent detailIntent = new Intent(getContext(), PopActivity.class);
+
+        detailIntent.putExtra(Intent.EXTRA_TITLE, item.getItemTitle());
+        detailIntent.putExtra(Intent.EXTRA_TEXT, item.getItemText());
+
+        startActivity(detailIntent);
     }
 
     //when calling firebase for data

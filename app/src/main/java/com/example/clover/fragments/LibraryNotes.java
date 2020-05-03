@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.example.clover.R;
 import com.example.clover.activities.Camera;
-import com.example.clover.activities.LibraryPopActivity;
+import com.example.clover.activities.PopActivity;
 import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.pojo.LibraryCardItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,7 +29,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -44,7 +43,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firestore.v1.WriteResult;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import java.util.Collections;
 
@@ -247,7 +245,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
 
     @Override //open card in pop-up view
     public void onItemClick(int position) {
-        Intent detailIntent = new Intent(getContext(), LibraryPopActivity.class);
+        Intent detailIntent = new Intent(getContext(), PopActivity.class);
         LibraryCardItem clickedItem = getListToUse().get(position);
 
         detailIntent.putExtra(Intent.EXTRA_TITLE, clickedItem.getItemTitle());
