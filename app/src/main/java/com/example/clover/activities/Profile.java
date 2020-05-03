@@ -50,6 +50,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -72,6 +74,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     private CardView profile_card;
     private ImageView pfp_temp, pfp_background;
     private CircleImageView pfp;
+    private TextView progressCount;
+
+    private ArrayList<GameItem> wordCount = new ArrayList<GameItem>();
+    String text;
 
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
@@ -143,6 +149,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         pfp_background = findViewById(R.id.profile_background);
         pfp_background.setOnClickListener(this);
         fullName = findViewById(R.id.prof_name);
+
+        progressCount = findViewById(R.id.progress_text);
+        setProgressCountText();
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
@@ -325,5 +334,70 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 Toast.makeText(this, "Get Clover Pro to unlock this game.", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    public void setProgressCountText() {
+        text = "SPELLING: ";
+        countItems(R.drawable.check, "spellingprogress", new Profile.ProgressCallback(){
+            @Override
+            public void onCallback(ArrayList<GameItem> progressList) {
+                text += wordCount.size() + " mastered, ";
+                countItems(R.drawable.cross, "spellingprogress", new Profile.ProgressCallback(){
+                    @Override
+                    public void onCallback(ArrayList<GameItem> progressList) {
+                        text += wordCount.size() + " to study \n ";
+                        countItems(R.drawable.check, "voiceprogress", new Profile.ProgressCallback(){
+                            @Override
+                            public void onCallback(ArrayList<GameItem> progressList) {
+                                text += "VOICE: "+ wordCount.size() + " mastered, ";
+                                countItems(R.drawable.cross, "voiceprogress", new Profile.ProgressCallback(){
+                                    @Override
+                                    public void onCallback(ArrayList<GameItem> progressList) {
+                                        text += wordCount.size() + " to study";
+                                        progressCount.setText(text);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+
+
+
+
+    }
+
+    public void countItems(int icon, String path, final Profile.ProgressCallback vCallback){
+        documentReference = fStore.collection("users")
+                .document(userId);
+        wordCount = new ArrayList<>();
+        documentReference.collection(path)
+                .whereEqualTo("itemIcon", icon)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("correct words", document.getId() + " => " + document.getData());
+                                GameItem correct = document.toObject(GameItem.class);
+                                wordCount.add(correct);
+                            }
+                            if(wordCount!=null) {
+                                Log.d("Load correct words", "Success");
+                                vCallback.onCallback(wordCount);
+                            }
+                        } else {
+                            Log.d("Load correct words", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public interface ProgressCallback {
+        void onCallback(ArrayList<GameItem> progressList);
     }
 }

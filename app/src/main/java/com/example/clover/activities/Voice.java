@@ -210,7 +210,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.next_word:
-                if(completedList.size()==3){
+                if(completedList.size()==10){
                     sendListToVoice();
                 } else {
                     if(fl==1) {
@@ -283,7 +283,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
 
                     nextWordBtn.setVisibility(View.VISIBLE);
 
-                    if(completedList.size()==3){
+                    if(completedList.size()==10){
                         nextWordText.setText("FINISHED!");
                     }
                 }

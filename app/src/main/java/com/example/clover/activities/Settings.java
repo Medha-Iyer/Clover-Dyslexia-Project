@@ -111,8 +111,8 @@ public class Settings extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         FragmentAdapter vpAdapter = new FragmentAdapter(getSupportFragmentManager());
-        vpAdapter.AddFragment(new SettingsPersonalInfo(), "Personal Info");
         vpAdapter.AddFragment(new SettingsPreferences(), "Preferences");
+        vpAdapter.AddFragment(new SettingsPersonalInfo(), "Personal Info");
         //setting up adapter for fragments
         viewPager.setAdapter(vpAdapter);
         tabLayout.setupWithViewPager(viewPager);

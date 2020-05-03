@@ -73,7 +73,7 @@
                 android:scaleType="centerCrop"
                 android:elevation="5dp"
                 app:srcCompat="@drawable/ic_insertphoto"
-                android:tint="?attr/baseDark"/>
+                android:tint="?attr/baseDark" />
 
             <TextView
                 android:id="@+id/text_view"
@@ -100,7 +100,7 @@
                 android:layout_below="@+id/image_view"
                 android:layout_marginRight="20dp"
                 app:srcCompat="@drawable/ic_hear"
-                android:tint="@android:color/darker_gray"/>
+                android:tint="?attr/baseDark"/>
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

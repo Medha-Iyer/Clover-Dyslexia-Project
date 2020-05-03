@@ -54,16 +54,20 @@ public class SettingsPersonalInfo extends Fragment implements PersonalInfoAdapte
         userId = fAuth.getCurrentUser().getUid();
 
         DocumentReference documentReference = fStore.collection("users").document(userId);
-        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                savedList = new ArrayList<PersonalInfoItem>();
-                savedList.add(0, new PersonalInfoItem("Name", documentSnapshot.getString("name"), R.drawable.name)); //TODO fix bug with logout that occurs here for some reason
-                savedList.add(1, new PersonalInfoItem("Age", documentSnapshot.getString("age"), R.drawable.age));
-                savedList.add(2, new PersonalInfoItem("Email", documentSnapshot.getString("email"), R.drawable.email));
-                buildRecyclerView(savedList);
-            }
-        });
+        if (documentReference != null) {
+            documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    savedList = new ArrayList<PersonalInfoItem>();
+                    if (documentSnapshot!=null) {
+                        savedList.add(0, new PersonalInfoItem("Name", documentSnapshot.getString("name"), R.drawable.name)); //TODO fix bug with logout that occurs here for some reason
+                        savedList.add(1, new PersonalInfoItem("Age", documentSnapshot.getString("age"), R.drawable.age));
+                        savedList.add(2, new PersonalInfoItem("Email", documentSnapshot.getString("email"), R.drawable.email));
+                        buildRecyclerView(savedList);
+                    }
+                }
+            });
+        }
 
         return view;
     }

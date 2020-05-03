@@ -258,7 +258,7 @@ public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickLis
         readData(new LibraryBooks.FirebaseCallback() {
             @Override
             public void onCallback(int a, int p, int s) {
-                String currentWord = item.getItemTitle() +item.getItemText();
+                String currentWord = item.getItemTitle();
                 SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
             }
         });

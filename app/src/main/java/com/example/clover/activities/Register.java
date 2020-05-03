@@ -44,10 +44,10 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     EditText mFullName, mEmail, mAge, mPassword;
     private ProgressBar mPbar;
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userID = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userID);
+    FirebaseAuth fAuth;
+    FirebaseFirestore fStore;
+    private String userID;
+    DocumentReference documentReference;
     private final String TAG = "Register";
     private boolean darkmode;
 
@@ -55,42 +55,42 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //This has to be implemented in every screen to update mode and theme.
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                if (e != null) {
-                    Toast.makeText(Register.this, "Error while loading!", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, e.toString());
-                    return;
-                }
-
-                if (documentSnapshot.exists()) {
-                    if(documentSnapshot.getBoolean("darkmode") != null){
-                        darkmode = documentSnapshot.getBoolean("darkmode");
-                    } else {
-                        darkmode = false;
-                    }
-                    if(documentSnapshot.getString("theme") != null){
-                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
-                    } else {
-                        Utils.setTheme(0);
-                    }
-                    if(darkmode){
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    }else{
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    }
-                }
-            }
-        });
-        Utils.onActivityCreateSetTheme(this);
-
-        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-            Utils.changeToDark(this);
-        }else{
-            Utils.changeToLight(this);
-        }
-
+//        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+//                if (e != null) {
+//                    Toast.makeText(Register.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+//                    Log.d(TAG, e.toString());
+//                    return;
+//                }
+//
+//                if (documentSnapshot.exists()) {
+//                    if(documentSnapshot.getBoolean("darkmode") != null){
+//                        darkmode = documentSnapshot.getBoolean("darkmode");
+//                    } else {
+//                        darkmode = false;
+//                    }
+//                    if(documentSnapshot.getString("theme") != null){
+//                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+//                    } else {
+//                        Utils.setTheme(0);
+//                    }
+//                    if(darkmode){
+//                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//                    }else{
+//                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//                    }
+//                }
+//            }
+//        });
+//        Utils.onActivityCreateSetTheme(this);
+//
+//        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+//            Utils.changeToDark(this);
+//        }else{
+//            Utils.changeToLight(this);
+//        }
+        this.setTheme(R.style.LightTheme1);
         setContentView(R.layout.activity_register);
 
         //initialize and assign variable, do this for every button or other interactive feature
@@ -105,7 +105,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         mPbar = findViewById(R.id.progressBar);
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-
+//        userID = fAuth.getCurrentUser().getUid();
     }
 
     @Override

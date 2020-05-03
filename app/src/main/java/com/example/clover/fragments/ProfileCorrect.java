@@ -43,7 +43,7 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
     DocumentReference progressRef;
     int code;
 
-
+    public static int NUMBER;
     private TextToSpeech mTTS;
     private int age, pitch, speed;
     ArrayList<GameItem> correctWords = new ArrayList<GameItem>();
@@ -143,6 +143,8 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
         } else {
             Log.d("correct", "size: "+correctWords.size());
         }
+
+        NUMBER = correctWords.size();
     }
 
     @Override

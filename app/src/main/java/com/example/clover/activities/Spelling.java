@@ -223,7 +223,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                 checkIfCorrect(1);
                 break;
             case R.id.next_word:
-                if(completedList.size()==3){
+                if(completedList.size()==10){
                     sendToSpellingResults();
                 } else {
                     reset();
@@ -277,7 +277,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             nextWordBtn.setVisibility(View.VISIBLE);
 
 
-            if(completedList.size()==3){
+            if(completedList.size()==10){
                 nextWordText.setText("FINISHED!");
             }
 

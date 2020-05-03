@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/pitchCard"
@@ -49,8 +49,8 @@
         android:id="@+id/speedCard"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:layout_margin="10dp"
         android:layout_below="@+id/pitchCard"
+        android:layout_margin="10dp"
         android:alpha="1"
         app:cardBackgroundColor="?attr/accentUnselect"
         app:cardCornerRadius="10dp"
@@ -88,9 +88,9 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/darkModeCard"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="10dp"
+        android:layout_height="75dp"
         android:layout_below="@id/speedCard"
+        android:layout_margin="10dp"
         android:alpha="1"
         app:cardBackgroundColor="?attr/invertTextcolor"
         app:cardCornerRadius="10dp"
@@ -121,9 +121,9 @@
                 android:id="@+id/switchmode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/switchTitle"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="50dp"
-                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/switchTitle"
                 android:fontFamily="@font/opendyslexic_regular" />
 
         </RelativeLayout>
@@ -133,8 +133,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_below="@+id/darkModeCard"
+        android:layout_margin="10dp"
         android:alpha="1"
         app:cardBackgroundColor="?attr/baseLight"
         app:cardCornerRadius="10dp"
@@ -148,11 +148,11 @@
                 android:id="@+id/second_section"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:rotation="180"
                 android:alpha="0.5"
+                android:rotation="180"
                 android:scaleType="fitXY"
-                app:srcCompat="@drawable/border_two"
-                android:tint="?attr/invertTextcolor"/>
+                android:tint="?attr/invertTextcolor"
+                app:srcCompat="@drawable/border_two" />
 
             <ImageView
                 android:id="@+id/first_section"
@@ -160,8 +160,8 @@
                 android:layout_height="match_parent"
                 android:alpha="0.5"
                 android:scaleType="fitXY"
-                app:srcCompat="@drawable/border_two"
-                android:tint="?attr/invertTextcolor"/>
+                android:tint="?attr/invertTextcolor"
+                app:srcCompat="@drawable/border_two" />
 
             <TextView
                 android:id="@+id/themeTitle"
@@ -179,41 +179,48 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/themeTitle"
-                android:layout_margin="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/radio_one"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:checked="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="15dp"
                     android:buttonTint="?attr/textcolor"
+                    android:checked="true"
                     android:text="One"
-                    android:textColor="?attr/textcolor"/>
+                    android:textColor="?attr/textcolor" />
 
                 <RadioButton
                     android:id="@+id/radio_two"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="15dp"
                     android:buttonTint="?attr/textcolor"
                     android:text="Two"
-                    android:textColor="?attr/textcolor"/>
+                    android:textColor="?attr/textcolor" />
 
                 <RadioButton
                     android:id="@+id/radio_three"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="15dp"
                     android:buttonTint="?attr/textcolor"
                     android:text="Three"
-                    android:textColor="?attr/textcolor"/>
+                    android:textColor="?attr/textcolor" />
 
             </RadioGroup>
 
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
-
 </RelativeLayout>

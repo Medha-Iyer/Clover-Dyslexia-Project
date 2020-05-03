@@ -8,6 +8,8 @@ import androidx.cardview.widget.CardView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -271,12 +273,20 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             Uri uri = data.getData();
             try {
                 imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                ImageView imageView = findViewById(R.id.image_view);
                 imageView.setImageBitmap(imageBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+//        int maxHeight = 500;
+//        int maxWidth = 500;
+//        float scale = Math.min(((float)maxHeight / imageBitmap.getWidth()), ((float)maxWidth / imageBitmap.getHeight()));
+//
+//        Matrix matrix = new Matrix();
+//        matrix.postScale(scale, scale);
+//        Bitmap bitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
+//        imageView.setImageBitmap(bitmap);
     }
 
     private void dispatchTakePictureIntent() {
@@ -314,9 +324,11 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         } else {
             tv.setText(sb.toString());
             fileTextComplete = tv.getText().toString();
-            String[] sentence = fileTextComplete.split(".");
-            fileTextSentences.addAll(Arrays.asList(sentence));
-            splitIntoWords();
+            if (fileTextComplete.equals("")||fileTextComplete==null) {
+                String[] sentence = fileTextComplete.split(".");
+                fileTextSentences.addAll(Arrays.asList(sentence));
+                splitIntoWords();
+            }
         }
     }
 

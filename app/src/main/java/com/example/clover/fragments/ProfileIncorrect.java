@@ -51,6 +51,8 @@ public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClic
     private TextToSpeech mTTS;
     private int age, pitch, speed;
 
+    public static int NUMBER;
+
     public ProfileIncorrect() {
     }
 
@@ -138,6 +140,7 @@ public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClic
                         }
                     }
                 });
+        NUMBER = incorrectWords.size();
     }
 
     @Override
