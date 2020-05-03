@@ -1,7 +1,11 @@
 <resources>
     <!--make sure the different styles chosen share the same parent-->
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
 
-<!--    LIGHT THEMES-->
+    <!--    LIGHT THEMES-->
     <style name="LightTheme1" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">@font/quicksand_regular</item>
         <item name="baseLight">#d5ede7</item>
@@ -12,8 +16,10 @@
         <item name="backgroundColor">#FFFFFF</item>
         <item name="textcolor">#303030</item>
         <item name="invertTextcolor">#FFFFFF</item>
+        <item name="invertBackground">#8DFFFFFF</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
+<!--    adb9e3-->
 
     <style name="LightTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">@font/quicksand_regular</item>
@@ -25,6 +31,7 @@
         <item name="backgroundColor">#FFFFFF</item>
         <item name="textcolor">#303030</item>
         <item name="invertTextcolor">#FFFFFF</item>
+        <item name="invertBackground">#8DFFFFFF</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
@@ -38,37 +45,11 @@
         <item name="backgroundColor">#FFFFFF</item>
         <item name="textcolor">#303030</item>
         <item name="invertTextcolor">#FFFFFF</item>
+        <item name="invertBackground">#8DFFFFFF</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
-
-    <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:fontFamily">@font/quicksand_bold</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-    </style>
-
-    <style name="AppTheme.PopMe" parent="LightTheme2">
-        <!-- Pop-up will overlap and close when you touch outside -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowCloseOnTouchOutside">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-    </style>
-
-
-    <style name="ProfileTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">#C4D186</item>
-        <item name="colorPrimaryDark">#435202</item>
-        <item name="colorAccent">#864149</item>
-        <item name="backgroundColor">#F1EDEA</item>
-        <item name="textcolor">#808080</item>
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-    </style>
-
 
     <!-- DARK THEMES -->
-
     <style name="DarkTheme1" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">@font/quicksand_regular</item>
         <item name="baseLight">#864149</item>
@@ -79,6 +60,7 @@
         <item name="backgroundColor">#303030</item>
         <item name="textcolor">#FFFFFF</item>
         <item name="invertTextcolor">#303030</item>
+        <item name="invertBackground">#AD303030</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
@@ -92,6 +74,7 @@
         <item name="backgroundColor">#303030</item>
         <item name="textcolor">#FFFFFF</item>
         <item name="invertTextcolor">#303030</item>
+        <item name="invertBackground">#AD303030</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
@@ -105,45 +88,56 @@
         <item name="backgroundColor">#303030</item>
         <item name="textcolor">#FFFFFF</item>
         <item name="invertTextcolor">#303030</item>
+        <item name="invertBackground">#AD303030</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
-<!--    <style name="DarkTheme2" parent="Theme.AppCompat.Light.NoActionBar">-->
-<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
-<!--        <item name="colorPrimary">#F7CBFF</item>-->
-<!--        <item name="colorPrimaryDark">#b76bc6</item>-->
-<!--        <item name="colorAccent">#9FE6FA</item>-->
-<!--        <item name="backgroundColor">#303030</item>-->
-<!--        <item name="cardbackground">#F7CBFF</item>-->
-<!--        <item name="textcolor">#F1EDEA</item>-->
-<!--        <item name="tintcolor">#FFFFFF</item>-->
-<!--        <item name="buttoncolor">#F7CBFF</item>-->
-<!--        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>-->
-<!--    </style>-->
-
-<!--    &lt;!&ndash; Base application theme. &ndash;&gt;-->
-<!--    &lt;!&ndash;    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">&ndash;&gt;-->
-<!--    &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
-<!--    &lt;!&ndash;        <item name="colorPrimary">@color/colorPrimary</item>&ndash;&gt;-->
-<!--    &lt;!&ndash;        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>&ndash;&gt;-->
-<!--    &lt;!&ndash;        <item name="colorAccent">@color/colorAccent</item>&ndash;&gt;-->
-<!--    &lt;!&ndash;    </style>&ndash;&gt;-->
-
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <!--    POP-UP THEMES-->
+    <style name="LightTheme1PopMe" parent="LightTheme1">
+        <!-- Pop-up will overlap and close when you touch outside -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@color/cardview_dark_background</item>
+    <style name="LightTheme2PopMe" parent="LightTheme2">
+        <!-- Pop-up will overlap and close when you touch outside -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="LightTheme3PopMe" parent="LightTheme3">
+        <!-- Pop-up will overlap and close when you touch outside -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
 
-    <style name="WindowAnimationTransition">
-        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
-        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    <style name="DarkTheme1PopMe" parent="DarkTheme1">
+        <!-- Pop-up will overlap and close when you touch outside -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
+    <style name="DarkTheme2PopMe" parent="DarkTheme2">
+        <!-- Pop-up will overlap and close when you touch outside -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+    </style>
+
+    <style name="DarkTheme3PopMe" parent="DarkTheme3">
+        <!-- Pop-up will overlap and close when you touch outside -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 </resources>

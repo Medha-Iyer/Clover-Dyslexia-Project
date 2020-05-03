@@ -1,10 +1,12 @@
 package com.example.clover.fragments;
 
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,13 +23,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-public class ProfileIncorrect extends Fragment {
+public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClickListener {
     View view;
 
     String userId;
@@ -41,6 +47,9 @@ public class ProfileIncorrect extends Fragment {
     private RecyclerView mRecyclerView;
     private GameAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    DocumentReference documentReference;
+    private TextToSpeech mTTS;
+    private int age, pitch, speed;
 
     public ProfileIncorrect() {
     }
@@ -55,15 +64,30 @@ public class ProfileIncorrect extends Fragment {
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         userId = fAuth.getCurrentUser().getUid();
+        documentReference = fStore.collection("users").document(userId);
 
         code = ProfileProgress.CODE;
 
-        readSpellingProgress(new ProfileIncorrect.ProgressCallback() {
+        readProgress(new ProfileIncorrect.ProgressCallback() {
             @Override
             public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
                 buildRecyclerView(spellingList);
-                if(spellingList.size()==1){
-                    Log.d("oncallback","should be right");
+            }
+        });
+
+        // declare if text to speech is being used
+        mTTS = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = mTTS.setLanguage(Locale.getDefault());
+
+                    if (result == TextToSpeech.LANG_MISSING_DATA
+                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                } else {
+                    Log.e("TTS", "Initialization failed");
                 }
             }
         });
@@ -75,23 +99,25 @@ public class ProfileIncorrect extends Fragment {
         mRecyclerView.setHasFixedSize(true); //might need to change false
         mLayoutManager = new LinearLayoutManager(getContext());
         mAdapter = new GameAdapter(savedList); //passes to adapter, then presents to viewholder
-
+        mAdapter.setOnItemClickListener(this);
         mRecyclerView.setLayoutManager((mLayoutManager));
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    public void readSpellingProgress(final ProfileIncorrect.ProgressCallback vCallback){
+    public void readProgress(final ProfileIncorrect.ProgressCallback vCallback){
         progressRef = fStore.collection("users")
                 .document(userId);
 
-        int icon = 0;
-        if(code==0){
-            icon = 2131165313;
-        } else if (code == 1){
-            icon = 2131165313;
+        int icon = R.drawable.cross;
+        String path = "";
+        if(code==1){
+            path = "spellingprogress";
+        } else if (code == 0){
+            path = "voiceprogress";
         }
 
-        progressRef.collection("spellingprogress")
+        incorrectWords = new ArrayList<GameItem>();
+        progressRef.collection(path)
                 .whereEqualTo("itemIcon", icon)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -99,18 +125,67 @@ public class ProfileIncorrect extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                GameItem incorrect = document.toObject(GameItem.class);
-                                incorrectWords.add(incorrect);
+                                Log.d("correct words", document.getId() + " => " + document.getData());
+                                GameItem correct = document.toObject(GameItem.class);
+                                incorrectWords.add(correct);
                             }
                             if(incorrectWords!=null) {
-                                Log.d("Load incorrect words", "Success");
+                                Log.d("Load correct words", "Success");
                                 vCallback.onCallback(incorrectWords);
                             }
                         } else {
-                            Log.d("Load incorrect words", "Error getting documents: ", task.getException());
+                            Log.d("Load correct words", "Error getting documents: ", task.getException());
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        final String currentWord = incorrectWords.get(position).getItemWord();
+        readData(new ProfileIncorrect.FirebaseCallback() {
+            @Override
+            public void onCallback(int a, int p, int s) {
+                SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
+            }
+        });
+    }
+
+    //get the right list depending on age
+    private void readData(final ProfileIncorrect.FirebaseCallback f){
+        documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(getContext(), "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d("read data", e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    age = Integer.parseInt(documentSnapshot.getString("age"));
+                    pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
+                    speed = Integer.parseInt(documentSnapshot.getString("speed"));
+                    f.onCallback(age, pitch, speed);
+                }
+            }
+        });
+    }
+
+    //for the speaker function
+    @Override
+    public void onDestroy() {
+        if (mTTS != null) {
+            mTTS.stop();
+            mTTS.shutdown();
+        }
+
+        super.onDestroy();
+    }
+
+    //allows access of variable age outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
     }
 
     public interface ProgressCallback {

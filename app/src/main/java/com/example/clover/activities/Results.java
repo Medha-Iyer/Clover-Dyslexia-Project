@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.clover.R;
 import com.example.clover.adapters.GameAdapter;
+import com.example.clover.fragments.SettingsPreferences;
 import com.example.clover.pojo.GameItem;
 import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -134,7 +135,13 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
 
                 buildRecyclerView(list);
 
-                saveProgress();
+                String path="";
+                if(gameKey == 1){
+                    path = "spellingprogress";
+                } else {
+                    path = "voiceprogress";
+                }
+                saveProgress(path);
             }
         });
 
@@ -188,7 +195,7 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
     @Override
     public void onItemClick(int position) {
         String currentWord = list.get(position).getItemWord();
-        Settings.speak(mTTS, currentWord, pitch, speed);
+        SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
     }
 
     public void buildRecyclerView(ArrayList<GameItem> savedList) {
@@ -202,13 +209,13 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
         mAdapter.setOnItemClickListener((GameAdapter.OnItemClickListener) Results.this);
     }
 
-    public void saveProgress(){
+    public void saveProgress(String path){
         String word;
         for(int i=0; i< list.size(); i++){
             word = list.get(i).getItemWord();
             documentReference = fStore.collection("users")
                     .document(userId)
-                    .collection("spellingprogress")
+                    .collection(path)
                     .document(word);
             documentReference.set(list.get(i))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {

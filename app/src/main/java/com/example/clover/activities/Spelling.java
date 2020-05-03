@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clover.R;
+import com.example.clover.fragments.SettingsPreferences;
 import com.example.clover.pojo.GameItem;
 import com.example.clover.pojo.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -36,34 +37,30 @@ import java.util.Scanner;
 public class Spelling extends AppCompatActivity implements View.OnClickListener {
     public static final int GAME_KEY = 1;
 
-    BottomNavigationView navView;
-    ImageView wordView;
-    ImageView hearWordBtn;
-    TextView viewWord, correctView;
-    EditText userWord;
-    CardView checkWordBtn, checkAgainBtn, nextWordBtn;
-
-    private TextToSpeech mTTS;
+    //for layout of activity
+    private boolean darkMode;
+    private BottomNavigationView navView;
+    private ImageView wordView, hearWordBtn;
+    private TextView viewWord, correctView, nextWordText;
+    private EditText userWord;
+    private CardView checkWordBtn, checkAgainBtn, nextWordBtn;
 
     //to store words
     private String currentWord;
     private ArrayList<String> wordList = new ArrayList<String>();
     private ArrayList<GameItem> completedList = new ArrayList<GameItem>();
 
-    //show word for a few seconds
-    private Handler mHandler = new Handler();
-
-    //to get the right age from list
+    //important components based on preference
     private int age, pitch, speed;
     private Scanner scanner;
+    private TextToSpeech mTTS;
+    private Handler mHandler = new Handler();
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    //for firebase
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userId);
-
-    private final String TAG = "Spelling";
-    private boolean darkmode;
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,21 +71,21 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                 if (e != null) {
                     Toast.makeText(Spelling.this, "Error while loading!", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, e.toString());
+                    Log.d("Spelling Activity", e.toString());
                     return;
                 }
                 if (documentSnapshot.exists()) {
                     if(documentSnapshot.getBoolean("darkmode") != null){
-                        darkmode = documentSnapshot.getBoolean("darkmode");
+                        darkMode = documentSnapshot.getBoolean("darkmode");
                     } else {
-                        darkmode = false;
+                        darkMode = false;
                     }
                     if(documentSnapshot.getString("theme") != null){
                         Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
                     } else {
                         Utils.setTheme(0);
                     }
-                    if(darkmode){
+                    if(darkMode){
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     }else{
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -108,6 +105,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
         viewWord = findViewById(R.id.show_word);
         correctView = findViewById(R.id.correct_text);
         userWord = findViewById(R.id.input_word);
+        nextWordText = findViewById(R.id.next_word_text);
 
         checkWordBtn = findViewById(R.id.check_word);
         checkWordBtn.setOnClickListener(this);
@@ -118,7 +116,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
         nextWordBtn = findViewById(R.id.next_word);
         nextWordBtn.setOnClickListener(this);
 
-        //speak word if click on speaker button
         hearWordBtn = findViewById(R.id.speak_word);
         hearWordBtn.setOnClickListener(this);
 
@@ -158,8 +155,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                     wordList.add(scanner.nextLine());
                 }
                 scanner.close();
-
-                //show word for 5 seconds before disappearing
                 setUpWord();
             }
         });
@@ -201,7 +196,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.speak_word:
-                Settings.speak(mTTS, currentWord, pitch, speed);
+                SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
                 break;
             case R.id.check_word:
                 checkIfCorrect(0);
@@ -210,8 +205,12 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
                 checkIfCorrect(1);
                 break;
             case R.id.next_word:
-                reset();
-                setUpWord();
+                if(completedList.size()==3){
+                    sendToSpellingResults();
+                } else {
+                    reset();
+                    setUpWord();
+                }
                 break;
         }
     }
@@ -219,7 +218,12 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     private void setUpWord(){
         //show word for 5 seconds before disappearing
         viewWord.setText(randomLine(wordList));
-        Settings.speak(mTTS, currentWord, pitch, speed);
+        readData(new Spelling.FirebaseCallback() {
+            @Override
+            public void onCallback(int a, int p, int s) {
+                SettingsPreferences.speak(mTTS,currentWord,pitch,speed);
+            }
+        });
         mHandler.postDelayed(mShowLoadingRunnable, 2000);
     }
 
@@ -255,8 +259,8 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             nextWordBtn.setVisibility(View.VISIBLE);
 
 
-            if(completedList.size()==2){
-                sendToSpellingResults();
+            if(completedList.size()==3){
+                nextWordText.setText("FINISHED!");
             }
 
         }else{
@@ -289,7 +293,6 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
     //get random word from wordList
     public String randomLine(ArrayList<String> list) {
         currentWord = list.get(new Random().nextInt(list.size()));
-
         //add to beginning of list
         completedList.add(0, new GameItem(currentWord));
         wordList.remove(currentWord);
