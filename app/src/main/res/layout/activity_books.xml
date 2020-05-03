@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/nav_bar"
         android:layout_centerHorizontal="true"
-        android:text="Descriptions taken from GoodReads"
+        android:text="Descriptions taken from Amazon"
         android:textSize="15dp"
         android:fontFamily="@font/opendyslexic_italic" />
 
