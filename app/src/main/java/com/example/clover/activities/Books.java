@@ -23,6 +23,11 @@ import com.example.clover.adapters.PersonalInfoAdapter;
 import com.example.clover.fragments.ProfilePersonalInfo;
 import com.example.clover.pojo.PersonalInfoItem;
 import com.example.clover.pojo.Utils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -52,6 +57,7 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
     private int pitch, speed;
     private boolean darkmode;
 
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +101,16 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
 
 
         setContentView(R.layout.activity_books);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
 
         // declare if text to speech is being used
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -152,7 +168,7 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
         userId = fAuth.getCurrentUser().getUid();
 
         bookList.add(0, new PersonalInfoItem("My Name is Brain Brian", "This is a book about a kids who is dyslexic", R.drawable.briancover));
-        bookList.add(1, new PersonalInfoItem("The Alphabet War: A Story about Dyslexia", "This is called the Alphabet War", R.drawable.alphabetcover));
+        bookList.add(1, new PersonalInfoItem("The Alphabet War: A Story about Dyslexia", "When Adam started kindergarten, the teacher wanted him to learn about letters. But -p- looked like -q, - and -b- looked like -d.- In first grade, he had to put the letters into words so he could read. That was the beginning of the Alphabet War.", R.drawable.alphabetcover));
         buildRecyclerView(bookList);
 
     }

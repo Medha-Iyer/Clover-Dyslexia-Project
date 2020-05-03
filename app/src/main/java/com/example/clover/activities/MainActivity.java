@@ -89,8 +89,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
         mAdView.loadAd(adRequest);
 
-        setContentView(R.layout.activity_home);
-
         CardView mvoice = findViewById(R.id.voice_game_btn);
         mvoice.setOnClickListener(this);
 

@@ -107,9 +107,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         }else{
             Utils.changeToLight(this);
         }
-        setContentView(R.layout.activity_profile);
 
         setContentView(R.layout.activity_profile);
+
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {

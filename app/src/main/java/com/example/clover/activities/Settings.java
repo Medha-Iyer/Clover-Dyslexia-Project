@@ -25,6 +25,11 @@ import com.example.clover.R;
 import com.example.clover.pojo.UserItem;
 import com.example.clover.pojo.Utils;
 import com.firebase.client.Firebase;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -47,10 +52,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     Switch switchMode;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
+
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userId = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userId);
+    private String userId;
+    DocumentReference documentReference;
     private int selectedTheme;
     private static float pitchVal, speedVal = 1;
 
@@ -66,6 +72,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private static boolean darkmode;
     private static int theme;
 
+    private AdView mAdView;
 
     //allows access of variables outside of the snapshotlistener
     private interface FirebaseCallback{
@@ -76,6 +83,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userId = fAuth.getCurrentUser().getUid();
+        documentReference = fStore.collection("users").document(userId);
         saveThemeData();
         //This has to be implemented in every screen to update mode and theme.
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
@@ -115,7 +124,18 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             Log.d(TAG, "Switching to light mode");
             Utils.changeToLight(this);
         }
+
         setContentView(R.layout.activity_settings);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
 
         //initialize and assign variable, do this for every
         BottomNavigationView navView = findViewById(R.id.nav_bar);
