@@ -1,5 +1,7 @@
 package com.example.clover.adapters;
 
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +24,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+
+import uk.co.deanwild.flowtextview.FlowTextView;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
     private ArrayList<PersonalInfoItem> booksList;
@@ -104,6 +108,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     @Override
     public void onBindViewHolder(@NonNull final BookViewHolder holder, int position) {
         holder.bookTitle.setText(booksList.get(position).getItemTitle());
+
         holder.bookDescription.setText(booksList.get(position).getItemText());
         holder.bookCover.setImageResource(booksList.get(position).getItemIcon());
         holder.speakIcon.setImageResource(R.drawable.ic_hear);

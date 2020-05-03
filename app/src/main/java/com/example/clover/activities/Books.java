@@ -24,11 +24,11 @@ import com.example.clover.pojo.PersonalInfoItem;
 import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+//import com.google.android.gms.ads.AdRequest;
+//import com.google.android.gms.ads.AdView;
+//import com.google.android.gms.ads.MobileAds;
+//import com.google.android.gms.ads.initialization.InitializationStatus;
+//import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -321,25 +321,6 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
         }
 
         super.onDestroy();
-    }
-
-    //save completeList to firebase
-    public void saveToFirebase(PersonalInfoItem item) {
-        String title = item.getItemTitle();
-        documentReference = fStore.collection("users").document(userId)
-                .collection("books").document(title);
-        //TODO make it so that they can't name two things the same title
-        documentReference.set(item).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("Books", "Document saved to library collection");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Books", "onFailure: " + e.toString());
-            }
-        });
     }
 }
 
