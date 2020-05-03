@@ -38,6 +38,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         void onSaveClick(PersonalInfoItem item, int position);
         void onUnsaveClick(PersonalInfoItem item, int position);
         void onSpeakClick(PersonalInfoItem item, int position);
+        void onItemClick(PersonalInfoItem item);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -58,6 +59,16 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             bookCover = itemView.findViewById(R.id.book_cover);
             saveIcon = itemView.findViewById(R.id.book_save);
             speakIcon = itemView.findViewById(R.id.book_speak);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(booksList.get(position));
+                    }
+                }
+            });
 
             saveIcon.setOnClickListener(new View.OnClickListener() {
                 @Override

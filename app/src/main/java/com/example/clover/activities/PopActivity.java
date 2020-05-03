@@ -28,7 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.Locale;
 
-public class LibraryPopActivity extends AppCompatActivity implements View.OnClickListener {
+public class PopActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String TAG = "LibraryPop";
     private boolean darkmode;
@@ -54,7 +54,7 @@ public class LibraryPopActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                 if (e != null) {
-                    Toast.makeText(LibraryPopActivity.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PopActivity.this, "Error while loading!", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, e.toString());
                     return;
                 }
@@ -83,7 +83,7 @@ public class LibraryPopActivity extends AppCompatActivity implements View.OnClic
         }else{
             Utils.changeToLight(this);
         }
-        setContentView(R.layout.activity_library_pop);
+        setContentView(R.layout.activity_pop);
 
         mHearIcon = findViewById(R.id.hear_text);
         mHearIcon.setOnClickListener(this);
@@ -109,7 +109,7 @@ public class LibraryPopActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
-        readData(new LibraryPopActivity.FirebaseCallback() {
+        readData(new PopActivity.FirebaseCallback() {
             @Override
             public void onCallback(int p, int s) {
                 Intent intent = getIntent();
@@ -151,12 +151,12 @@ public class LibraryPopActivity extends AppCompatActivity implements View.OnClic
     }
 
     //get the right list depending on age
-    private void readData(final LibraryPopActivity.FirebaseCallback f){
+    private void readData(final PopActivity.FirebaseCallback f){
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                 if (e != null) {
-                    Toast.makeText(LibraryPopActivity.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PopActivity.this, "Error while loading!", Toast.LENGTH_SHORT).show();
                     Log.d("read data", e.toString());
                     return;
                 }

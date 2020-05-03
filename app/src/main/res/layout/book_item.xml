@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="175dp"
     android:layout_margin="12dp"
     android:layout_centerHorizontal="true"
     android:layout_columnWeight="1"
@@ -56,15 +56,20 @@
 
                 <TextView
                     android:id="@+id/book_title"
-                    android:layout_marginTop="12dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="0dp"
                     android:layout_toLeftOf="@+id/book_speak"
-                    android:textColor="?attr/textcolor"
-                    android:textSize="18sp"
-                    android:text="My Name is Brain Brian"
                     android:fontFamily="@font/opendyslexic_bolditalic"
-                    android:lineSpacingExtra="-8dp"/>
+                    android:lineSpacingExtra="-10dp"
+                    android:padding="5dp"
+                    android:textAlignment="center"
+                    android:text="My Name is Brain Brian"
+                    android:textColor="?attr/textcolor"
+                    android:textSize="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="3"/>
 
             </RelativeLayout>
 
@@ -72,17 +77,20 @@
 
         <TextView
             android:id="@+id/book_description"
-            android:layout_marginTop="12dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/title"
+            android:layout_marginLeft="-5dp"
+            android:layout_alignParentBottom="true"
             android:layout_toRightOf="@id/book_cover"
-            android:textColor="?attr/textcolor"
-            android:textSize="18sp"
-            android:text="This is the description of the book"
-            android:fontFamily="@font/opendyslexic_regular"
             android:ellipsize="end"
-            android:maxLines="2"/>
+            android:fontFamily="@font/opendyslexic_regular"
+            android:lineSpacingExtra="-5dp"
+            android:maxLines="2"
+            android:padding="5dp"
+            android:text="This is the description of the book"
+            android:textColor="?attr/textcolor"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

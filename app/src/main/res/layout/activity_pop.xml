@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pop_bg"
-    tools:context="com.example.clover.activities.LibraryPopActivity">
+    tools:context="com.example.clover.activities.PopActivity">
 
     <androidx.cardview.widget.CardView
             android:id="@id/title"
@@ -27,9 +27,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="10dp"
+                android:layout_toLeftOf="@+id/hear_text"
                 android:text="hey"
                 android:textAlignment="center"
-                android:textSize="40dp"
+                android:textSize="30dp"
                 android:textColor="?attr/textcolor"/>
 
             <ImageView
@@ -58,7 +59,7 @@
         android:padding="10dp"
         android:scrollbars="vertical"
         android:text="hey"
-        android:textSize="25dp"
+        android:textSize="18dp"
         android:textColor="?attr/textcolor"/>
 </RelativeLayout>
 
