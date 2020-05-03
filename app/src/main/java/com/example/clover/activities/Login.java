@@ -269,8 +269,4 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-<<<<<<< .merge_file_a17044
 }
-=======
-}
->>>>>>> .merge_file_a13736

@@ -30,8 +30,6 @@ public class Utils
     public final static int THEME_GREEN = 4;
     public final static int DARK_THEME_GREEN = 5;
 
-<<<<<<< .merge_file_a17340
-=======
     //adding popup
     public final static int POPUP_LIGHT_ONE = 6;
     public final static int POPUP_DARK_ONE = 7;
@@ -40,7 +38,6 @@ public class Utils
     public final static int POPUP_LIGHT_THREE = 10;
     public final static int POPUP_DARK_THREE = 11;
 
->>>>>>> .merge_file_a09196
     static FirebaseAuth fAuth = FirebaseAuth.getInstance();
     static FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private static String userId = fAuth.getCurrentUser().getUid();
@@ -178,8 +175,4 @@ public class Utils
                     }
                 });
     }
-<<<<<<< .merge_file_a17340
 }
-=======
-}
->>>>>>> .merge_file_a09196

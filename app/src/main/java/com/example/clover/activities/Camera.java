@@ -209,11 +209,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         switch (v.getId()){
             case R.id.audio_icon:
                 Log.d("on click","why no work?");
-<<<<<<< .merge_file_a17712
-                Settings.speak(mTTS, fileTextComplete, pitch,speed);
-=======
                 SettingsPreferences.speak(mTTS, fileText, pitch,speed);
->>>>>>> .merge_file_a15724
                 break;
             case R.id.take_photo:
                 dispatchTakePictureIntent();
