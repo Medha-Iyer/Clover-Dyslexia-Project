@@ -1,6 +1,5 @@
 package com.example.clover.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,14 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
-import com.example.clover.activities.Profile;
-import com.example.clover.activities.ProfileNameDialog;
+import com.example.clover.activities.EditInfoDialog;
 import com.example.clover.adapters.PersonalInfoAdapter;
 import com.example.clover.pojo.PersonalInfoItem;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
 
-public class ProfilePersonalInfo extends Fragment implements PersonalInfoAdapter.OnItemClickListener, ProfileNameDialog.profileInput {
+public class SettingsPersonalInfo extends Fragment implements PersonalInfoAdapter.OnItemClickListener, EditInfoDialog.profileInput {
     View view;
 
     String userId;
@@ -45,7 +41,7 @@ public class ProfilePersonalInfo extends Fragment implements PersonalInfoAdapter
     private ArrayList<PersonalInfoItem> savedList = new ArrayList<PersonalInfoItem>();
     private PersonalInfoItem currentItem;
 
-    public ProfilePersonalInfo() {
+    public SettingsPersonalInfo() {
     }
 
     @Nullable
@@ -61,6 +57,7 @@ public class ProfilePersonalInfo extends Fragment implements PersonalInfoAdapter
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                savedList = new ArrayList<PersonalInfoItem>();
                 savedList.add(0, new PersonalInfoItem("Name", documentSnapshot.getString("name"), R.drawable.name)); //TODO fix bug with logout that occurs here for some reason
                 savedList.add(1, new PersonalInfoItem("Age", documentSnapshot.getString("age"), R.drawable.age));
                 savedList.add(2, new PersonalInfoItem("Email", documentSnapshot.getString("email"), R.drawable.email));
@@ -80,15 +77,15 @@ public class ProfilePersonalInfo extends Fragment implements PersonalInfoAdapter
         mRecyclerView.setLayoutManager((mLayoutManager));
         mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(ProfilePersonalInfo.this);
+        mAdapter.setOnItemClickListener(SettingsPersonalInfo.this);
     }
 
     @Override
     public void onEditClick(PersonalInfoItem item, int position) {
         // Allows you to edit name when edit button is clicked
         currentItem = item;
-        ProfileNameDialog profileDialog = new ProfileNameDialog(item.getItemTitle());
-        profileDialog.setTargetFragment(ProfilePersonalInfo.this, 1);
+        EditInfoDialog profileDialog = new EditInfoDialog(item.getItemTitle());
+        profileDialog.setTargetFragment(SettingsPersonalInfo.this, 1);
         Log.e("edit click", "Button has been clicked: opening dialog");
         profileDialog.show(getFragmentManager(), "profile dialog"); //I can't use getSupportFragmentManager in a fragment, might need to change
     }

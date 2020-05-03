@@ -22,11 +22,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class Books extends AppCompatActivity implements View.OnClickListener {
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userID = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userID);
     private final String TAG = "Books";
+
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userID = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userID);
     private boolean darkmode;
 
     @Override

@@ -1,145 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.Settings"
-    android:background="?attr/backgroundColor">
+    android:background="?attr/backgroundColor"
+    tools:context=".activities.Settings">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="700dp"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/curvy_topbar" />
 
     <TextView
-        android:id="@+id/settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Settings"
-        android:textSize="50dp" />
-
-    <TextView
-        android:id="@+id/pitchTitle"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_toStartOf="@id/seek_bar_pitch"
-        android:layout_marginTop="150dp"
-        android:text="Pitch"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/quicksand_bold"
+        android:padding="5dp"
+        android:shadowColor="?attr/invertTextcolor"
+        android:shadowDx="4"
+        android:shadowDy="4"
+        android:shadowRadius="2"
+        android:text="S E T T I N G S"
+        android:textAlignment="center"
         android:textColor="?attr/textcolor"
-        android:fontFamily="@font/opendyslexic_regular"
-        android:textSize="16sp" />
+        android:textSize="50sp" />
 
-    <SeekBar
-        android:id="@+id/seek_bar_pitch"
-        android:layout_width="200dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/content_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/logoutBtn"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:elevation="10dp"
+        android:alpha="0.98"
+        app:cardBackgroundColor="?attr/invertBackground"
+        app:cardCornerRadius="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@android:color/transparent">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/baseLight"
+                android:backgroundTint="?attr/baseLight"
+                android:alpha="1"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="?attr/accentSelect"
+                app:tabMode="fixed"
+                app:tabTextColor="?attr/textcolor" />
+
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/logoutBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"
-        android:progress="50"
-        android:progressTint="?attr/baseLight"/>
+        android:layout_above="@id/nav_bar"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="?attr/accentSelect"
+        app:cardElevation="0dp">
 
-    <TextView
-        android:id="@+id/speedTitle"
-        android:layout_width="72dp"
-        android:layout_height="23dp"
-        android:layout_alignStart="@id/pitchTitle"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="-30dp"
-        android:layout_toStartOf="@id/seek_bar_speed"
-        android:fontFamily="@font/opendyslexic_regular"
-        android:text="Speed"
-        android:textColor="?attr/textcolor"
-        android:textSize="16sp" />
-
-    <SeekBar
-        android:id="@+id/seek_bar_speed"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:progress="50"
-        android:progressTint="?attr/baseLight"
-        android:layout_marginTop="180dp" />
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/settings"
-        android:layout_centerInParent="true"
-        android:id="@+id/radioGroup">
-
-        <RadioButton
-            android:id="@+id/radio_one"
-            android:layout_width="wrap_content"
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="One"
-            android:onClick="radioClick"
-            android:checked="true"/>
+            android:padding="5dp"
+            android:text="Log Out"
+            android:textSize="25dp"/>
 
-        <RadioButton
-            android:id="@+id/radio_two"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Two"
-            android:onClick="radioClick"/>
+    </androidx.cardview.widget.CardView>
 
-        <RadioButton
-            android:id="@+id/radio_three"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Three"
-            android:onClick="radioClick"/>
-
-    </RadioGroup>
 
     //needs to be placed on every single activity
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/rounded_nav"
         android:elevation="8dp"
         app:itemBackground="@android:color/white"
-        app:itemTextColor="@drawable/selector"
         app:itemIconTint="@drawable/selector"
-        app:menu="@menu/menu_nav"
-        android:layout_alignParentBottom="true"/>
+        app:itemTextColor="@drawable/selector"
+        app:menu="@menu/menu_nav" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/logoutCard"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_above="@id/nav_bar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
-        app:cardBackgroundColor="?attr/baseDark"
-        app:cardCornerRadius="25dp"
-        app:cardElevation="5dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/logoutText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:fontFamily="@font/opendyslexic_regular"
-                android:text="LOG OUT"
-                android:textColor="?attr/textcolor"
-                android:textSize="25sp" />
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
-
-    <Switch
-        android:id="@+id/switchmode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/seek_bar_speed"
-        android:layout_marginTop="10dp"
-        android:layout_alignStart="@id/speedTitle"
-        android:fontFamily="@font/opendyslexic_regular"
-        android:text="Dark Mode"
-        android:textColor="?attr/textcolor"
-        android:textSize="20sp" />
 
 </RelativeLayout>

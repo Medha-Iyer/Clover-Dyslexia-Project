@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
+    android:padding="20dp"
     android:background="?attr/invertTextcolor">
 
     <EditText
@@ -20,10 +20,9 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/edit_name"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
         app:cardBackgroundColor="?attr/invertTextcolor"
         app:cardCornerRadius="10sp"
-        app:cardElevation="8dp">
+        app:cardElevation="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -35,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:fontFamily="@font/opendyslexic_regular"
-                android:padding="5dp"
+                android:padding="3dp"
                 android:text="UPDATE"
                 android:textColor="?attr/logoColor"
                 android:textSize="18sp" />
@@ -51,7 +50,7 @@
         android:layout_marginTop="10dp"
         app:cardBackgroundColor="?attr/invertTextcolor"
         app:cardCornerRadius="10sp"
-        app:cardElevation="8dp">
+        app:cardElevation="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -62,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:padding="5dp"
+                android:padding="3dp"
                 android:fontFamily="@font/opendyslexic_regular"
                 android:text="CANCEL"
                 android:textColor="?attr/logoColor"

@@ -17,25 +17,32 @@
             app:cardElevation="0dp"
             android:backgroundTint="?attr/baseLight">
 
-        <TextView
-            android:id="@+id/titleView"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:text="hey"
-            android:textAlignment="center"
-            android:textSize="40dp"
-            android:textColor="?attr/textcolor"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/hear_text"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:layout_margin="10dp"
-            app:srcCompat="@drawable/ic_hear"
-            android:tint="@android:color/darker_gray"/>
+            <TextView
+                android:id="@+id/titleView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:text="hey"
+                android:textAlignment="center"
+                android:textSize="40dp"
+                android:textColor="?attr/textcolor"/>
+
+            <ImageView
+                android:id="@+id/hear_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:tint="?attr/baseDark"
+                app:srcCompat="@drawable/ic_hear" />
+
+        </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 
