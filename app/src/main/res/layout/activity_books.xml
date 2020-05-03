@@ -22,7 +22,34 @@
         android:id="@+id/bookRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar_layout"
         android:layout_margin="12dp"
         android:scrollbars="vertical"/>
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/accentSelect"
+                app:title="Browse Books"
+                app:titleTextColor="?attr/invertTextcolor"/>
+
+            <com.miguelcatalan.materialsearchview.MaterialSearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible" />
+        </FrameLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
 </RelativeLayout>

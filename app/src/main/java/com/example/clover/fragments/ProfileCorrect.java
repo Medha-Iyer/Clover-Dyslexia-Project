@@ -138,6 +138,11 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
                         }
                     }
                 });
+        if(correctWords.size() == 0) {
+            Log.d("correct", "icon id: "+R.drawable.check);
+        } else {
+            Log.d("correct", "size: "+correctWords.size());
+        }
     }
 
     @Override

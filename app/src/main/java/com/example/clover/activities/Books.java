@@ -1,28 +1,29 @@
 package com.example.clover.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.cardview.widget.CardView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
 import com.example.clover.adapters.BookAdapter;
-import com.example.clover.adapters.PersonalInfoAdapter;
-import com.example.clover.fragments.ProfilePersonalInfo;
+import com.example.clover.fragments.SettingsPreferences;
 import com.example.clover.pojo.PersonalInfoItem;
 import com.example.clover.pojo.Utils;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -30,12 +31,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class Books extends AppCompatActivity implements View.OnClickListener, BookAdapter.OnItemClickListener {
-
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
@@ -52,6 +53,7 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
     private int pitch, speed;
     private boolean darkmode;
 
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +94,11 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
         }else{
             Utils.changeToLight(this);
         }
-
-
         setContentView(R.layout.activity_books);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setUpSearch();
 
         // declare if text to speech is being used
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -157,6 +161,53 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.book_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        MaterialSearchView searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView.setMenuItem(searchItem);
+        return true;
+    }
+
+    private void setUpSearch() {
+        MaterialSearchView searchView = findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                processQuery(newText);
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                buildRecyclerView(bookList);
+            }
+        });
+    }
+    private void processQuery(String query) {
+        ArrayList<PersonalInfoItem> result = new ArrayList<>();
+
+        for (PersonalInfoItem item : bookList) {
+            if (item.getItemTitle().toLowerCase().contains(query.toLowerCase()) ||
+                    item.getItemText().toLowerCase().contains(query.toLowerCase())) {
+                result.add(item);
+            }
+        }
+        mAdapter.setBookItems(result);
+    }
+
     public void buildRecyclerView(ArrayList<PersonalInfoItem> books) {
         mRecyclerView = findViewById(R.id.bookRecycler);
         mRecyclerView.setHasFixedSize(true);
@@ -201,11 +252,36 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
     @Override
     public void onSaveClick(PersonalInfoItem item, int position) {
         Log.d(TAG, "saved");
+        String title = item.getItemTitle();
+        documentReference = fStore.collection("users").document(userId)
+                .collection("books").document(title);
+        //TODO make it so that they can't name two things the same title
+        documentReference.set(item).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("Books", "Document saved to library collection");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Books", "onFailure: " + e.toString());
+            }
+        });
+    }
+
+    @Override
+    public void onUnsaveClick(PersonalInfoItem item, int position) {
+        Log.d(TAG, "unsaved");
+        String title = item.getItemTitle();
+        documentReference = fStore.collection("users").document(userId)
+                .collection("books").document(title);
+        //TODO make it so that they can't name two things the same title
+        documentReference.delete();
     }
 
     @Override
     public void onSpeakClick(PersonalInfoItem item, int position) {
-        Settings.speak(mTTS, item.getItemTitle() + item.getItemText(), pitch,speed);
+        SettingsPreferences.speak(mTTS, item.getItemTitle() + item.getItemText(), pitch,speed);
     }
 
     //allows access of variables outside of the snapshotlistener
@@ -223,4 +299,25 @@ public class Books extends AppCompatActivity implements View.OnClickListener, Bo
 
         super.onDestroy();
     }
+
+    //save completeList to firebase
+    public void saveToFirebase(PersonalInfoItem item) {
+        String title = item.getItemTitle();
+        documentReference = fStore.collection("users").document(userId)
+                .collection("books").document(title);
+        //TODO make it so that they can't name two things the same title
+        documentReference.set(item).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("Books", "Document saved to library collection");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Books", "onFailure: " + e.toString());
+            }
+        });
+    }
 }
+
+

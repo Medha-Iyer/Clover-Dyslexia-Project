@@ -15,6 +15,9 @@ public class PersonalInfoItem implements Serializable {
         itemIcon = icon;
     }
 
+    public PersonalInfoItem(){
+    }
+
 
     public String getItemTitle(){
         return itemTitle;
