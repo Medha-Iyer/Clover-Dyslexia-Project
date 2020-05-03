@@ -2,34 +2,65 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="?attr/invertTextcolor">
 
     <EditText
         android:id="@+id/edit_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name" />
+        android:hint="Name"
+        android:textColor="?attr/textcolor"/>
 
-    <TextView
-        android:id="@+id/action_update"
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="UPDATE"
-        android:layout_below="@id/edit_name"
         android:layout_alignParentRight="true"
+        android:layout_below="@id/edit_name"
         android:layout_marginRight="20dp"
-        android:textSize="18sp"
-        android:textColor="#33bbff" />
+        app:cardCornerRadius="10sp"
+        app:cardElevation="8dp">
 
-    <TextView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/action_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/opendyslexic_regular"
+                android:text="UPDATE"
+                android:textColor="?attr/logoColor"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CANCEL"
-        android:layout_below="@id/edit_name"
         android:layout_alignParentLeft="true"
+        android:layout_below="@id/edit_name"
         android:layout_marginRight="20dp"
-        android:textSize="18sp"
-        android:textColor="#33bbff"
-        android:id="@+id/action_cancel"/>
+        app:cardCornerRadius="10sp"
+        app:cardElevation="8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/action_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/opendyslexic_regular"
+                android:text="CANCEL"
+                android:textColor="?attr/logoColor"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="4dp"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/lighterGreen">
+    app:cardBackgroundColor="?attr/accentSelect">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -42,9 +42,10 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="8dp"
             android:layout_toEndOf="@+id/info_icon"
+            android:textStyle="bold"
             android:text="Saved Text 1"
             android:textSize="10sp"
-            android:textColor="@color/darkerGreen"/>
+            android:textColor="?attr/baseDark"/>
 
         <TextView
             android:id="@+id/info_user"
@@ -56,7 +57,7 @@
             android:fontFamily="@font/opendyslexic_regular"
             android:scrollbars="vertical"
             android:text="text 1 content..."
-            android:textColor="@android:color/black"
+            android:textColor="?attr/textcolor"
             android:textSize="20dp" />
 
     </RelativeLayout>

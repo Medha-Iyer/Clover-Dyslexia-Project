@@ -3,10 +3,13 @@ package com.example.clover.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognizerIntent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -24,6 +27,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.example.clover.pojo.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -43,30 +47,71 @@ import java.util.Scanner;
 
 public class Voice extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String VOICE_LIST = "voiceList";
+    public static final int GAME_KEY = 0;
     private static final String TAG = "VoiceActivity";
 
     private ArrayList<String> wordList = new ArrayList<String>();
-    private ArrayList<GameItem> voiceGame = new ArrayList<GameItem>();
+    private ArrayList<GameItem> completedList = new ArrayList<GameItem>();
     ArrayList<String> speakResult;
 
     private AdView mAdView;
-    private TextView voiceResult, gameWord, displayScore;
-    private ImageView speakWord, bool;
-    private Scanner sc;
-    int age, pitch, speed, fl=0;
-    int score = 0;
-    String currentWord, userId;
-    private TextToSpeech mTTS;
-    FirebaseFirestore fStore;
-    FirebaseAuth fAuth;
-    DocumentReference documentReference;
+    private TextView voiceResult, gameWord, bool;
+    private ImageView wordView;
+    private ImageView speakWord;
+    CardView nextWordBtn;
 
+    private Scanner sc;
+    private boolean darkmode;
+    int age, pitch, speed, fl=0;
+    private Scanner scanner;
+    String currentWord;
+    private TextToSpeech mTTS;
+
+    //show word for a few seconds
+    private Handler mHandler = new Handler();
+
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //This has to be implemented in every screen to update mode and theme.
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Voice.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+                if (documentSnapshot.exists()) {
+                    if(documentSnapshot.getBoolean("darkmode") != null){
+                        darkmode = documentSnapshot.getBoolean("darkmode");
+                    } else {
+                        darkmode = false;
+                    }
+                    if(documentSnapshot.getString("theme") != null){
+                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
+                    } else {
+                        Utils.setTheme(0);
+                    }
+                    if(darkmode){
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    }else{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    }
+                }
+            }
+        });
+        Utils.onActivityCreateSetTheme(this);
+        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+            Utils.changeToDark(this);
+        }else{
+            Utils.changeToLight(this);
+        }
         setContentView(R.layout.activity_voice);
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -80,42 +125,18 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         mAdView.loadAd(adRequest);
 
         //Initialize all variables
-        voiceResult = (TextView) findViewById(R.id.voiceResult);
-        gameWord = (TextView) findViewById(R.id.gameWord);
-        displayScore = findViewById(R.id.displayScore);
-        displayScore.setText(String.valueOf(score));
+        wordView = findViewById(R.id.word_view);
+        gameWord = findViewById(R.id.gameWord);
+        bool = findViewById(R.id.correct_text);
+        voiceResult = findViewById(R.id.voiceResult);
+
         speakWord = findViewById(R.id.speakWord);
         speakWord.setOnClickListener(this);
-        BottomNavigationView navView = findViewById(R.id.nav_bar);
-        bool = findViewById(R.id.imageView);
-        Button next = findViewById(R.id.nextWord);
-        next.setOnClickListener(this);
-        fStore = FirebaseFirestore.getInstance();
-        fAuth = FirebaseAuth.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-        documentReference = fStore.collection("users").document(userId);
 
-        //loads age from firebase
-        readData(new FirebaseCallback() {
-            @Override
-            public void onCallback(int a, int p, int s) {
-                Log.d(TAG, "This is the age from Firebase: " + a);
-                Log.d(TAG, "This is the pitch from Firebase: " + p);
-                Log.d(TAG, "This is the speed from Firebase: " + s);
-                //adds all the words from text file into an arraylist so they can be chosen randomly in the game.
-                if(age>=7){
-                    Log.d("age", "Valid list");
-                    sc = new Scanner(getResources().openRawResource(R.raw.words2));
-                }else{
-                    sc = new Scanner(getResources().openRawResource(R.raw.words1));
-                }
-                while (sc.hasNextLine()) {
-                    wordList.add(sc.nextLine());
-                }
-                sc.close();
-                gameWord.setText(randomLine(wordList));
-            }
-        });
+        nextWordBtn = findViewById(R.id.next_word);
+        nextWordBtn.setOnClickListener(this);
+
+        reset();
 
         // declare if text to speech is being used
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -136,9 +157,34 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        //set home as selected
-        navView.setSelectedItemId(R.id.home); //TODO set the navigation bar to nothing highlighted
+        fStore = FirebaseFirestore.getInstance();
+        fAuth = FirebaseAuth.getInstance();
+        userId = fAuth.getCurrentUser().getUid();
+        documentReference = fStore.collection("users").document(userId);
 
+        //loads age from firebase
+        readData(new Voice.FirebaseCallback() {
+            @Override
+            public void onCallback(int a, int p, int s) {
+                //adds all the words from text file into an arraylist so they can be chosen randomly in the game.
+                if(age>=7){
+                    scanner = new Scanner(getResources().openRawResource(R.raw.words2));
+                }else{
+                    scanner = new Scanner(getResources().openRawResource(R.raw.words1));
+                }
+                while (scanner.hasNextLine()) {
+                    wordList.add(scanner.nextLine());
+                }
+                scanner.close();
+
+                //show word for 5 seconds before disappearing
+                setUpWord();
+            }
+        });
+
+        //set home as selected
+        BottomNavigationView navView = findViewById(R.id.nav_bar);
+        navView.setSelectedItemId(R.id.home); //TODO set the navigation bar to nothing highlighted
         //perform item selected listener
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -168,11 +214,40 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
                 return false;
             }
         });
-
     }
 
-    public void getSpeechInput(View view) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.next_word:
+                if(fl==1) {
+                    reset();
+                    setUpWord();
+                }else{
+                    Toast.makeText(Voice.this, "Attempt to say the word", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.speakWord:
+                getSpeechInput(v);
+                break;
+        }
+    }
 
+    private void setUpWord(){
+        //show word for 5 seconds before disappearing
+        gameWord.setText(randomLine(wordList));
+        mHandler.postDelayed(mShowLoadingRunnable, 2000);
+    }
+
+    //after showing word for 2 seconds
+    private Runnable mShowLoadingRunnable = new Runnable() {
+        @Override
+        public void run() {
+            voiceResult.setVisibility(View.VISIBLE);
+        }
+    };
+
+    public void getSpeechInput(View view) {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
@@ -192,20 +267,29 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
             case 10:
                 if (resultCode == RESULT_OK && data != null) {
                     speakResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if(speakResult.get(0).equals("")){
+                        Toast.makeText(this, "Please type in the word...", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     voiceResult.setText("You said: " + speakResult.get(0));
-                    speakWord.setVisibility(View.VISIBLE);
                     bool.setVisibility(View.VISIBLE);
                     fl=1;
                     if(speakResult.get(0).equalsIgnoreCase(currentWord)){
-                        bool.setImageResource(R.drawable.check);
-                        score++;
-                        displayScore.setText(String.valueOf(score));
-                        voiceGame.add(new GameItem(currentWord, R.drawable.check));
+                        bool.setText("Correct!");
+                        bool.setTextColor(getResources().getColor(R.color.darkGreen));
+                        wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_light_green));
+                        completedList.get(0).setItemIcon(R.drawable.check);
                     }else{
-                        bool.setImageResource(R.drawable.x);
-                        voiceGame.add(new GameItem(currentWord, R.drawable.x));
+                        bool.setText("Incorrect!");
+                        bool.setTextColor(getResources().getColor(R.color.darkRed));
+                        wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_light_red));
+                        completedList.get(0).setItemIcon(R.drawable.cross);
                     }
-                    if(voiceGame.size()==2){ //TODO change to 10
+
+                    nextWordBtn.setVisibility(View.VISIBLE);
+
+                    if(completedList.size()==2){ //TODO change to 10
                         sendListToVoice();
                     }
                 }
@@ -213,41 +297,22 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.nextWord:
-                if(fl==1) {
-                    gameWord.setText(randomLine(wordList));
-                    speakWord.setVisibility(View.INVISIBLE);
-                    bool.setVisibility(View.INVISIBLE);
-                    fl=0;
-                }else{
-                    Toast.makeText(Voice.this, "Attempt to say the word", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.speakWord:
-                Settings.speak(mTTS, currentWord, pitch, speed);
-                break;
-        }
+    public void sendListToVoice(){
+        Intent i = new Intent(Voice.this, Results.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("game list", completedList);
+        bundle.putSerializable("game key", GAME_KEY);
+        i.putExtras(bundle);
+        startActivity(i);
+        overridePendingTransition(0,0);
     }
 
     public String randomLine(ArrayList<String> list) {
         currentWord = list.get(new Random().nextInt(list.size()));
-        Toast.makeText(Voice.this, "Current word: " + currentWord, Toast.LENGTH_SHORT).show();
+        //add to beginning of list
+        completedList.add(0, new GameItem(currentWord));
         wordList.remove(currentWord);
         return currentWord;
-    }
-
-    public void sendListToVoice(){
-        saveData();
-        loadData();
-        Intent i = new Intent(Voice.this, VoiceResults.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("voice list", voiceGame);
-        i.putExtras(bundle);
-        startActivity(i);
-        overridePendingTransition(0,0);
     }
 
     private void readData(final FirebaseCallback f){
@@ -270,34 +335,6 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         });
     }
 
-    //allows access of variables outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int age, int pitch, int speed);
-    }
-
-    //to save UI states
-    private void saveData(){
-        //no other app can change our shared preferences
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(voiceGame);
-        editor.putString(VOICE_LIST, json);
-        editor.apply();
-    }
-
-    private void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString(VOICE_LIST, null);
-        Type type = new TypeToken<ArrayList<GameItem>>() {}.getType();
-        voiceGame = gson.fromJson(json, type);
-
-        if (voiceGame == null){
-            voiceGame = new ArrayList<GameItem>();
-        }
-    }
-
     @Override
     protected void onDestroy() {
         if (mTTS != null) {
@@ -308,4 +345,17 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         super.onDestroy();
     }
 
+    //allows access of variables outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
+    }
+
+    private void reset(){
+        bool.setVisibility(View.GONE);
+        voiceResult.setVisibility(View.GONE);
+        voiceResult.setText("");
+        nextWordBtn.setVisibility(View.GONE);
+        gameWord.setText("Say word...");
+        wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_nav));
+    }
 }

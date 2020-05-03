@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_toLeftOf="@id/seek_bar_pitch"
+        android:layout_toStartOf="@id/seek_bar_pitch"
         android:layout_marginTop="150dp"
         android:text="Pitch"
         android:textColor="?attr/textcolor"
@@ -29,14 +29,13 @@
         android:textSize="16sp" />
 
     <SeekBar
-
         android:id="@+id/seek_bar_pitch"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="150dp"
         android:progress="50"
-        android:progressTint="?attr/buttoncolor"/>
+        android:progressTint="?attr/baseLight"/>
 
     <TextView
         android:id="@+id/speedTitle"
@@ -44,8 +43,8 @@
         android:layout_height="23dp"
         android:layout_alignStart="@id/pitchTitle"
         android:layout_marginTop="180dp"
-        android:layout_marginRight="-30dp"
-        android:layout_toLeftOf="@id/seek_bar_speed"
+        android:layout_marginEnd="-30dp"
+        android:layout_toStartOf="@id/seek_bar_speed"
         android:fontFamily="@font/opendyslexic_regular"
         android:text="Speed"
         android:textColor="?attr/textcolor"
@@ -57,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:progress="50"
-        android:progressTint="?attr/buttoncolor"
+        android:progressTint="?attr/baseLight"
         android:layout_marginTop="180dp" />
 
     <RadioGroup
@@ -72,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="One"
-            android:onClick="checkButton"
+            android:onClick="radioClick"
             android:checked="true"/>
 
         <RadioButton
@@ -80,14 +79,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Two"
-            android:onClick="checkButton"/>
+            android:onClick="radioClick"/>
 
         <RadioButton
             android:id="@+id/radio_three"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Three"
-            android:onClick="checkButton"/>
+            android:onClick="radioClick"/>
 
     </RadioGroup>
 
@@ -105,13 +104,13 @@
         android:layout_alignParentBottom="true"/>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/logoutButton"
+        android:id="@+id/logoutCard"
         android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_above="@id/nav_bar"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
-        app:cardBackgroundColor="?attr/cardbackground"
+        app:cardBackgroundColor="?attr/baseDark"
         app:cardCornerRadius="25dp"
         app:cardElevation="5dp">
 

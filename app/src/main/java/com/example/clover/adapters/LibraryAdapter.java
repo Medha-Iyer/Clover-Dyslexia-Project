@@ -84,7 +84,11 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ExampleV
     @Override //referring to item at certain position
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
         LibraryCardItem currentItem = mExampleList.get(position);
-        holder.mEditBtn.setImageResource(R.drawable.ic_edit);
+        currentItem.setPosition(position);
+
+        if (currentItem.getState()) {
+            holder.mEditBtn.setImageResource(R.drawable.ic_edit);
+        }
         holder.mTitle.setText(currentItem.getItemTitle());
         holder.mText.setText(currentItem.getItemText());
     }

@@ -82,9 +82,9 @@ public class ProfileCorrect extends Fragment {
 
         int icon = 0;
         if(code==0){
-            icon = 2131165289;
+            icon = 2131165290;
         } else if (code == 1){
-            icon = 2131165288;
+            icon = 2131165290;
         }
 
         progressRef.collection("spellingprogress")
