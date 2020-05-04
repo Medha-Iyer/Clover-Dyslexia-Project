@@ -19,6 +19,8 @@
         ads:adUnitId="ca-app-pub-5031593389746041/6548828100">
     </com.google.android.gms.ads.AdView>
 
+<!--    ca-app-pub-3940256099942544/6300978111 tester-->
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
