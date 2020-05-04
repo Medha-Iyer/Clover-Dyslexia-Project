@@ -6,15 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.clover.R;
-import com.example.clover.activities.EditInfoDialog;
+import com.example.clover.popups.EditInfoDialog;
 import com.example.clover.adapters.PersonalInfoAdapter;
 import com.example.clover.pojo.PersonalInfoItem;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,37 +21,31 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-
 import java.util.ArrayList;
 
 public class SettingsPersonalInfo extends Fragment implements PersonalInfoAdapter.OnItemClickListener, EditInfoDialog.profileInput {
-    View view;
 
-    String userId;
-    TextView fullname, age;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    DocumentReference progressRef;
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
 
     private RecyclerView mRecyclerView;
     private PersonalInfoAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private View view;
+
     private ArrayList<PersonalInfoItem> savedList = new ArrayList<PersonalInfoItem>();
     private PersonalInfoItem currentItem;
 
-    public SettingsPersonalInfo() {
-    }
+    public SettingsPersonalInfo() {  }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_personal_info, container, false);
 
-        fAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-
-        DocumentReference documentReference = fStore.collection("users").document(userId);
         if (documentReference != null) {
             documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override

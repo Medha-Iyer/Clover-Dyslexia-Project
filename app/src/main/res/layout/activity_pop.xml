@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pop_bg"
-    tools:context="com.example.clover.activities.PopActivity">
+    tools:context="com.example.clover.popups.BookPop">
 
     <androidx.cardview.widget.CardView
             android:id="@id/title"

@@ -5,24 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.example.clover.R;
 import com.example.clover.activities.Camera;
-import com.example.clover.activities.LibraryPop;
-import com.example.clover.activities.PopActivity;
+import com.example.clover.popups.LibraryPop;
 import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.pojo.LibraryCardItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import android.graphics.Canvas;
 import android.util.Log;
@@ -31,12 +27,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.example.clover.activities.LibraryEditCard;
+import com.example.clover.popups.LibraryEditCard;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,38 +41,36 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import java.util.Collections;
-
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 import static android.app.Activity.RESULT_OK;
 
 public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClickListener {
-    View view;
-    private FloatingActionButton addNoteBtn;
-    private MenuItem showArchive;
-    private Toolbar toolbar;
 
-    //for recycler view format
-    private RecyclerView mRecyclerView;
-    private LibraryAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    public static final int ADD_NOTE_REQUEST = 1;
+    public static final int EDIT_NOTE_REQUEST = 2;
 
-    private ArrayList<LibraryCardItem> libraryItems = new ArrayList<LibraryCardItem>();
-    private ArrayList<LibraryCardItem> archivedItems = new ArrayList<>();
-    private ArrayList<LibraryCardItem> completeList = new ArrayList<>();
-    private LibraryCardItem newCard;
-    private int currentPos, cpList;
-
-    //for firebase
     private FirebaseFirestore fStore;
     private FirebaseAuth fAuth;
     private DocumentReference documentReference;
     private String userID;
-    private ArrayList<LibraryCardItem> firebaseList = new ArrayList<LibraryCardItem>();
 
-    //for editing or adding note
-    public static final int ADD_NOTE_REQUEST = 1;
-    public static final int EDIT_NOTE_REQUEST = 2;
+    private RecyclerView mRecyclerView;
+    private LibraryAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private View view;
+    private FloatingActionButton addNoteBtn;
+    private MenuItem showArchive;
+    private Toolbar toolbar;
+
+
+    private ArrayList<LibraryCardItem> firebaseList = new ArrayList<LibraryCardItem>();
+    private ArrayList<LibraryCardItem> libraryItems = new ArrayList<LibraryCardItem>();
+    private ArrayList<LibraryCardItem> archivedItems = new ArrayList<>();
+    private ArrayList<LibraryCardItem> completeList = new ArrayList<>();
+    private LibraryCardItem newCard, deletedItem = null;
+    private int currentPos, cpList;
 
     public LibraryNotes() {
     }
@@ -86,7 +79,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_notes, container, false);
-        setUpSearch();
+
         toolbar = view.findViewById(R.id.toolbarNotes);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
@@ -126,6 +119,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
                 return false;
             }
         });
+        setUpSearch();
 
         addNoteBtn = view.findViewById(R.id.add_button);
         addNoteBtn.setOnClickListener(new View.OnClickListener() {
@@ -205,11 +199,6 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
         });
     }
 
-    //when calling firebase for data
-    public interface LibraryCallback {
-        void onCallback(ArrayList<LibraryCardItem> progressList);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -264,6 +253,83 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
         intent.putExtra(LibraryEditCard.EXTRA_TITLE, item.getItemTitle());
         intent.putExtra(LibraryEditCard.EXTRA_TEXT, item.getItemText());
         startActivityForResult(intent, EDIT_NOTE_REQUEST);
+    }
+
+    //for searching, set up recycler view and cards
+    private void setUpSearch() {
+        MaterialSearchView searchView = view.findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                processQuery(newText);
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                if (toolbar.getTitle().equals("Archives")) {
+                    buildRecyclerView(archivedItems);
+                } else {
+                    buildRecyclerView(libraryItems);
+                }
+            }
+        });
+    }
+    private void processQuery(String query) {
+        ArrayList<LibraryCardItem> result = new ArrayList<>();
+
+        ArrayList<LibraryCardItem> listToUse;
+        if (toolbar.getTitle().equals("Archives")) {
+            listToUse = archivedItems;
+        } else {
+            listToUse = libraryItems;
+        }
+
+        for (LibraryCardItem item : listToUse) {
+            if (item.getItemTitle().toLowerCase().contains(query.toLowerCase())) {
+                result.add(item);
+            }
+        }
+        if (listToUse.size()!=0){
+            mAdapter.setLibraryItems(result);
+        }
+    }
+    public void buildRecyclerView(ArrayList<LibraryCardItem> savedList) {
+        mRecyclerView = view.findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mAdapter = new LibraryAdapter(savedList); //passes to adapter, then presents to viewholder
+        mRecyclerView.setLayoutManager((mLayoutManager));
+        mRecyclerView.setAdapter(mAdapter);
+
+        //if individual card items get click (see onItemClick methods)
+        mAdapter.setOnItemClickListener(LibraryNotes.this);
+
+        //let add button disappear on scroll down
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0)
+                    addNoteBtn.hide();
+                else if (dy < 0)
+                    addNoteBtn.show();
+            }
+        });
+
+        Log.d("update after","library: "+libraryItems.size());
+        Log.d("update after","archive: "+archivedItems.size());
+        Log.d("update after","complete: "+completeList.size());
     }
 
     //save completeList to firebase
@@ -416,8 +482,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
         }
     }
 
-    //deleting function
-    LibraryCardItem deletedItem = null;
+    //item touch
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END , ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -534,80 +599,8 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
         }
     };
 
-    //for searching, set up recycler view and cards
-    private void setUpSearch() {
-        MaterialSearchView searchView = view.findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                processQuery(newText);
-                return false;
-            }
-        });
-
-        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-            }
-
-            @Override
-            public void onSearchViewClosed() {
-                if (toolbar.getTitle().equals("Archives")) {
-                    buildRecyclerView(archivedItems);
-                } else {
-                    buildRecyclerView(libraryItems);
-                }
-            }
-        });
-    }
-    private void processQuery(String query) {
-        ArrayList<LibraryCardItem> result = new ArrayList<>();
-
-        ArrayList<LibraryCardItem> listToUse;
-        if (toolbar.getTitle().equals("Archives")) {
-            listToUse = archivedItems;
-        } else {
-            listToUse = libraryItems;
-        }
-
-        for (LibraryCardItem item : listToUse) {
-            if (item.getItemTitle().toLowerCase().contains(query.toLowerCase())) {
-                result.add(item);
-            }
-        }
-        if (listToUse.size()!=0){
-            mAdapter.setLibraryItems(result);
-        }
-    }
-    public void buildRecyclerView(ArrayList<LibraryCardItem> savedList) {
-        mRecyclerView = view.findViewById(R.id.recyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mAdapter = new LibraryAdapter(savedList); //passes to adapter, then presents to viewholder
-        mRecyclerView.setLayoutManager((mLayoutManager));
-        mRecyclerView.setAdapter(mAdapter);
-
-        //if individual card items get click (see onItemClick methods)
-        mAdapter.setOnItemClickListener(LibraryNotes.this);
-
-        //let add button disappear on scroll down
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0)
-                    addNoteBtn.hide();
-                else if (dy < 0)
-                    addNoteBtn.show();
-            }
-        });
-
-        Log.d("update after","library: "+libraryItems.size());
-        Log.d("update after","archive: "+archivedItems.size());
-        Log.d("update after","complete: "+completeList.size());
+    //when calling firebase for data
+    public interface LibraryCallback {
+        void onCallback(ArrayList<LibraryCardItem> progressList);
     }
 }

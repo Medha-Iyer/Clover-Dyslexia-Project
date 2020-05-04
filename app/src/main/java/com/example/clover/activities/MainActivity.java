@@ -4,14 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
-
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 import com.example.clover.R;
 import com.example.clover.pojo.Utils;
@@ -30,13 +27,17 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private AdView mAdView;
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userId = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userId);
     private final String TAG = "MainActivity";
+
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
+
     private boolean darkmode;
+
+    private CardView mVoice, mSpelling, mBooks, mLocked1, mLocked2;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, e.toString());
                     return;
                 }
-
                 if (documentSnapshot.exists()) {
                     if(documentSnapshot.getBoolean("darkmode") != null){
                         darkmode = documentSnapshot.getBoolean("darkmode");
@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         Utils.onActivityCreateSetTheme(this);
-
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
             Utils.changeToDark(this);
         }else{
@@ -81,36 +80,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         setContentView(R.layout.activity_home);
 
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-                    @Override
-                    public void onInitializationComplete(InitializationStatus initializationStatus) {
-                    }
-                });
+        mVoice = findViewById(R.id.voice_game_btn);
+        mVoice.setOnClickListener(this);
 
+        mSpelling = findViewById(R.id.spelling_game_btn);
+        mSpelling.setOnClickListener(this);
+
+        mBooks = findViewById(R.id.book_btn);
+        mBooks.setOnClickListener(this);
+
+        mLocked1 = findViewById(R.id.unlocked1);
+        mLocked1.setOnClickListener(this);
+
+        mLocked2 = findViewById(R.id.unlocked2);
+        mLocked2.setOnClickListener(this);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
         mAdView.loadAd(adRequest);
 
-        CardView mvoice = findViewById(R.id.voice_game_btn);
-        mvoice.setOnClickListener(this);
-
-        CardView mspelling = findViewById(R.id.spelling_game_btn);
-        mspelling.setOnClickListener(this);
-
-        CardView mlocked1 = findViewById(R.id.unlocked1);
-        mlocked1.setOnClickListener(this);
-
-        CardView mlocked2 = findViewById(R.id.unlocked2);
-        mlocked2.setOnClickListener(this);
-
-        CardView mbooks = findViewById(R.id.book_btn);
-        mbooks.setOnClickListener(this);
-
-        //initialize and assign variable, do this for every button or other interactive feature
+        //set up bottom nav bar
         BottomNavigationView navView = findViewById(R.id.nav_bar);
-        //set home as selected
         navView.setSelectedItemId(R.id.home);
-        //perform item selected listener
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -138,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+
     @Override
     public void onClick(View v) {
         Intent i;

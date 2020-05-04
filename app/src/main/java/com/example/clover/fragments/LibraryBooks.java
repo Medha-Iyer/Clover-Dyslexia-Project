@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,9 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.clover.R;
-import com.example.clover.activities.PopActivity;
+import com.example.clover.popups.BookPop;
 import com.example.clover.adapters.BookAdapter;
 import com.example.clover.pojo.PersonalInfoItem;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,51 +35,35 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickListener{
-    View view;
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userId);
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
 
     private TextToSpeech mTTS;
     private int age, pitch, speed;
-    Toolbar toolbar;
 
     private RecyclerView mRecyclerView;
     private BookAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private View view;
+    private Toolbar toolbar;
+
     private ArrayList<PersonalInfoItem> firebaseList = new ArrayList<PersonalInfoItem>();
     private ArrayList<PersonalInfoItem> savedList = new ArrayList<PersonalInfoItem>();
 
-    public LibraryBooks() {
-    }
+    public LibraryBooks() { }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_books, container, false);
-
-        toolbar = view.findViewById(R.id.toolbarBooks);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        setHasOptionsMenu(true);
-
-        setUpSearch();
-        readLibraryData(new LibraryBooks.LibraryCallback() {
-            @Override
-            public void onCallback(ArrayList<PersonalInfoItem> firebaseList) { //loads firebase library if it exists
-                Log.d("Library", "Inside callback");
-                savedList = firebaseList;
-
-                buildRecyclerView(savedList);
-                setUpSearch();
-            }
-        });
 
         // declare if text to speech is being used
         mTTS = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
@@ -99,6 +81,22 @@ public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickLis
                 }
             }
         });
+
+        //gets list from firebase
+        readLibraryData(new LibraryBooks.LibraryCallback() {
+            @Override
+            public void onCallback(ArrayList<PersonalInfoItem> firebaseList) {
+                savedList = firebaseList;
+                buildRecyclerView(savedList);
+                setUpSearch();
+            }
+        });
+
+        toolbar = view.findViewById(R.id.toolbarBooks);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        setHasOptionsMenu(true);
+        setUpSearch();
+
         return view;
     }
 
@@ -112,6 +110,70 @@ public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickLis
 
         MenuItem saveItem = menu.findItem(R.id.show_archive);
         saveItem.setVisible(false);
+    }
+
+    @Override //to save card, item will be saved to firebase
+    public void onSaveClick(PersonalInfoItem item, int position) {
+        Log.d("LibraryBooks", "saved");
+        String title = item.getItemTitle();
+        documentReference = fStore.collection("users").document(userId)
+                .collection("books").document(title);
+        //TODO make it so that they can't name two things the same title
+        documentReference.set(item).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("Books", "Document saved to library collection");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Books", "onFailure: " + e.toString());
+            }
+        });
+    }
+
+    @Override //to unsave card, item will be deleted from firebase
+    public void onUnsaveClick(PersonalInfoItem item, int position) {
+        Log.d("unsave","in on item click");
+        String title = item.getItemTitle();
+        documentReference = fStore.collection("users").document(userId)
+                .collection("books").document(title);
+        //TODO make it so that they can't name two things the same title
+        documentReference.delete();
+        savedList.remove(item);
+        buildRecyclerView(savedList);
+    }
+
+    @Override //if speaker on card clicked, item title will be spoken
+    public void onSpeakClick(final PersonalInfoItem item, int position) {
+        Log.d("speak","in on item click");
+        readData(new LibraryBooks.FirebaseCallback() {
+            @Override
+            public void onCallback(int a, int p, int s) {
+                String currentWord = item.getItemTitle();
+                SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
+            }
+        });
+    }
+
+    @Override //if card is clicked, pop-up will open
+    public void onItemClick(PersonalInfoItem item) {
+        Intent detailIntent = new Intent(getContext(), BookPop.class);
+
+        detailIntent.putExtra(Intent.EXTRA_TITLE, item.getItemTitle());
+        detailIntent.putExtra(Intent.EXTRA_TEXT, item.getItemText());
+
+        startActivity(detailIntent);
+    }
+
+    public void buildRecyclerView(ArrayList<PersonalInfoItem> savedList) {
+        mRecyclerView = view.findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mAdapter = new BookAdapter(savedList); //passes to adapter, then presents to viewholder
+        mRecyclerView.setLayoutManager((mLayoutManager));
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(this);
     }
 
     private void setUpSearch() {
@@ -154,16 +216,6 @@ public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickLis
         }
     }
 
-    public void buildRecyclerView(ArrayList<PersonalInfoItem> savedList) {
-        mRecyclerView = view.findViewById(R.id.recyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mAdapter = new BookAdapter(savedList); //passes to adapter, then presents to viewholder
-        mRecyclerView.setLayoutManager((mLayoutManager));
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(this);
-    }
-
     //read data from firebase
     public void readLibraryData(final LibraryBooks.LibraryCallback lCallback) {
         firebaseList = new ArrayList<>();
@@ -189,17 +241,13 @@ public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickLis
                     }
                 });
     }
-    public void readData(){
-        readLibraryData(new LibraryBooks.LibraryCallback() {
-            @Override
-            public void onCallback(ArrayList<PersonalInfoItem> firebaseList) { //loads firebase library if it exists
-                Log.d("Library", "Inside callback");
-                buildRecyclerView(savedList);
-            }
-        });
+
+    //when calling firebase for data
+    public interface LibraryCallback {
+        void onCallback(ArrayList<PersonalInfoItem> progressList);
     }
 
-    //get the right list depending on age
+    //get the age, pitch, and speed from data
     private void readData(final LibraryBooks.FirebaseCallback f){
         documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
             @Override
@@ -220,67 +268,12 @@ public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickLis
         });
     }
 
-    @Override
-    public void onSaveClick(PersonalInfoItem item, int position) {
-        Log.d("LibraryBooks", "saved");
-        String title = item.getItemTitle();
-        documentReference = fStore.collection("users").document(userId)
-                .collection("books").document(title);
-        //TODO make it so that they can't name two things the same title
-        documentReference.set(item).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("Books", "Document saved to library collection");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Books", "onFailure: " + e.toString());
-            }
-        });
+    //allows access of variable age, pitch, and speed outside of the snapshotListener
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
     }
 
-    @Override
-    public void onUnsaveClick(PersonalInfoItem item, int position) {
-        Log.d("unsave","in on item click");
-        String title = item.getItemTitle();
-        documentReference = fStore.collection("users").document(userId)
-                .collection("books").document(title);
-        //TODO make it so that they can't name two things the same title
-        documentReference.delete();
-        savedList.remove(item);
-        buildRecyclerView(savedList);
-    }
-
-    @Override
-    public void onSpeakClick(final PersonalInfoItem item, int position) {
-        Log.d("speak","in on item click");
-        readData(new LibraryBooks.FirebaseCallback() {
-            @Override
-            public void onCallback(int a, int p, int s) {
-                String currentWord = item.getItemTitle();
-                SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
-            }
-        });
-    }
-
-    @Override
-    public void onItemClick(PersonalInfoItem item) {
-        Intent detailIntent = new Intent(getContext(), PopActivity.class);
-
-        detailIntent.putExtra(Intent.EXTRA_TITLE, item.getItemTitle());
-        detailIntent.putExtra(Intent.EXTRA_TEXT, item.getItemText());
-
-        startActivity(detailIntent);
-    }
-
-    //when calling firebase for data
-    public interface LibraryCallback {
-        void onCallback(ArrayList<PersonalInfoItem> progressList);
-    }
-
-    //for the speaker function
-    @Override
+    @Override //for the speaker function
     public void onDestroy() {
         if (mTTS != null) {
             mTTS.stop();
@@ -289,9 +282,4 @@ public class LibraryBooks extends Fragment implements BookAdapter.OnItemClickLis
 
         super.onDestroy();
     }
-    //allows access of variable age outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int age, int pitch, int speed);
-    }
-
 }

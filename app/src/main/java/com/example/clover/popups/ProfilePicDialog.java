@@ -1,4 +1,4 @@
-package com.example.clover.activities;
+package com.example.clover.popups;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,53 +11,43 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.cardview.widget.CardView;
-
 import com.example.clover.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.clover.activities.Profile;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
-
 import java.io.IOException;
-
 import static android.app.Activity.RESULT_OK;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class ProfilePicDialog extends AppCompatDialogFragment implements View.OnClickListener {
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    DocumentReference documentReference;
-    StorageReference storageReference;
 
-    private Uri imageUri;
-    private Bitmap imageBitmap;
+    private static final int SELECT_PICTURE = 0;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    private String userID;
+    private FirebaseAuth fAuth;
+    private FirebaseFirestore fStore;
+    private DocumentReference documentReference;
+    private StorageReference storageReference;
 
     private CardView openCam, openGallery;
     private ImageView close;
 
-    //constants for taking photos
-    private static final int SELECT_PICTURE = 0;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private Uri imageUri;
+    private Bitmap imageBitmap;
+    private String userID;
+    public PictureDialogListener pUpdate;
 
     public interface PictureDialogListener{
         void uploadPicture(Bitmap b, Uri u);
         void uploadBackgroundPicture(Bitmap b, Uri u);
     }
-
-    public PictureDialogListener pUpdate;
 
     @Nullable
     @Override
@@ -150,6 +140,5 @@ public class ProfilePicDialog extends AppCompatDialogFragment implements View.On
                     "must implement PictureDialogListener");
         }
     }
-
 }
 

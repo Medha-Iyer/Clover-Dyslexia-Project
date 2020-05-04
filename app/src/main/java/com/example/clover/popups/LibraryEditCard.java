@@ -1,10 +1,9 @@
-package com.example.clover.activities;
+package com.example.clover.popups;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.clover.R;
 import com.example.clover.pojo.Utils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,15 +32,15 @@ public class LibraryEditCard extends AppCompatActivity {
             "com.example.clover.EXTRA_TEXT";
     public static final String EXTRA_ID =
             "com.example.clover.EXTRA_ID";
-    private boolean darkmode;
 
     private FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     private DocumentReference documentReference = fStore.collection("users").document(userId);
 
-    private EditText editTitle;
-    private EditText editText;
+    private boolean darkmode;
+
+    private EditText editTitle, editText;
     private Toolbar toolbar;
 
     @Override
@@ -83,13 +81,15 @@ public class LibraryEditCard extends AppCompatActivity {
         }
         setContentView(R.layout.activity_library_edit_card);
 
-        editTitle = findViewById(R.id.edit_title);
-        editText = findViewById(R.id.edit_text);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
+        editTitle = findViewById(R.id.edit_title);
+        editText = findViewById(R.id.edit_text);
+
+        //if editing, set text to the text before
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)){
             setTitle("Edit Note");
@@ -111,6 +111,11 @@ public class LibraryEditCard extends AppCompatActivity {
         params.x = 0;
         params.y = -20;
         getWindow().setAttributes(params);
+        //dim screen
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        layoutParams.dimAmount = 0.5f;
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getWindow().setAttributes(layoutParams);
     }
 
     @Override

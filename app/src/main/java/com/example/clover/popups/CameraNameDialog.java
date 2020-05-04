@@ -1,4 +1,4 @@
-package com.example.clover.activities;
+package com.example.clover.popups;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,14 +8,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
-
 import com.example.clover.R;
 
 public class CameraNameDialog extends AppCompatDialogFragment {
+
     private EditText editName;
     private ExampleDialogListener listener;
 
@@ -31,7 +30,6 @@ public class CameraNameDialog extends AppCompatDialogFragment {
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                     }
                 })
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {

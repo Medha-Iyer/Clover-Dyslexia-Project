@@ -2,25 +2,18 @@ package com.example.clover.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.text.TextUtils;
 import android.widget.Toast;
-
 import com.example.clover.R;
 import com.example.clover.pojo.UserItem;
-import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -28,84 +21,42 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.auth.User;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Register extends AppCompatActivity implements View.OnClickListener {
 
-    private TextView mLoginHere;
-    private CardView mRegisterButton;
-    EditText mFullName, mEmail, mAge, mPassword;
-    private ProgressBar mPbar;
-
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    private String userID;
-    DocumentReference documentReference;
     private final String TAG = "Register";
-    private boolean darkmode;
+
+    private FirebaseAuth fAuth;
+    private FirebaseFirestore fStore;
+    private String userID;
+
+    private TextView mLoginHere;
+    private EditText mFullName, mEmail, mAge, mPassword;
+    private CardView mRegisterButton;
+
+    private ProgressBar mPbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //This has to be implemented in every screen to update mode and theme.
-//        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-//                if (e != null) {
-//                    Toast.makeText(Register.this, "Error while loading!", Toast.LENGTH_SHORT).show();
-//                    Log.d(TAG, e.toString());
-//                    return;
-//                }
-//
-//                if (documentSnapshot.exists()) {
-//                    if(documentSnapshot.getBoolean("darkmode") != null){
-//                        darkmode = documentSnapshot.getBoolean("darkmode");
-//                    } else {
-//                        darkmode = false;
-//                    }
-//                    if(documentSnapshot.getString("theme") != null){
-//                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
-//                    } else {
-//                        Utils.setTheme(0);
-//                    }
-//                    if(darkmode){
-//                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//                    }else{
-//                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//                    }
-//                }
-//            }
-//        });
-//        Utils.onActivityCreateSetTheme(this);
-//
-//        if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-//            Utils.changeToDark(this);
-//        }else{
-//            Utils.changeToLight(this);
-//        }
         this.setTheme(R.style.LightTheme1);
         setContentView(R.layout.activity_register);
 
-        //initialize and assign variable, do this for every button or other interactive feature
+        fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+
         mLoginHere = findViewById(R.id.loginHere);
         mLoginHere.setOnClickListener(this);
+
         mRegisterButton = findViewById(R.id.registerButton);
         mRegisterButton.setOnClickListener(this);
+
         mFullName = findViewById(R.id.fullname);
         mEmail = findViewById(R.id.email);
         mAge = findViewById(R.id.age);
         mPassword = findViewById(R.id.password);
         mPbar = findViewById(R.id.progressBar);
-        fAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
-//        userID = fAuth.getCurrentUser().getUid();
     }
 
     @Override

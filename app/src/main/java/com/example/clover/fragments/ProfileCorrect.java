@@ -15,9 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
-import com.example.clover.activities.Profile;
-import com.example.clover.activities.ProfileProgress;
-import com.example.clover.activities.Results;
+import com.example.clover.popups.ProfileProgress;
 import com.example.clover.adapters.GameAdapter;
 import com.example.clover.pojo.GameItem;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,47 +33,38 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickListener{
-    View view;
-
-    String userId;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    DocumentReference progressRef;
-    int code;
 
     public static int NUMBER;
+
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
+    private DocumentReference progressRef = fStore.collection("users").document(userId);
+
     private TextToSpeech mTTS;
     private int age, pitch, speed;
-    ArrayList<GameItem> correctWords = new ArrayList<GameItem>();
 
     private RecyclerView mRecyclerView;
     private GameAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    DocumentReference documentReference;
 
-    public ProfileCorrect() {
-    }
+    private View view;
+
+    private int code;
+    private ArrayList<GameItem> correctWords = new ArrayList<GameItem>();
+
+    public ProfileCorrect() { }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_correct, container, false);
 
-        Log.d("correct","in the right activity");
-        fAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-        documentReference = fStore.collection("users").document(userId);
+        //find out which game
         code = ProfileProgress.CODE;
 
-        readProgress(new ProfileCorrect.ProgressCallback() {
-            @Override
-            public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
-                buildRecyclerView(spellingList);
-            }
-        });
-
-        // declare if text to speech is being used
+        // set up text to speech function
         mTTS = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -91,7 +80,26 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
                 }
             }
         });
+
+        readProgress(new ProfileCorrect.ProgressCallback() {
+            @Override
+            public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
+                buildRecyclerView(spellingList);
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        final String currentWord = correctWords.get(position).getItemWord();
+        readData(new ProfileCorrect.FirebaseCallback() {
+            @Override
+            public void onCallback(int a, int p, int s) {
+                SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
+            }
+        });
     }
 
     public void buildRecyclerView(ArrayList<GameItem> savedList) {
@@ -104,6 +112,7 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    //read arraylist of indicated game that is correct
     public void readProgress(final ProfileCorrect.ProgressCallback vCallback){
         progressRef = fStore.collection("users")
                 .document(userId);
@@ -142,18 +151,11 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
         NUMBER = correctWords.size();
     }
 
-    @Override
-    public void onItemClick(int position) {
-        final String currentWord = correctWords.get(position).getItemWord();
-        readData(new ProfileCorrect.FirebaseCallback() {
-            @Override
-            public void onCallback(int a, int p, int s) {
-                SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
-            }
-        });
+    public interface ProgressCallback {
+        void onCallback(ArrayList<GameItem> progressList);
     }
 
-    //get the right list depending on age
+    //get the right age, pitch, and speed from firebase
     private void readData(final ProfileCorrect.FirebaseCallback f){
         documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
             @Override
@@ -174,6 +176,10 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
         });
     }
 
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
+    }
+
     //for the speaker function
     @Override
     public void onDestroy() {
@@ -183,14 +189,5 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
         }
 
         super.onDestroy();
-    }
-
-    public interface ProgressCallback {
-        void onCallback(ArrayList<GameItem> progressList);
-    }
-
-    //allows access of variable age outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int age, int pitch, int speed);
     }
 }

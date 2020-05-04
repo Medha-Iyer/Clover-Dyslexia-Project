@@ -1,19 +1,16 @@
-package com.example.clover.activities;
+package com.example.clover.popups;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.clover.R;
 import com.example.clover.adapters.FragmentAdapter;
 import com.example.clover.fragments.ProfileCorrect;
@@ -26,26 +23,24 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 public class ProfileProgress extends AppCompatActivity {
+
+    private final String TAG = "Profile";
+    public static final String EXTRA_ID =
+            "com.example.clover.EXTRA_ID";
+    public static int CODE;
+
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
+
+    private boolean darkmode;
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private TextView title;
-
-    public static final String EXTRA_ID =
-            "com.example.clover.EXTRA_ID";
-
-    public static int CODE;
-
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userId = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userId);
-    private final String TAG = "Profile";
-    private boolean darkmode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +80,16 @@ public class ProfileProgress extends AppCompatActivity {
         }
         setContentView(R.layout.activity_profile_progress);
 
+        //depending on CODE, set title of fragment to SPELLING or VOICE
+        Intent intent = getIntent();
+        CODE = intent.getIntExtra(EXTRA_ID, -1);
+        title = findViewById(R.id.game_title);
+        if(CODE==1){
+            title.setText("S P E L L I N G");
+        }else if(CODE==0){
+            title.setText("V O I C E");
+        }
+
         //setting up tabs for fragments
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -94,16 +99,6 @@ public class ProfileProgress extends AppCompatActivity {
         //setting up adapter for fragments
         viewPager.setAdapter(vpAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
-        Intent intent = getIntent();
-        CODE = intent.getIntExtra(EXTRA_ID, -1);
-
-        title = findViewById(R.id.game_title);
-        if(CODE==1){
-            title.setText("S P E L L I N G");
-        }else if(CODE==0){
-            title.setText("V O I C E");
-        }
 
         //set it as popup
         DisplayMetrics dm = new DisplayMetrics();
@@ -117,7 +112,7 @@ public class ProfileProgress extends AppCompatActivity {
         params.x = 0;
         params.y = -20;
         getWindow().setAttributes(params);
-
+        //dim background
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         layoutParams.dimAmount = 0.3f;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);

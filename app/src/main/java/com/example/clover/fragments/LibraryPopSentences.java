@@ -7,57 +7,43 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.clover.R;
-import com.example.clover.activities.LibraryPop;
-import com.example.clover.activities.Profile;
-import com.example.clover.activities.ProfileProgress;
-import com.example.clover.activities.Results;
-import com.example.clover.adapters.GameAdapter;
+import com.example.clover.popups.LibraryPop;
 import com.example.clover.adapters.LibrarySentenceAdapter;
 import com.example.clover.pojo.GameItem;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
 public class LibraryPopSentences extends Fragment implements LibrarySentenceAdapter.OnItemClickListener{
-    View view;
-    int code;
 
-    public static int NUMBER;
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
+
     private TextToSpeech mTTS;
     private int age, pitch, speed;
-    ArrayList<GameItem> correctWords = new ArrayList<GameItem>();
 
     private RecyclerView mRecyclerView;
     private LibrarySentenceAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userId = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userId);
+    private View view;
 
-    ArrayList<String> fileTextSentences = new ArrayList<>();
-
-    String fullText;
+    private ArrayList<String> fileTextSentences = new ArrayList<>();
+    private String fullText;
 
     public LibraryPopSentences() {
     }
@@ -94,52 +80,8 @@ public class LibraryPopSentences extends Fragment implements LibrarySentenceAdap
             }
         });
 
-
-
-//        NG_MLog.d("correct","in the right activity");
-//                    fAuth = FirebaseAuth.getInstance();
-//                    fStore = FirebaseFirestore.getInstance();
-//                    userId = fAuth.getCurrentUser().getUid();
-//                    documentReference = fStore.collection("users").document(userId);
-//                    code = ProfileProgress.CODE;
-//
-//                    readProgress(new ProfileCorrect.ProgressCallback() {
-//                        @Override
-//                        public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
-//                            buildRecyclerView(spellingList);
-//                        }
-//                    });
-//
-//                    // declare if text to speech is being used
-//                    mTTS = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
-//                        @Override
-//                        public void onInit(int status) {
-//                            if (status == TextToSpeech.SUCCESS) {
-//                                int result = mTTS.setLanguage(Locale.getDefault());
-//
-//                                if (result == TextToSpeech.LAISSING_DATA
-//                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-//                        Log.e("TTS", "Language not supported");
-//                    }
-//                } else {
-//                    Log.e("TTS", "Initialization failed");
-//                }
-//            }
-//        });
         return view;
     }
-
-    public void buildRecyclerView(ArrayList<String> savedList) {
-        mRecyclerView = view.findViewById(R.id.sentenceRecycler);
-        mRecyclerView.setHasFixedSize(true); //might need to change false
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mAdapter = new LibrarySentenceAdapter(savedList); //passes to adapter, then presents to viewholder
-        mAdapter.setOnItemClickListener(this);
-        mRecyclerView.setLayoutManager((mLayoutManager));
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-
 
     @Override
     public void onItemClick(int position) {
@@ -152,7 +94,17 @@ public class LibraryPopSentences extends Fragment implements LibrarySentenceAdap
         });
     }
 
-    //get the right list depending on age
+    public void buildRecyclerView(ArrayList<String> savedList) {
+        mRecyclerView = view.findViewById(R.id.sentenceRecycler);
+        mRecyclerView.setHasFixedSize(true); //might need to change false
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mAdapter = new LibrarySentenceAdapter(savedList); //passes to adapter, then presents to viewholder
+        mAdapter.setOnItemClickListener(this);
+        mRecyclerView.setLayoutManager((mLayoutManager));
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    //get the right age, pitch, speed
     private void readData(final LibraryPopSentences.FirebaseCallback f){
         documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
             @Override
@@ -173,8 +125,12 @@ public class LibraryPopSentences extends Fragment implements LibrarySentenceAdap
         });
     }
 
-    //for the speaker function
-    @Override
+    //allows access of variable age outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
+    }
+
+    @Override //for the speaker function
     public void onDestroy() {
         if (mTTS != null) {
             mTTS.stop();
@@ -182,14 +138,5 @@ public class LibraryPopSentences extends Fragment implements LibrarySentenceAdap
         }
 
         super.onDestroy();
-    }
-
-    public interface ProgressCallback {
-        void onCallback(ArrayList<GameItem> progressList);
-    }
-
-    //allows access of variable age outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int age, int pitch, int speed);
     }
 }

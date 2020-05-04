@@ -7,16 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.clover.R;
-import com.example.clover.activities.Profile;
-import com.example.clover.activities.ProfileProgress;
+import com.example.clover.popups.ProfileProgress;
 import com.example.clover.adapters.GameAdapter;
 import com.example.clover.pojo.GameItem;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,53 +26,39 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClickListener {
-    View view;
 
-    String userId;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    DocumentReference progressRef;
-    int code;
+    public static int NUMBER;
 
-    ArrayList<GameItem> incorrectWords = new ArrayList<GameItem>();
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
+    private DocumentReference progressRef = fStore.collection("users").document(userId);
+
+    private TextToSpeech mTTS;
+    private int age, pitch, speed;
 
     private RecyclerView mRecyclerView;
     private GameAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    DocumentReference documentReference;
-    private TextToSpeech mTTS;
-    private int age, pitch, speed;
 
-    public static int NUMBER;
+    private View view;
 
-    public ProfileIncorrect() {
-    }
+    private int code;
+    private ArrayList<GameItem> incorrectWords = new ArrayList<GameItem>();
+
+    public ProfileIncorrect() { }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_incorrect, container, false);
 
-        Log.d("incorrect","in the right activity");
-
-        fAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-        documentReference = fStore.collection("users").document(userId);
-
         code = ProfileProgress.CODE;
-
-        readProgress(new ProfileIncorrect.ProgressCallback() {
-            @Override
-            public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
-                buildRecyclerView(spellingList);
-            }
-        });
 
         // declare if text to speech is being used
         mTTS = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
@@ -93,7 +76,26 @@ public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClic
                 }
             }
         });
+
+        readProgress(new ProfileIncorrect.ProgressCallback() {
+            @Override
+            public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
+                buildRecyclerView(spellingList);
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        final String currentWord = incorrectWords.get(position).getItemWord();
+        readData(new ProfileIncorrect.FirebaseCallback() {
+            @Override
+            public void onCallback(int a, int p, int s) {
+                SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
+            }
+        });
     }
 
     public void buildRecyclerView(ArrayList<GameItem> savedList) {
@@ -106,6 +108,7 @@ public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClic
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    //get list for the incorrect words of indicated game
     public void readProgress(final ProfileIncorrect.ProgressCallback vCallback){
         progressRef = fStore.collection("users")
                 .document(userId);
@@ -143,18 +146,11 @@ public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClic
         NUMBER = incorrectWords.size();
     }
 
-    @Override
-    public void onItemClick(int position) {
-        final String currentWord = incorrectWords.get(position).getItemWord();
-        readData(new ProfileIncorrect.FirebaseCallback() {
-            @Override
-            public void onCallback(int a, int p, int s) {
-                SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
-            }
-        });
+    public interface ProgressCallback {
+        void onCallback(ArrayList<GameItem> progressList);
     }
 
-    //get the right list depending on age
+    //get the right age, pitch, and speed from firebase
     private void readData(final ProfileIncorrect.FirebaseCallback f){
         documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
             @Override
@@ -175,8 +171,12 @@ public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClic
         });
     }
 
-    //for the speaker function
-    @Override
+    //allows access of variable age, pitch, and speed outside of the snapshotlistener
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
+    }
+
+    @Override //for the speaker function
     public void onDestroy() {
         if (mTTS != null) {
             mTTS.stop();
@@ -184,14 +184,5 @@ public class ProfileIncorrect extends Fragment implements GameAdapter.OnItemClic
         }
 
         super.onDestroy();
-    }
-
-    //allows access of variable age outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int age, int pitch, int speed);
-    }
-
-    public interface ProgressCallback {
-        void onCallback(ArrayList<GameItem> progressList);
     }
 }

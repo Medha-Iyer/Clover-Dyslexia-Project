@@ -196,6 +196,7 @@ public class SettingsPreferences extends Fragment {
         getActivity().finish();
     }
 
+    //reads data from firebase
     private void readData(final SettingsPreferences.FirebaseCallback f){
         documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
             @Override
@@ -222,6 +223,7 @@ public class SettingsPreferences extends Fragment {
         });
     }
 
+    //updates data to firebase
     public void saveData(){
         documentReference.update(
                 "pitch", Integer.toString(mSeekBarPitch.getProgress()),
@@ -241,8 +243,8 @@ public class SettingsPreferences extends Fragment {
                 });
     }
 
+    //loads data from firebase
     private void loadData(){
-        //loads data from firebase
         readData(new FirebaseCallback() {
             @Override
             public void onCallback(int p, int s, boolean mode, int t) {
@@ -267,6 +269,7 @@ public class SettingsPreferences extends Fragment {
         });
     }
 
+    //call every time we need text to be spoken
     public static void speak(TextToSpeech mTTS, String word, int p, int s) {
         pitchVal = (float) p / 50;
         if (pitchVal < 0.1) pitchVal = 0.1f;

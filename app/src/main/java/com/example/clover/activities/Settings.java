@@ -5,20 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import com.example.clover.R;
 import com.example.clover.adapters.FragmentAdapter;
 import com.example.clover.fragments.SettingsPersonalInfo;
 import com.example.clover.fragments.SettingsPreferences;
 import com.example.clover.pojo.Utils;
-import com.firebase.client.Firebase;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -44,12 +41,11 @@ public class Settings extends AppCompatActivity {
     private String userId;
     private DocumentReference documentReference;
 
+    private static boolean darkmode;
+
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private CardView logout;
-
-    private static boolean darkmode;
-
     private AdView mAdView;
 
     @Override
@@ -94,18 +90,7 @@ public class Settings extends AppCompatActivity {
             Log.d(TAG, "Switching to light mode");
             Utils.changeToLight(this);
         }
-
         setContentView(R.layout.activity_settings);
-
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
-
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
-        mAdView.loadAd(adRequest);
 
         //setting up tabs for fragments
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
@@ -126,11 +111,19 @@ public class Settings extends AppCompatActivity {
             }
         });
 
-        //set home as selected
+        //set up ads
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
+
+        //set up bottom nav bar
         BottomNavigationView navView = findViewById(R.id.nav_bar);
         navView.setSelectedItemId(R.id.settings);
-
-        //perform item selected listener
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

@@ -5,13 +5,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -19,19 +16,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.clover.R;
-import com.example.clover.adapters.FragmentAdapter;
 import com.example.clover.adapters.ProgressCheckAdapter;
-import com.example.clover.fragments.ProfileProgressCheck;
-import com.example.clover.fragments.SettingsPersonalInfo;
-import com.example.clover.pojo.LibraryCardItem;
 import com.example.clover.pojo.ProgressCheckItem;
 import com.example.clover.pojo.Utils;
+import com.example.clover.popups.ProfilePicDialog;
+import com.example.clover.popups.ProfileProgress;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.example.clover.pojo.GameItem;
@@ -43,7 +36,6 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -56,41 +48,35 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static java.security.AccessController.getContext;
-
 public class Profile extends AppCompatActivity implements View.OnClickListener, ProgressCheckAdapter.OnItemClickListener, ProfilePicDialog.PictureDialogListener {
-    TextView fullName;
-    public static int picCode;
 
-    private AdView mAdView;
-
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private CardView profile_card;
-    private ImageView pfp_temp, pfp_background;
-    private CircleImageView pfp;
-    private TextView progressCount;
-
-    private ArrayList<GameItem> wordCount = new ArrayList<GameItem>();
-    String text;
-
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userId = fAuth.getCurrentUser().getUid();
-    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    StorageReference profileRef = storageReference.child("users/" + userId + "/profile.jpg");
-    DocumentReference documentReference = fStore.collection("users").document(userId);
     private final String TAG = "Profile";
+
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
+    private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+
     private boolean darkmode;
 
     private RecyclerView mRecyclerView;
     private ProgressCheckAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private TextView progressCount, fullName;
+    private CardView profile_card;
+    private ImageView pfp_temp, pfp_background;
+    private CircleImageView pfp;
+    private AdView mAdView;
+
+    public static int picCode;
+
+    private ArrayList<GameItem> wordCount = new ArrayList<GameItem>();
+    private String text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,34 +115,30 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         }else{
             Utils.changeToLight(this);
         }
-
         setContentView(R.layout.activity_profile);
 
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+        //set up progress report cards
+        buildRecyclerView();
+
+        //get first name from firebase and put in TextView
+        fullName = findViewById(R.id.prof_name);
+        DocumentReference documentReference = fStore.collection("users").document(userId);
+        documentReference.addSnapshotListener(Profile.this, new EventListener<DocumentSnapshot>() {
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                fullName.setText(documentSnapshot.getString("name"));
             }
         });
 
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
-        mAdView.loadAd(adRequest);
-
-        pfp_temp = findViewById(R.id.profile_temp);
-        pfp = findViewById(R.id.profile_photo);
-        profile_card = findViewById(R.id.profile_card);
-        profile_card.setOnClickListener(this);
-        pfp_background = findViewById(R.id.profile_background);
-        pfp_background.setOnClickListener(this);
-        fullName = findViewById(R.id.prof_name);
-
+        //get progress status and put in TextView
         progressCount = findViewById(R.id.progress_text);
         setProgressCountText();
 
-        fAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-
+        //get profile picture from firebase and set in ImageView
+        profile_card = findViewById(R.id.profile_card);
+        profile_card.setOnClickListener(this);
+        pfp_temp = findViewById(R.id.profile_temp);
+        pfp = findViewById(R.id.profile_photo);
         storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference profileRef = storageReference.child("users/" + userId + "/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -168,7 +150,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             }
         });
 
-        //for profile background
+        //get profile background from firebase and set in ImageView
+        pfp_background = findViewById(R.id.profile_background);
+        pfp_background.setOnClickListener(this);
         storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference profileBackRef = storageReference.child("users/" + userId + "/profileback.jpg");
         profileBackRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -178,21 +162,19 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             }
         });
 
-        DocumentReference documentReference = fStore.collection("users").document(userId);
-        documentReference.addSnapshotListener(Profile.this, new EventListener<DocumentSnapshot>() {
+        //set up ads
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                fullName.setText(documentSnapshot.getString("name"));
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
 
-        buildRecyclerView();
-
-        //set profile as selected
+        //set up bottom nav bar
         BottomNavigationView navView = findViewById(R.id.nav_bar);
-        //set home as selected
         navView.setSelectedItemId(R.id.profile);
-        //perform item selected listener
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -237,83 +219,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         }
     }
 
-    public void uploadPicture(Bitmap b, Uri u){
-        //pfp.setImageBitmap(b);
-        pfp_temp.setVisibility(View.INVISIBLE);
-        pfp.setVisibility(View.VISIBLE);
-        uploadImageToFirebase(u);
-    }
-
-    private void uploadImageToFirebase(Uri uri){
-        final StorageReference fileRef = storageReference.child("users/" + userId + "/profile.jpg");
-        fileRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.get().load(uri).into(pfp);
-                    }
-                });
-                Toast.makeText(Profile.this, "Image uploaded", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Profile.this, "Upload failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void uploadBackgroundPicture(Bitmap b, Uri u){
-        //pfp.setImageBitmap(b);
-        pfp_temp.setVisibility(View.INVISIBLE);
-        pfp.setVisibility(View.VISIBLE);
-        uploadBackgroundImageToFirebase(u);
-    }
-
-    private void uploadBackgroundImageToFirebase(Uri uri){
-        //background
-        final StorageReference fileBackRef = storageReference.child("users/" + userId + "/profileback.jpg");
-        fileBackRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                fileBackRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.get().load(uri).into(pfp_background);
-                    }
-                });
-                Toast.makeText(Profile.this, "Image uploaded", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Profile.this, "Upload failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void buildRecyclerView() {
-        ArrayList<ProgressCheckItem> savedList = new ArrayList<>();
-        savedList.add(new ProgressCheckItem("SPELLING", R.drawable.abc));
-        savedList.add(new ProgressCheckItem("VOICE", R.drawable.voice_game));
-        savedList.add(new ProgressCheckItem("MATCH", R.drawable.lock));
-        savedList.add(new ProgressCheckItem("BLENDS", R.drawable.lock));
-        mRecyclerView = findViewById(R.id.progressRecycler);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mAdapter = new ProgressCheckAdapter(savedList); //passes to adapter, then presents to viewholder
-
-        mRecyclerView.setLayoutManager((mLayoutManager));
-        mRecyclerView.setAdapter(mAdapter);
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(mRecyclerView);
-
-        mAdapter.setOnItemClickListener((ProgressCheckAdapter.OnItemClickListener) this);
-    }
-
-    @Override
+    @Override //on game card clicked, open progress report
     public void onItemClick(int position){
         Intent i;
         switch (position) {
@@ -336,6 +242,26 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         }
     }
 
+    public void buildRecyclerView() {
+        ArrayList<ProgressCheckItem> savedList = new ArrayList<>();
+        savedList.add(new ProgressCheckItem("SPELLING", R.drawable.abc));
+        savedList.add(new ProgressCheckItem("VOICE", R.drawable.voice_game));
+        savedList.add(new ProgressCheckItem("MATCH", R.drawable.lock));
+        savedList.add(new ProgressCheckItem("BLENDS", R.drawable.lock));
+
+        mRecyclerView = findViewById(R.id.progressRecycler);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mAdapter = new ProgressCheckAdapter(savedList);
+        mAdapter.setOnItemClickListener((ProgressCheckAdapter.OnItemClickListener) this);
+        mRecyclerView.setLayoutManager((mLayoutManager));
+        mRecyclerView.setAdapter(mAdapter);
+
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(mRecyclerView);
+    }
+
+    //setting up progress overview TextView, counts # of words mastered or need to study
     public void setProgressCountText() {
         text = "SPELLING: ";
         countItems(R.drawable.check, "spellingprogress", new Profile.ProgressCallback(){
@@ -369,7 +295,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
 
     }
-
     public void countItems(int icon, String path, final Profile.ProgressCallback vCallback){
         documentReference = fStore.collection("users")
                 .document(userId);
@@ -395,6 +320,60 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         }
                     }
                 });
+    }
+
+    //upload photos
+    public void uploadPicture(Bitmap b, Uri u){
+        //pfp.setImageBitmap(b);
+        pfp_temp.setVisibility(View.INVISIBLE);
+        pfp.setVisibility(View.VISIBLE);
+        uploadImageToFirebase(u);
+    }
+    private void uploadImageToFirebase(Uri uri){
+        final StorageReference fileRef = storageReference.child("users/" + userId + "/profile.jpg");
+        fileRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(pfp);
+                    }
+                });
+                Toast.makeText(Profile.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Profile.this, "Upload failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public void uploadBackgroundPicture(Bitmap b, Uri u){
+        pfp_temp.setVisibility(View.INVISIBLE);
+        pfp.setVisibility(View.VISIBLE);
+        uploadBackgroundImageToFirebase(u);
+    }
+    private void uploadBackgroundImageToFirebase(Uri uri){
+        //background
+        final StorageReference fileBackRef = storageReference.child("users/" + userId + "/profileback.jpg");
+        fileBackRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileBackRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(pfp_background);
+                    }
+                });
+                Toast.makeText(Profile.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Profile.this, "Upload failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public interface ProgressCallback {

@@ -4,12 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,22 +15,19 @@ import android.util.SparseArray;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.clover.R;
 import com.example.clover.fragments.SettingsPreferences;
 import com.example.clover.pojo.LibraryCardItem;
+import com.example.clover.popups.CameraNameDialog;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.example.clover.pojo.Utils;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
@@ -45,54 +38,32 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
-//import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
-import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.squareup.picasso.Picasso;
-
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 public class Camera extends AppCompatActivity implements CameraNameDialog.ExampleDialogListener, View.OnClickListener {
 
-    //layout things
-    CardView convertTextBtn, saveLibraryBtn, takePhotoBtn, fromGalleryBtn;
-    private ImageView imageView, hearBtn;
-    private TextView tv;
-    private Bitmap imageBitmap;
-
-    //ads
-    private AdView mAdView;
-
-    //saving to library
-    private String fileName, fileTextComplete;
-    private ArrayList<String> fileTextSentences, fileTextWords;
-    public static LibraryCardItem newCard;
-
-    //constants for taking photos
+    private final String TAG = "Camera";
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userId);
-    private final String TAG = "Camera";
-    private boolean darkmode;
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
 
     private TextToSpeech mTTS;
     private int pitch, speed;
+    private boolean darkmode;
+
+    private CardView convertTextBtn, saveLibraryBtn, takePhotoBtn, fromGalleryBtn;
+    private ImageView imageView, hearBtn;
+    private TextView tv;
+    private Bitmap imageBitmap;
+    private AdView mAdView;
+
+    public static LibraryCardItem newCard = null;
+    private String fileName, fileTextComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +77,6 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                     Log.d(TAG, e.toString());
                     return;
                 }
-
                 if (documentSnapshot.exists()) {
                     if(documentSnapshot.getBoolean("darkmode") != null){
                         darkmode = documentSnapshot.getBoolean("darkmode");
@@ -127,7 +97,6 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             }
         });
         Utils.onActivityCreateSetTheme(this);
-
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
             Utils.changeToDark(this);
         }else{
@@ -135,46 +104,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         }
         setContentView(R.layout.activity_camera);
 
-        setContentView(R.layout.activity_camera);
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
-
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
-        mAdView.loadAd(adRequest);
-
-        //reset card item value
-        LibraryCardItem newCard = null;
-
-        /*set up layout*/
-        imageView = findViewById(R.id.image_view);
-
-        //make text view scrollable
-        tv = (TextView) findViewById(R.id.text_view);
-        tv.setMovementMethod(new ScrollingMovementMethod());
-
-        //take photo function
-        takePhotoBtn = findViewById(R.id.take_photo);
-        takePhotoBtn.setOnClickListener(this);
-
-        //photo from gallery function
-        fromGalleryBtn = findViewById(R.id.from_gallery);
-        fromGalleryBtn.setOnClickListener(this);
-
-        convertTextBtn = findViewById(R.id.convert_text);
-        convertTextBtn.setOnClickListener(this);
-
-        saveLibraryBtn = findViewById(R.id.save_card);
-        saveLibraryBtn.setOnClickListener(this);
-
-        hearBtn = (ImageView) findViewById(R.id.audio_icon);
-        hearBtn.setVisibility(View.GONE);
-        hearBtn.setOnClickListener(this);
-
-        // declare if text to speech is being used
+        // set up text to speech
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -191,16 +121,48 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
             }
         });
 
+        //read speed and pitch from firebase
         readData(new Camera.FirebaseCallback() {
             @Override
             public void onCallback(int p, int s) {
             }
         });
 
-        //for bottom navigation bar
+        /*set up layout*/
+        imageView = findViewById(R.id.image_view);
+
+        tv = (TextView) findViewById(R.id.text_view);
+        tv.setMovementMethod(new ScrollingMovementMethod());
+
+        takePhotoBtn = findViewById(R.id.take_photo);
+        takePhotoBtn.setOnClickListener(this);
+
+        fromGalleryBtn = findViewById(R.id.from_gallery);
+        fromGalleryBtn.setOnClickListener(this);
+
+        convertTextBtn = findViewById(R.id.convert_text);
+        convertTextBtn.setOnClickListener(this);
+
+        saveLibraryBtn = findViewById(R.id.save_card);
+        saveLibraryBtn.setOnClickListener(this);
+
+        hearBtn = (ImageView) findViewById(R.id.audio_icon);
+        hearBtn.setVisibility(View.GONE);
+        hearBtn.setOnClickListener(this);
+
+        //load ad
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView = findViewById(R.id.adView);
+        mAdView.loadAd(adRequest);
+
+        //set up bottom nav bar
         BottomNavigationView navView = findViewById(R.id.nav_bar);
-        navView.setSelectedItemId(R.id.camera); //set camera as selected
-        //perform item selected listener
+        navView.setSelectedItemId(R.id.camera);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -233,7 +195,6 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.audio_icon:
-                Log.d("on click","why no work?");
                 SettingsPreferences.speak(mTTS, fileTextComplete, pitch,speed);
                 break;
             case R.id.take_photo:
@@ -320,19 +281,6 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         } else {
             tv.setText(sb.toString());
             fileTextComplete = tv.getText().toString();
-            if (fileTextComplete.equals("")||fileTextComplete==null) {
-                String[] sentence = fileTextComplete.split(".");
-                fileTextSentences.addAll(Arrays.asList(sentence));
-                splitIntoWords();
-            }
-        }
-    }
-
-    private void splitIntoWords(){
-        String[] words;
-        for(String sentence : fileTextSentences){
-            words = sentence.split(" ");
-            fileTextWords.addAll(Arrays.asList(words));
         }
     }
 
@@ -353,18 +301,12 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         overridePendingTransition(0, 0);
     }
 
-    //for the speaker function
-    @Override
-    protected void onDestroy() {
-        if (mTTS != null) {
-            mTTS.stop();
-            mTTS.shutdown();
-        }
-
-        super.onDestroy();
+    //allows access of variable pitch and speed outside of the snapshot listener
+    private interface FirebaseCallback{
+        void onCallback(int pitch, int speed);
     }
 
-    //get the right list depending on age
+    //get the right pitch and speed
     private void readData(final Camera.FirebaseCallback f){
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -384,8 +326,14 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
         });
     }
 
-    //allows access of variable age outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int pitch, int speed);
+    //for the speaker function
+    @Override
+    protected void onDestroy() {
+        if (mTTS != null) {
+            mTTS.stop();
+            mTTS.shutdown();
+        }
+
+        super.onDestroy();
     }
 }

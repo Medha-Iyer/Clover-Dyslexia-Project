@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
-
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,7 +15,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.clover.R;
 import com.example.clover.pojo.GameItem;
 import com.google.android.gms.ads.AdRequest;
@@ -33,43 +30,36 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Voice extends AppCompatActivity implements View.OnClickListener {
+
     public static final int GAME_KEY = 0;
 
-    //for layout of activity
-    private boolean darkMode;
-    private BottomNavigationView navView;
-    private TextView voiceResult, gameWord, correctView, nextWordText;
-    private ImageView wordView, speakWord;
-    private CardView nextWordBtn;
-
-    //to store words
-    private String currentWord;
-    private ArrayList<String> speakResult;
-    private ArrayList<String> wordList = new ArrayList<String>();
-    private ArrayList<GameItem> completedList = new ArrayList<GameItem>();
-
-    //important components based on preference
-    private int age, pitch, speed;
-    private int fl = 0;
-    private Scanner scanner;
-    private TextToSpeech mTTS;
-    private Handler mHandler = new Handler();
-
-    //for firebase
     private FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     private DocumentReference documentReference = fStore.collection("users").document(userId);
 
-    //banner ads
+    private int age, pitch, speed;
+    private TextToSpeech mTTS;
+    private Scanner scanner;
+    private boolean darkMode;
+
+    private TextView voiceResult, gameWord, correctView, nextWordText;
+    private ImageView wordView, speakWord;
+    private CardView nextWordBtn;
     private AdView mAdView;
+
+    private String currentWord;
+    private ArrayList<String> speakResult;
+    private ArrayList<String> wordList = new ArrayList<String>();
+    private ArrayList<GameItem> completedList = new ArrayList<GameItem>();
+    private int fl = 0;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,31 +100,6 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         }
         setContentView(R.layout.activity_voice);
 
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
-
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
-        mAdView.loadAd(adRequest);
-
-        //Initialize all variables
-        wordView = findViewById(R.id.word_view);
-        gameWord = findViewById(R.id.gameWord);
-        correctView = findViewById(R.id.correct_text);
-        voiceResult = findViewById(R.id.voiceResult);
-        nextWordText = findViewById(R.id.next_word_text);
-
-        speakWord = findViewById(R.id.speakWord);
-        speakWord.setOnClickListener(this);
-
-        nextWordBtn = findViewById(R.id.next_word);
-        nextWordBtn.setOnClickListener(this);
-
-        reset();
-
         // declare if text to speech is being used
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -154,11 +119,10 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        //loads age from firebase
+        //loads age from firebase, creates random word list
         readData(new Voice.FirebaseCallback() {
             @Override
             public void onCallback(int a, int p, int s) {
-                //adds all the words from text file into an arraylist so they can be chosen randomly in the game.
                 if(age>=7){
                     scanner = new Scanner(getResources().openRawResource(R.raw.words2));
                 }else{
@@ -172,10 +136,33 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        //set home as selected
-        navView = findViewById(R.id.nav_bar);
-        navView.setSelectedItemId(R.id.home); //TODO set the navigation bar to nothing highlighted
-        //perform item selected listener
+        speakWord = findViewById(R.id.speakWord);
+        speakWord.setOnClickListener(this);
+
+        nextWordBtn = findViewById(R.id.next_word);
+        nextWordBtn.setOnClickListener(this);
+
+        wordView = findViewById(R.id.word_view);
+        gameWord = findViewById(R.id.gameWord);
+        correctView = findViewById(R.id.correct_text);
+        voiceResult = findViewById(R.id.voiceResult);
+        nextWordText = findViewById(R.id.next_word_text);
+
+        reset();
+
+        //set up ads
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
+
+        //set up bottom nav bar
+        BottomNavigationView navView = findViewById(R.id.nav_bar);
+        navView.setSelectedItemId(R.id.home);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -227,13 +214,22 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+    //reset view before each word
+    private void reset(){
+        correctView.setVisibility(View.GONE);
+        voiceResult.setVisibility(View.GONE);
+        voiceResult.setText("");
+        nextWordBtn.setVisibility(View.GONE);
+        gameWord.setText("Say word...");
+        wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_nav));
+    }
+
+    //set up word, after showing word for 2 seconds
     private void setUpWord(){
         //show word for 5 seconds before disappearing
         gameWord.setText(randomLine(wordList));
         mHandler.postDelayed(mShowLoadingRunnable, 2000);
     }
-
-    //after showing word for 2 seconds
     private Runnable mShowLoadingRunnable = new Runnable() {
         @Override
         public void run() {
@@ -241,6 +237,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         }
     };
 
+    //get speech from user
     public void getSpeechInput(View view) {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -253,7 +250,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    @Override
+    @Override //check if correct
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -291,6 +288,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+    //after 10 words, send to Results
     public void sendListToVoice(){
         Intent i = new Intent(Voice.this, Results.class);
         Bundle bundle = new Bundle();
@@ -301,14 +299,7 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         overridePendingTransition(0,0);
     }
 
-    public String randomLine(ArrayList<String> list) {
-        currentWord = list.get(new Random().nextInt(list.size()));
-        //add to beginning of list
-        completedList.add(0, new GameItem(currentWord));
-        wordList.remove(currentWord);
-        return currentWord;
-    }
-
+    //get the right age, pitch, and speed depending on firebase
     private void readData(final FirebaseCallback f){
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -329,7 +320,21 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         });
     }
 
-    @Override
+    //get random word from wordList
+    public String randomLine(ArrayList<String> list) {
+        currentWord = list.get(new Random().nextInt(list.size()));
+        //add to beginning of list
+        completedList.add(0, new GameItem(currentWord));
+        wordList.remove(currentWord);
+        return currentWord;
+    }
+
+    //allows access of variables outside of the snapshotListener
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
+    }
+
+    @Override //for speaker function
     protected void onDestroy() {
         if (mTTS != null) {
             mTTS.stop();
@@ -337,19 +342,5 @@ public class Voice extends AppCompatActivity implements View.OnClickListener {
         }
 
         super.onDestroy();
-    }
-
-    //allows access of variables outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int age, int pitch, int speed);
-    }
-
-    private void reset(){
-        correctView.setVisibility(View.GONE);
-        voiceResult.setVisibility(View.GONE);
-        voiceResult.setText("");
-        nextWordBtn.setVisibility(View.GONE);
-        gameWord.setText("Say word...");
-        wordView.setImageDrawable(getResources().getDrawable(R.drawable.rounded_nav));
     }
 }

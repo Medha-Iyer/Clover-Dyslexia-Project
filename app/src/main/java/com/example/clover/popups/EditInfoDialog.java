@@ -1,4 +1,4 @@
-package com.example.clover.activities;
+package com.example.clover.popups;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -23,17 +23,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class EditInfoDialog extends DialogFragment implements View.OnClickListener {
-    private View view;
-
-    private String fieldTitle;
-    private EditText editField;
-    private TextView cancel, update;
-    public profileInput pInput;
 
     private FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userID = fAuth.getCurrentUser().getUid();
     private DocumentReference documentReference = fStore.collection("users").document(userID);
+
+    private View view;
+    private EditText editField;
+    private TextView cancel, update;
+
+    private String fieldTitle;
+    public profileInput pInput;
 
     public EditInfoDialog(String f) {
         fieldTitle = f;

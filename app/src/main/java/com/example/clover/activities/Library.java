@@ -4,13 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.example.clover.R;
 import com.example.clover.pojo.Utils;
 import com.example.clover.adapters.FragmentAdapter;
@@ -28,12 +26,13 @@ import com.google.android.material.tabs.TabLayout;
 public class Library extends AppCompatActivity {
 
     private final String TAG = "Library";
-    private boolean darkmode;
 
     private FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
     private DocumentReference documentReference = fStore.collection("users").document(userId);
+
+    private boolean darkmode;
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -50,7 +49,6 @@ public class Library extends AppCompatActivity {
                     Log.d(TAG, e.toString());
                     return;
                 }
-
                 if (documentSnapshot.exists()) {
                     if(documentSnapshot.getBoolean("darkmode") != null){
                         darkmode = documentSnapshot.getBoolean("darkmode");
@@ -71,13 +69,11 @@ public class Library extends AppCompatActivity {
             }
         });
         Utils.onActivityCreateSetTheme(this);
-
         if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
             Utils.changeToDark(this);
         }else{
             Utils.changeToLight(this);
         }
-
         setContentView(R.layout.activity_library);
 
         //setting up tabs for fragments
@@ -90,10 +86,9 @@ public class Library extends AppCompatActivity {
         viewPager.setAdapter(vpAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        //perform item selected listener
-        BottomNavigationView navView = findViewById(R.id.nav_bar); //initialize and assign variable, do this for every
+        //set up nav bar
+        BottomNavigationView navView = findViewById(R.id.nav_bar);
         navView.setSelectedItemId(R.id.library); //set library as selected
-
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

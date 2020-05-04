@@ -3,16 +3,13 @@ package com.example.clover.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,10 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.clover.R;
-import com.example.clover.pojo.LightbulbAnimation;
-import com.example.clover.pojo.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,15 +25,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
-
-    AnimationDrawable lightbulb;
 
     private FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
@@ -47,89 +35,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private DocumentReference documentReference;
 
     private RelativeLayout mainLogin, mainLayout;
-    private ImageView splashlogo;
     private TextView mcreateAccount, mforgotPassword, splashwords;
+    private EditText mEmail, mPassword;
     private CardView mloginButton;
-    EditText mEmail, mPassword;
+    private ImageView splashlogo;
+
+    private AnimationDrawable lightbulb;
     private ProgressBar mPbar;
     private Handler handler = new Handler();
-
-    private final String TAG = "Login";
-    private boolean darkmode;
-
-    Runnable hideViews = new Runnable() {
-        @Override
-        public void run() {
-            splashlogo.setVisibility(View.GONE);
-            splashwords.setVisibility(View.GONE);
-            mainLayout.setBackgroundColor(getResources().getColor(R.color.mainBlue));
-        }
-    };
-
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() { //TODO splash screen shows up after logout but we only want it when the app starts
-            if(fAuth.getCurrentUser() != null) {
-                userId= fAuth.getCurrentUser().getUid();
-                documentReference = fStore.collection("users").document(userId);
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-            }else {
-                mainLogin.setBackgroundColor(getResources().getColor(R.color.mainBlue));
-                splashwords.animate().alpha(0f).setDuration(1000);
-                splashlogo.animate().alpha(0f).setDuration(1000);
-                mainLogin.animate().alpha(1f).setDuration(1000);
-            }
-            handler.postDelayed(hideViews, 1000);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //This has to be implemented in every screen to update mode and theme.
-        if(fAuth.getCurrentUser() != null) {
-            userId = fAuth.getCurrentUser().getUid();
-            documentReference = fStore.collection("users").document(userId);
-
-            documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Toast.makeText(Login.this, "Error while loading!", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, e.toString());
-                        return;
-                    }
-
-                    if (documentSnapshot.exists()) {
-                        if(documentSnapshot.getBoolean("darkmode") != null){
-                            darkmode = documentSnapshot.getBoolean("darkmode");
-                        } else {
-                            darkmode = false;
-                        }
-                        if(documentSnapshot.getString("theme") != null){
-                            Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
-                        } else {
-                            Utils.setTheme(0);
-                        }
-//                        darkmode = documentSnapshot.getBoolean("darkmode");
-//                        Utils.setTheme(Integer.parseInt(documentSnapshot.getString("theme")));
-                        if (darkmode) {
-                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                        } else {
-                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                        }
-                    }
-                }
-            });
-            Utils.onActivityCreateSetTheme(this);
-
-            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                Utils.changeToDark(this);
-            } else {
-                Utils.changeToLight(this);
-            }
-        }
+        this.setTheme(R.style.LightTheme1);
         setContentView(R.layout.activity_login);
 
         //initialize and assign variable, do this for every button or other interactive feature
@@ -153,42 +71,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         handler.postDelayed(runnable, 4000); //4000 is the timeout for the splash
 
     }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        final LightbulbAnimation anim = new LightbulbAnimation(lightbulb) {
-//            @Override
-//            public void onAnimationFinish() {
-//                splashwords.animate().alpha(1f).setDuration(200);
-//                handler.postDelayed(runnable, 1000); //3000 is the timeout for the splash
-//            }
-//
-//            @Override
-//            public void onAnimationStart() {
-//            }
-//        };
-//
-//        //splashlogo.setBackground(anim);
-//        anim.start();
-//    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        lightbulb.start();
-        splashwords.animate().alpha(1f).setDuration(2050);
-    }
-
-
-    //    @Override
-//    protected void onPause(){
-//        super.onPause();
-//        if(fAuth.getCurrentUser() != null) {
-//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//            finish();
-//        }
-//    }
 
     @Override
     public void onClick(View v) {
@@ -269,4 +151,39 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+    @Override //at start, put splash screen animation
+    protected void onStart() {
+        super.onStart();
+        lightbulb.start();
+        splashwords.animate().alpha(1f).setDuration(2050);
+    }
+
+    /* when running the splash screen*/
+    private Runnable hideViews = new Runnable() {
+        @Override
+        public void run() {
+            splashlogo.setVisibility(View.GONE);
+            splashwords.setVisibility(View.GONE);
+            mainLayout.setBackgroundColor(getResources().getColor(R.color.mainBlue));
+        }
+    };
+
+    /* after the splash screen*/
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if(fAuth.getCurrentUser() != null) {
+                userId= fAuth.getCurrentUser().getUid();
+                documentReference = fStore.collection("users").document(userId);
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+            }else {
+                mainLogin.setBackgroundColor(getResources().getColor(R.color.mainBlue));
+                splashwords.animate().alpha(0f).setDuration(1000);
+                splashlogo.animate().alpha(0f).setDuration(1000);
+                mainLogin.animate().alpha(1f).setDuration(1000);
+            }
+            handler.postDelayed(hideViews, 1000);
+        }
+    };
 }

@@ -6,16 +6,13 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
-
 import com.example.clover.R;
 import com.example.clover.adapters.GameAdapter;
 import com.example.clover.fragments.SettingsPreferences;
@@ -35,32 +32,30 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class Results extends AppCompatActivity implements View.OnClickListener, GameAdapter.OnItemClickListener {
 
-    //for recycler view format
-    private RecyclerView mRecyclerView;
-    private GameAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<GameItem> list = new ArrayList<GameItem>();
-
-    private CardView playAgain, goHomeBtn;
-
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-    private String userId = fAuth.getCurrentUser().getUid();
-    DocumentReference documentReference = fStore.collection("users").document(userId);
-
     private final String TAG = "SpellingResults";
-    private boolean darkmode;
+
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    private DocumentReference documentReference = fStore.collection("users").document(userId);
 
     private TextToSpeech mTTS;
     private int age, pitch, speed, gameKey;
+    private boolean darkmode;
 
+    private RecyclerView mRecyclerView;
+    private GameAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private CardView playAgain, goHomeBtn;
     private AdView mAdView;
+
+    private ArrayList<GameItem> list = new ArrayList<GameItem>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,31 +94,9 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
         }else{
             Utils.changeToLight(this);
         }
-
         setContentView(R.layout.activity_results);
 
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
-
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
-        mAdView.loadAd(adRequest);
-
-        fStore = FirebaseFirestore.getInstance();
-        fAuth = FirebaseAuth.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-        documentReference = fStore.collection("users").document(userId);
-
-        playAgain = findViewById(R.id.play_again);
-        playAgain.setOnClickListener(this);
-
-        goHomeBtn = findViewById(R.id.home_button);
-        goHomeBtn.setOnClickListener(this);
-
-        // declare if text to speech is being used
+        // set up speaking function
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -140,9 +113,11 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
             }
         });
 
+        //read age, pitch, and speed from firebase
         readData(new Results.FirebaseCallback() {
             @Override
             public void onCallback(int a, int p, int s) {
+                //get list from Spelling or Voice game
                 Bundle bundleObject = getIntent().getExtras();
                 if (bundleObject != null) {
                     list = (ArrayList<GameItem>) bundleObject.getSerializable("game list");
@@ -151,6 +126,7 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
 
                 buildRecyclerView(list);
 
+                //save progress to firebase depending on game, denoted by path and gameKey
                 String path="";
                 if(gameKey == 1){
                     path = "spellingprogress";
@@ -161,7 +137,23 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
             }
         });
 
-        //perform item selected listener
+        playAgain = findViewById(R.id.play_again);
+        playAgain.setOnClickListener(this);
+
+        goHomeBtn = findViewById(R.id.home_button);
+        goHomeBtn.setOnClickListener(this);
+
+        //set up ads
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("9F59EB48A48DC1D3C05FCBCA3FBAC1F9").build();
+        mAdView.loadAd(adRequest);
+
+        //set up bottom nav bar
         BottomNavigationView navView = findViewById(R.id.nav_bar); //initialize and assign variable, do this for every
         navView.setSelectedItemId(R.id.home); //set home as selected
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -208,7 +200,7 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
         }
     }
 
-    @Override
+    @Override //on click of speaker in card, say the word
     public void onItemClick(int position) {
         String currentWord = list.get(position).getItemWord();
         SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
@@ -218,13 +210,34 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
         mRecyclerView =  findViewById(R.id.spellingRecycler);
         mRecyclerView.setHasFixedSize(true); //might need to change false
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new GameAdapter(savedList); //passes to adapter, then presents to viewholder
-
+        mAdapter = new GameAdapter(savedList); //passes to adapter, then presents to viewHolder
+        mAdapter.setOnItemClickListener((GameAdapter.OnItemClickListener) Results.this);
         mRecyclerView.setLayoutManager((mLayoutManager));
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener((GameAdapter.OnItemClickListener) Results.this);
     }
 
+    //get the age, speed, and pitch from firebase
+    private void readData(final Results.FirebaseCallback f){
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(Results.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                    Log.d("read data", e.toString());
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    age = Integer.parseInt(documentSnapshot.getString("age"));
+                    pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
+                    speed = Integer.parseInt(documentSnapshot.getString("speed"));
+                    f.onCallback(age, pitch, speed);
+                }
+            }
+        });
+    }
+
+    //save user progress depending on game
     public void saveProgress(String path){
         String word;
         for(int i=0; i< list.size(); i++){
@@ -251,6 +264,11 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
         }
     }
 
+    //allows access of variable age, pitch, and speed outside of the snapshotListener
+    private interface FirebaseCallback{
+        void onCallback(int age, int pitch, int speed);
+    }
+
     //for the speaker function
     @Override
     protected void onDestroy() {
@@ -260,31 +278,5 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
         }
 
         super.onDestroy();
-    }
-
-    //get the right list depending on age
-    private void readData(final Results.FirebaseCallback f){
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                if (e != null) {
-                    Toast.makeText(Results.this, "Error while loading!", Toast.LENGTH_SHORT).show();
-                    Log.d("read data", e.toString());
-                    return;
-                }
-
-                if (documentSnapshot.exists()) {
-                    age = Integer.parseInt(documentSnapshot.getString("age"));
-                    pitch = Integer.parseInt(documentSnapshot.getString("pitch"));
-                    speed = Integer.parseInt(documentSnapshot.getString("speed"));
-                    f.onCallback(age, pitch, speed);
-                }
-            }
-        });
-    }
-
-    //allows access of variable age outside of the snapshotlistener
-    private interface FirebaseCallback{
-        void onCallback(int age, int pitch, int speed);
     }
 }

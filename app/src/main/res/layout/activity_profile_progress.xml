@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/pop_bg"
     android:backgroundTint="?attr/invertTextcolor"
-    tools:context="com.example.clover.activities.ProfileProgress">
+    tools:context="com.example.clover.popups.ProfileProgress">
 
     <TextView
         android:id="@+id/game_title"
