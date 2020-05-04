@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/pop_bg"
+    android:backgroundTint="?attr/invertTextcolor"
+    tools:context="com.example.clover.activities.ProfileProgress">
+
+    <androidx.cardview.widget.CardView
+        android:id="@id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@android:color/transparent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/hear_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                app:srcCompat="@drawable/ic_hear"
+                android:tint="?attr/baseDark"/>
+
+            <TextView
+                android:id="@+id/note_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/hear_icon"
+                android:padding="5dp"
+                android:shadowColor="?attr/baseDark"
+                android:shadowDx="4"
+                android:shadowDy="4"
+                android:shadowRadius="2"
+                android:text="Title"
+                android:textColor="?attr/textcolor"
+                android:fontFamily="@font/quicksand_bold"
+                android:textSize="30dp"
+                android:textAlignment="center"/>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/title"
+        android:background="@drawable/pop_bg"
+        android:backgroundTint="?attr/baseLight"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabTextColor="?attr/textcolor"
+        app:tabIndicatorColor="?attr/logoColor"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tabLayout"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/pop_bg"
+        android:backgroundTint="?attr/baseLight"/>
+
+</RelativeLayout>

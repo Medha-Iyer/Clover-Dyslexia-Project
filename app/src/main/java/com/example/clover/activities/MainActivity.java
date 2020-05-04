@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Utils.changeToLight(this);
         }
         setContentView(R.layout.activity_home);
+
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
                     @Override
                     public void onInitializationComplete(InitializationStatus initializationStatus) {

@@ -27,19 +27,20 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="10dp"
-                android:layout_toLeftOf="@+id/hear_text"
+                android:layout_toRightOf="@+id/hear_text"
                 android:text="hey"
                 android:textAlignment="center"
-                android:textSize="30dp"
+                android:textSize="25dp"
                 android:textColor="?attr/textcolor"/>
 
             <ImageView
                 android:id="@+id/hear_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentStart="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
                 android:tint="?attr/baseDark"
                 app:srcCompat="@drawable/ic_hear" />
 

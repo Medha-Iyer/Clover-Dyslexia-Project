@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.example.clover.R;
 import com.example.clover.activities.Camera;
+import com.example.clover.activities.LibraryPop;
 import com.example.clover.activities.PopActivity;
 import com.example.clover.adapters.LibraryAdapter;
 import com.example.clover.pojo.LibraryCardItem;
@@ -245,7 +246,7 @@ public class LibraryNotes extends Fragment implements LibraryAdapter.OnItemClick
 
     @Override //open card in pop-up view
     public void onItemClick(int position) {
-        Intent detailIntent = new Intent(getContext(), PopActivity.class);
+        Intent detailIntent = new Intent(getContext(), LibraryPop.class);
         LibraryCardItem clickedItem = getListToUse().get(position);
 
         detailIntent.putExtra(Intent.EXTRA_TITLE, clickedItem.getItemTitle());

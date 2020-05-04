@@ -228,6 +228,7 @@ public class Results extends AppCompatActivity implements View.OnClickListener, 
     public void saveProgress(String path){
         String word;
         for(int i=0; i< list.size(); i++){
+            list.get(i).fixIcons();
             word = list.get(i).getItemWord();
             documentReference = fStore.collection("users")
                     .document(userId)

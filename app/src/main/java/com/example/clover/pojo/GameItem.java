@@ -1,5 +1,7 @@
 package com.example.clover.pojo;
 
+import com.example.clover.R;
+
 import java.io.Serializable;
 
 public class GameItem implements Serializable {
@@ -29,5 +31,14 @@ public class GameItem implements Serializable {
         return itemIcon;
     }
 
-    public void setItemIcon(int icon) { itemIcon = icon; }
+    public void setItemIcon(int icon) {
+        itemIcon = icon;
+        fixIcons();
+    }
+
+    public void fixIcons(){
+        if (itemIcon == R.drawable.check-1 || itemIcon==R.drawable.cross-1){
+            itemIcon++;
+        }
+    }
 }

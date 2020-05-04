@@ -15,10 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clover.R;
+import com.example.clover.activities.LibraryPop;
 import com.example.clover.activities.Profile;
 import com.example.clover.activities.ProfileProgress;
 import com.example.clover.activities.Results;
 import com.example.clover.adapters.GameAdapter;
+import com.example.clover.adapters.LibrarySentenceAdapter;
 import com.example.clover.pojo.GameItem;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,15 +34,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
-public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickListener{
+public class LibraryPopSentences extends Fragment implements LibrarySentenceAdapter.OnItemClickListener{
     View view;
-
-    String userId;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fStore;
-    DocumentReference progressRef;
     int code;
 
     public static int NUMBER;
@@ -49,33 +47,26 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
     ArrayList<GameItem> correctWords = new ArrayList<GameItem>();
 
     private RecyclerView mRecyclerView;
-    private GameAdapter mAdapter;
+    private LibrarySentenceAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    DocumentReference documentReference;
 
-    public ProfileCorrect() {
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private String userId = fAuth.getCurrentUser().getUid();
+    DocumentReference documentReference = fStore.collection("users").document(userId);
+
+    ArrayList<String> fileTextSentences = new ArrayList<>();
+
+    String fullText;
+
+    public LibraryPopSentences() {
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_correct, container, false);
+        view = inflater.inflate(R.layout.fragment_pop_sentences, container, false);
 
-        Log.d("correct","in the right activity");
-        fAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
-        userId = fAuth.getCurrentUser().getUid();
-        documentReference = fStore.collection("users").document(userId);
-        code = ProfileProgress.CODE;
-
-        readProgress(new ProfileCorrect.ProgressCallback() {
-            @Override
-            public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
-                buildRecyclerView(spellingList);
-            }
-        });
-
-        // declare if text to speech is being used
         mTTS = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -91,61 +82,69 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
                 }
             }
         });
+
+        readData(new LibraryPopSentences.FirebaseCallback() {
+            @Override
+            public void onCallback(int a, int p, int s) {
+                fullText = LibraryPop.content;
+                fullText = fullText.replace("\n"," ");
+                String[] sentence = fullText.split("\\.");
+                fileTextSentences.addAll(Arrays.asList(sentence));
+                buildRecyclerView(fileTextSentences);
+            }
+        });
+
+
+
+//        NG_MLog.d("correct","in the right activity");
+//                    fAuth = FirebaseAuth.getInstance();
+//                    fStore = FirebaseFirestore.getInstance();
+//                    userId = fAuth.getCurrentUser().getUid();
+//                    documentReference = fStore.collection("users").document(userId);
+//                    code = ProfileProgress.CODE;
+//
+//                    readProgress(new ProfileCorrect.ProgressCallback() {
+//                        @Override
+//                        public void onCallback(ArrayList<GameItem> spellingList) { //switches to correct spelling words
+//                            buildRecyclerView(spellingList);
+//                        }
+//                    });
+//
+//                    // declare if text to speech is being used
+//                    mTTS = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+//                        @Override
+//                        public void onInit(int status) {
+//                            if (status == TextToSpeech.SUCCESS) {
+//                                int result = mTTS.setLanguage(Locale.getDefault());
+//
+//                                if (result == TextToSpeech.LAISSING_DATA
+//                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+//                        Log.e("TTS", "Language not supported");
+//                    }
+//                } else {
+//                    Log.e("TTS", "Initialization failed");
+//                }
+//            }
+//        });
         return view;
     }
 
-    public void buildRecyclerView(ArrayList<GameItem> savedList) {
-        mRecyclerView = view.findViewById(R.id.spellingProgressRecycler);
+    public void buildRecyclerView(ArrayList<String> savedList) {
+        mRecyclerView = view.findViewById(R.id.sentenceRecycler);
         mRecyclerView.setHasFixedSize(true); //might need to change false
         mLayoutManager = new LinearLayoutManager(getContext());
-        mAdapter = new GameAdapter(savedList); //passes to adapter, then presents to viewholder
+        mAdapter = new LibrarySentenceAdapter(savedList); //passes to adapter, then presents to viewholder
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setLayoutManager((mLayoutManager));
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    public void readProgress(final ProfileCorrect.ProgressCallback vCallback){
-        progressRef = fStore.collection("users")
-                .document(userId);
 
-        int icon = R.drawable.check;
-        String path = "";
-        if(code==1){
-            path = "spellingprogress";
-        } else if (code == 0){
-            path = "voiceprogress";
-        }
-
-        correctWords = new ArrayList<GameItem>();
-        progressRef.collection(path)
-                .whereEqualTo("itemIcon", icon)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("correct words", document.getId() + " => " + document.getData());
-                                GameItem correct = document.toObject(GameItem.class);
-                                correctWords.add(correct);
-                            }
-                            if(correctWords!=null) {
-                                Log.d("Load correct words", "Success");
-                                vCallback.onCallback(correctWords);
-                            }
-                        } else {
-                            Log.d("Load correct words", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-        NUMBER = correctWords.size();
-    }
 
     @Override
     public void onItemClick(int position) {
-        final String currentWord = correctWords.get(position).getItemWord();
-        readData(new ProfileCorrect.FirebaseCallback() {
+        final String currentWord = fileTextSentences.get(position);
+        readData(new LibraryPopSentences.FirebaseCallback() {
             @Override
             public void onCallback(int a, int p, int s) {
                 SettingsPreferences.speak(mTTS, currentWord, pitch, speed);
@@ -154,7 +153,7 @@ public class ProfileCorrect extends Fragment implements GameAdapter.OnItemClickL
     }
 
     //get the right list depending on age
-    private void readData(final ProfileCorrect.FirebaseCallback f){
+    private void readData(final LibraryPopSentences.FirebaseCallback f){
         documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {

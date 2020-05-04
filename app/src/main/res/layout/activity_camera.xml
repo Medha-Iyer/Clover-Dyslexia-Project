@@ -72,8 +72,7 @@
                 android:layout_margin="20dp"
                 android:scaleType="centerCrop"
                 android:elevation="5dp"
-                app:srcCompat="@drawable/ic_insertphoto"
-                android:tint="?attr/baseDark" />
+                app:srcCompat="@drawable/ic_insertphoto"/>
 
             <TextView
                 android:id="@+id/text_view"

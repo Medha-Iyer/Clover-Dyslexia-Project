@@ -50,8 +50,12 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 //import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -79,7 +83,7 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
     //constants for taking photos
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     private String userId = fAuth.getCurrentUser().getUid();
@@ -279,15 +283,6 @@ public class Camera extends AppCompatActivity implements CameraNameDialog.Exampl
                 e.printStackTrace();
             }
         }
-
-//        int maxHeight = 500;
-//        int maxWidth = 500;
-//        float scale = Math.min(((float)maxHeight / imageBitmap.getWidth()), ((float)maxWidth / imageBitmap.getHeight()));
-//
-//        Matrix matrix = new Matrix();
-//        matrix.postScale(scale, scale);
-//        Bitmap bitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
-//        imageView.setImageBitmap(bitmap);
     }
 
     private void dispatchTakePictureIntent() {

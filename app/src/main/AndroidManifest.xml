@@ -54,6 +54,8 @@
         <activity android:name=".activities.LibraryEditCard"
             android:parentActivityName=".activities.Library"
             android:theme="@style/LightTheme1PopMe"/>
+        <activity android:name=".activities.LibraryPop"
+            android:theme="@style/DarkTheme3PopMe"/>
         <activity android:name=".activities.PopActivity"
             android:theme="@style/DarkTheme3PopMe"/>
 

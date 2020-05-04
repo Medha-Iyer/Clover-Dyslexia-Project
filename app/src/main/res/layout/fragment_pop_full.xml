@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/hear_icon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="10dp"
+        app:srcCompat="@drawable/ic_hear"
+        android:tint="?attr/baseDark"/>
+
+    <TextView
+        android:id="@+id/full_text"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_toLeftOf="@+id/hear_icon"
+        android:fontFamily="@font/opendyslexic_regular"
+        android:padding="10dp"
+        android:scrollbars="vertical"
+        android:text="hey"
+        android:textSize="18dp"
+        android:textColor="?attr/textcolor"/>
+
+</RelativeLayout>
