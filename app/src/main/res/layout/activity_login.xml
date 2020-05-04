@@ -34,10 +34,11 @@
             android:layout_below="@id/splashlogo"
             android:text="Clover"
             android:textSize="75dp"
-            android:textColor="#47AB47"
+            android:textColor="#2E6C35"
             android:fontFamily="@font/opendyslexic_bold"
             android:alpha="0">
         </TextView>
+<!--        alternate color: 48A948-->
 
         <RelativeLayout
             android:id="@+id/mainlogin"
