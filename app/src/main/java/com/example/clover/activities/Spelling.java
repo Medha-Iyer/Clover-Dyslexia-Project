@@ -165,7 +165,7 @@ public class Spelling extends AppCompatActivity implements View.OnClickListener 
             public void onCallback(int a, int p, int s) {
                 //adds all the words from text file into an arraylist so they can be chosen randomly in the game.
                 if(age>=7){
-                    scanner = new Scanner(getResources().openRawResource(R.raw.words2));
+                    scanner = new Scanner(getResources().openRawResource(R.raw.spellwords2));
                 }else{
                     scanner = new Scanner(getResources().openRawResource(R.raw.words1));
                 }

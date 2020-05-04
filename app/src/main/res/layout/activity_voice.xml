@@ -48,7 +48,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+        ads:adUnitId="ca-app-pub-5031593389746041/6548828100">
     </com.google.android.gms.ads.AdView>
 
         <ImageView
