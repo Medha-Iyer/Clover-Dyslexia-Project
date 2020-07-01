@@ -9,7 +9,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/pitchCard"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="50dp"
         android:layout_margin="10dp"
         android:alpha="1"
         app:cardBackgroundColor="?attr/accentSelect"
@@ -48,7 +48,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/speedCard"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="50dp"
         android:layout_below="@+id/pitchCard"
         android:layout_margin="10dp"
         android:alpha="1"
@@ -88,7 +88,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/darkModeCard"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="50dp"
         android:layout_below="@id/speedCard"
         android:layout_margin="10dp"
         android:alpha="1"
@@ -111,7 +111,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
-                android:layout_marginTop="20dp"
+                android:layout_centerVertical="true"
                 android:fontFamily="@font/opendyslexic_regular"
                 android:text="Dark Mode"
                 android:textColor="?attr/textcolor"
@@ -132,7 +132,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_below="@+id/darkModeCard"
         android:layout_margin="10dp"
         android:alpha="1"
@@ -168,7 +168,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:fontFamily="@font/opendyslexic_regular"
                 android:text="Themes"
                 android:textColor="?attr/textcolor"
